@@ -76,7 +76,7 @@ rowttests <- function(x, fac) {
     ## one group
     xavg  <- rowMeans(x)
     dof   <- ncol(x)-1
-    denom <- sqrt(rowSums(sqr(x - matrix(xavg, nrow=nrow(x), ncol=ncol(x)))) / (dof*ncol(x)) )
+    denom <- sqrt(rowSums(sqr(x-xavg)) / (dof*ncol(x)) )
     tstat <- xavg/denom
   } else {
     ## two groups
@@ -95,8 +95,8 @@ rowttests <- function(x, fac) {
     xavg1 <- rowMeans(x[,g1, drop=FALSE])
     xavg2 <- rowMeans(x[,g2, drop=FALSE])
     dof <- n1+n2-2
-    denom <- sqrt( (rowSums(sqr(x[,g1, drop=FALSE] - matrix(xavg1, nrow=nrow(x), ncol=n1))) +
-                    rowSums(sqr(x[,g2, drop=FALSE] - matrix(xavg2, nrow=nrow(x), ncol=n2)))) * ((n1+n2)/(dof*n1*n2)) )
+    denom <- sqrt( (rowSums(sqr(x[,g1, drop=FALSE] - xavg1)) +
+                    rowSums(sqr(x[,g2, drop=FALSE] - xavg2))) * ((n1+n2)/(dof*n1*n2)) )
     tstat <- (xavg2 - xavg1) / denom
   }
   pval  <- 2*pt(abs(tstat), dof, lower.tail = FALSE)
