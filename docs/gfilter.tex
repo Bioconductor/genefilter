@@ -1,0 +1,240 @@
+\documentclass{article}
+
+\begin{document}
+
+\title{Using Genefilter}
+\author{Robert Gentleman \thanks{rgentlem@hsph.harvard.edu}
+}
+\date{}
+\maketitle
+
+\section{An extended example}
+
+Consider an experiment to explore genes that are induced by cellular
+contact with a ligand (we will call the ligand F).
+The receptors are known to transduce intracellular signals when the
+cell is placed in contact with F. We want to determine which genes are
+involved in the process.
+
+The experiment was designed to use two substrates, F and an inert
+substance that will be referred to as P.
+A large number of cells were cultured and then separated and one batch
+was applied to F while the other was applied to P.
+For both conditions cells were harvested at the times, 0, 1 hour, 3
+hours and 8 hours. Those cells were processed and applied to
+Affymetrix U95Av2 chips. This process yielded expression level
+estimates for the 12,600 genes or ESTs measured by that chip.
+
+The goal of the analysis is to produce a list of genes (possibly in
+some rank order) thathave patterns of expression that are different in
+the two subsets (those cells applied to F versus those cells applied
+to P).
+
+If there were jsut a few genes then we might try to select the
+interesting ones by using a linear model (or some other model that was
+more appropriate). In the subsequent discussion the form of the model
+is irrelevant and the linear model will be used purely for pedagogical
+reasons.
+
+Let $y_{ij}$ denote the expression level of a particular gene in
+contact with substrate $i$, ($i$ will be either F or P) at time $j$,
+($j$ is one of 0,1,3,8).
+Suppose that in consultation with the biologists we determine that a
+gene is interesting if the coeffecient for time, in a linear model, is
+different in the two subsets.
+This can easily be done (for a small handful of genes) using a linear
+model. 
+
+Let $a$ denote the substrate and $b$ denote the times. Further we
+assume that the expression data is presented in a matrix with 12,600
+rows and 8 columns. Further assume that the columns contain the data
+in the order F0, F1, F3, F8, P0, P1, P3, P8.
+Then we can fit the model using the following R code.
+
+\begin{verbatim}
+ a <- as.factor(c(rep("F",4), rep("P",4)))
+ b <- c(0,1,3,8,0,1,3,8)
+ data1 <- data.frame(a,b)
+ f1 <- y~a/b-1
+ f2 <- y~a+b
+\end{verbatim}
+
+The model \verb+f1+ fits separate regressions on \verb+b+ within
+levels of \verb+b+.
+The model \verb+f2+ fits a parallel lines regression model. So
+comparing these two models via: 
+\begin{verbatim}
+ fit1 <- lm(f1, data1)
+ fit2 <- lm(f2, data1)
+ an1 <- anova(fit1, fit2)
+ an1 
+\end{verbatim}
+From \verb+an1+ we can obtain the F--test statistic for comparing the
+two models. We would reject the hypothesis that the slopes of the two
+lines were the same if this $p$--value were sufficiently small (and
+all of our diagnostic tests confirmed that the model was appropriate).
+
+In the current setting with 12,600 genes it is not feasible to
+consider carrying out this process by hand and thus we need some
+automatic procedure for carrying it out.
+To do that we rely on some special functionality in R that is being
+used more and more to provide easy to use programs for complex
+problems (such as the current one).
+See the {\em Environments} section to get a better understanding of
+the use of environments in R.
+
+First we provide the code that will create an environment, associate
+it with both \verb+f1+ and \verb+f2+ and populate it with the
+variables \verb+a+ and \verb+b+.
+
+\begin{verbatim}
+  e1 <- new.env()
+  assign("a", a, env=e1)
+  assign("b", b, env=e1)
+  environment(f1) <- e1
+  environment(f2) <- e1
+\end{verbatim}
+Now the two formulas share the environment \verb+e1+ and all the
+variable bindings in it.
+We have not assigned any value to \verb+y+ for our formulas though.
+The reason for that is that \verb+a+ and \verb+b+ are the same for
+each gene we want to test but \verb+y+ will change.
+
+We now consider an abstract (or algorithmic) version of what we need
+to do for each gene.
+Our ultimate goal is to produce a function that takes a single
+argument, \verb+x+, the expression levels for a gene and returns
+either \verb+TRUE+ indicating that the gene is interesting or
+\verb+FALSE+ indicating that the gene is uninteresting.
+
+\begin{itemize}
+\item For each gene we need to assign the expression levels for that
+  gene to the variable \verb+y+ in the environment \verb+e1+.
+\item We fit both models \verb+f1+ and \verb+f2+.
+\item We compute the anova comparing these two models.
+\item We determine whether according to some criteria the large model
+  is needed (and hence in this case that the slopes for the expression
+  are different in the two substrates). If so we output \verb+TRUE+
+  otherwise we output \verb+FALSE+.
+\end{itemize}
+
+To operationalize this (and to make it easier to extend the ideas to
+more complex settings) we construct a closure to carry out this task.
+\begin{verbatim}
+ make3fun <- function(form1, form2, p) {
+      e1 <- environment(form1)
+      #if( !identical(e1, environment(form2)) )
+      #   stop("form1 and form2 must share the same environment")
+      function(x) {
+          assign("y", x, env=e1)
+          fit1 <- lm(form1)
+          fit2 <- lm(form2)
+          an1 <- anova(fit1, fit2)
+          if( an1$"Pr(>F)"[2] < p )
+              return(TRUE)
+          else
+              return(FALSE)
+      }
+  }
+\end{verbatim}
+%$
+The function, \verb+make3fun+ is quite simple. It takes two formulas
+and a $p$--value as arguments. It checks to see that the formulas
+share an environment and then creates and returns a function of one
+argument. That function carries out all the fitting and testing for
+us.
+It is worth pointing out that the returned function is called a
+{\em closure} and that it makes use of some of the special properties
+of environments that are discussed below.
+
+Now we can create the function that we will use to call apply.
+We do this quite simply with:
+\begin{verbatim}
+ myappfun <- make3fun(f1, f2, 0.01)
+ myappfun
+function(x) {
+          assign("y", x, env=e1)
+          fit1 <- lm(form1)
+          fit2 <- lm(form2)
+          an1 <- anova(fit1, fit2)
+          if( an1$"Pr(>F)"[2] < p )
+              return(TRUE)
+          else
+              return(FALSE)
+      }
+<environment: 02FF53B8>
+\end{verbatim}
+%$
+Thus, \verb+myappfun+ is indeed a function of one argument. It carries
+out the three steps we outlined above and will return \verb+TRUE+ if
+the $p$--value for comparing the model in \verb+f1+ to that in
+\verb+f2+ is less than $0.01$.
+
+If we assume that the data are stored in a data frame called
+\verb+gene.exprs+ then we can find the interesting ones using the
+following line of code.
+\begin{verbatim}
+  interesting.ones <- apply(gene.exprs, 1, myappfun)
+\end{verbatim}
+
+The real advantage of this approach is that it extends simply (or
+trivially) to virtually any model comparison that can be represented
+or carried out in R.
+
+\section{Environments}
+
+In R an environment can be thought of as a table. The table contains a
+list of symbols that are linked to a list of values.
+There are only a couple of operations that you need to carry out on
+environments. One is to give the name of a symbol and get the
+associated value. The other is to set the value for a symbol to some
+supplied value.
+
+The following code shows some simple manipulations that you can do.
+
+\begin{verbatim}
+
+>  e1 <- new.env()
+>  ls(env=e1)
+ character(0)
+> ls()
+ [1] "a"     "an1"   "b"     "data1" "e1"    "f1"    "f2"    "fit1"  "fit2" 
+[10] "y" 
+> #this ls() lists the objects in my workspace (which is itself
+> # an environment; it gets searched by default
+> assign("a", 4, env=e1)
+> #this assigns the value 4 to the symbol a in e1
+> #it has no effect on a in my workspace
+> a
+[1] F F F F P P P P
+Levels:  F P 
+> get("a",env=e1)
+[1] 4
+> #so the a in env1 is separate and protected from the a in my
+> # workspace
+\end{verbatim}
+
+In R every formula has an associated environment. This environment is
+used to provide bindings (or values) for the symbols in the
+formula. When we write \verb=y~a+x= we have in mind some values to
+associate with \verb+y+, \verb+a+ and \verb+x+. We can use an
+environment to specify these.
+
+\begin{verbatim}
+ substrate <- c(1,1,1,1,2,2,2,2)
+ time <- c(0,1,3,8,0,1,3,8)
+ response <- rnorm(8)
+ assign("a", substrate, env=e1)
+ assign("b", time, env=e1)
+ assign("y", response, env=e1)
+ environment(f1) <- e1
+ environment(f2) <- e1
+\end{verbatim}
+Now, both of our formulas (from section 1) share the environment
+\verb+e1+ and both can be used in any modeling context without
+specifying the data; it will be obtained automatically from the
+environment. 
+
+
+
+\end{document}
