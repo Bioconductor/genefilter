@@ -1,4 +1,10 @@
 A start at some functionality for filtering genes,
 more to come...
 
+Idea:
+   have lm and glm filters that take a formula,
+   bind the free variables, we supply a function that handles each x
+   in turn, assigning things into the environment of the formula,
+   then we call lm/glm/etc with the formula.
+
  This library should now be maintained at a make check level.
