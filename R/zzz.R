@@ -2,8 +2,6 @@
 .First.lib <- function(lib, pkgname, where) 
   {
   library.dynam("genefilter", pkgname, lib)
-  require(methods)
-  require(Biobase)
     if(missing(where)) {
         where <- match(paste("package:", pkgname, sep=""), search())
         if(is.na(where)) {
@@ -12,7 +10,6 @@
         }
         where <- pos.to.env(where)
     }
-  .initFinder(where)
   cacheMetaData(as.environment(where))
   }
 

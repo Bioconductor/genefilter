@@ -28,11 +28,9 @@ genescale <- function (m, axis=2, method=c("Z", "R"), na.rm=TRUE) {
 	method(m, na.rm=na.rm)
 }
 
-.initFinder <- function(where) {
-
 setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
     weights, method="euclidean" )
-    standardGeneric("genefinder"), where=where)
+    standardGeneric("genefinder"))
 
 setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY",
           "ANY"),
@@ -45,7 +43,7 @@ setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY",
                         method=method)
               names(ans) <- gN[ilist]
               ans
-      }, where=where)
+      })
 
 setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
          function (X, ilist, numResults, scale, weights,
@@ -139,9 +137,8 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
     }
 
     return(retList)
-}, where=where)
+})
 
-}
 
 
 
