@@ -106,9 +106,28 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
                   method= as.integer(method),
                   DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")
 
-    Genes <- extCall$g
+    Genes <- extCall$g+1
     Dists <- extCall$d
-    return(list(indices=Genes, dists=Dists))
+    Which <- vector()
+
+    ## Get the number of genes/dists per selection.  There should
+    ## always be a number of total genes such that they are a multiple
+    ## of ninterest
+    numPerList <- length(Genes) / ninterest
+
+    Which <- rep(iRows, rep(numPerList, ninterest))
+
+    byGene <- split(Genes, Which)
+    names(byGene) <- rep("indices", length(byGene))
+    byDists <- split(Dists, Which)
+    names(byDists) <- rep("dists", length(byDists))
+    ## Need a better way to stuff these together
+    retList <- list()
+    for (i in 1:ninterest) {
+        retList[[i]] <- list(indices=byGene[[i]], dists=byDists[[1]])
+    }
+
+    return(retList)
 }, where=where)
 
 }
