@@ -26,12 +26,12 @@ filterfun(...)
 }
 \author{R. Gentleman }
 \seealso{\code{\link{genefilter}} }
-\example{
-  set.seed(333)
-  x <- matrix(rnorm(100,2,1),nc=10)
-  cvfun <- cv(.5,2.5)
-  ffun <- filterfun(cvfun)
-  which <- genefilter(x, ffun)
-  }
+\examples{
+ set.seed(333)
+ x <- matrix(rnorm(100,2,1),nc=10)
+ cvfun <- cv(.5,2.5)
+ ffun <- filterfun(cvfun)
+ which <- genefilter(x, ffun)
+}
 \keyword{manip}
 
