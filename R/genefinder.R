@@ -36,11 +36,16 @@ setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
 
 setMethod("genefinder", c("exprSet", "vector", "ANY", "character",
           "character"),
-          function(X, ilist, numResults, scale="none", method="euclidean") {
+          function(X, ilist, numResults, scale="none",
+                   method="euclidean") {
+              gN <- geneNames(X)
+              if (is.character(ilist))
+                  ilist <- match(ilist,gN)
+
               ans <- genefinder(exprs(X), ilist, numResults, scale,
                         method=method)
-          ans$names <- geneNames(X)[ans$indices]
-          ans
+              names(ans) <- gN[ilist]
+              ans
       }, where=where)
 
 setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
@@ -124,7 +129,7 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
     ## Need a better way to stuff these together
     retList <- list()
     for (i in 1:ninterest) {
-        retList[[i]] <- list(indices=byGene[[i]], dists=byDists[[1]])
+        retList[[i]] <- list(indices=byGene[[i]], dists=byDists[[i]])
     }
 
     return(retList)
