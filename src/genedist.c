@@ -110,7 +110,6 @@ static double mm_correlation(double *x, int nr, int nc, int i1, int i2) {
 	    upTot += ((x[a] - xAvg) * (x[b] - yAvg));
 	    botTotL += pow((x[a] - xAvg),2);
 	    botTotR += pow((x[b] - yAvg),2);
-		   x[b], yAvg, botTotR);
 	}
 	a += nr;
 	b += nr;    
