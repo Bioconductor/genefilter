@@ -212,11 +212,9 @@ static double mm_canberra(double *x, double *wval, int nr, int nc, int i1, int i
     for(j = 0 ; j < nc ; j++) {
 	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
 	    sum = fabs(x[i1] + x[i2]);
-	    sum *= wval[j];
 	    diff = fabs(x[i1] - x[i2]);
-	    diff *= wval[j];
 	    if (sum > xmin || diff > xmin) {
-		dist += diff/sum;
+		dist += wval[j]*(diff/sum);
 		count++;
 	    }
 	}
