@@ -31,98 +31,98 @@
 #include "R_ext/Applic.h" /* machar */
 
 typedef struct {
-  int geneNum;
-  double geneDist;
+    int geneNum;
+    double geneDist;
 } gene_t;
 
 
 void detectTies(int geneNum, int nResults, int nRows, gene_t *data) {
-  /* Will scan through the first nResults+1 distances in the */
-  /* data array, and if it detects any ties, will flag a R */
-  /* warning */
-  int i; /* Loop indices */
-
-  /* If nResults == nRows, do not exceed nResults - otherwise exceed it */
-  /* by 1 in order to see if there were trailing ties */
-  if (nResults == nRows) {
-    nResults = nRows-1;
-  }
-  
-  for (i = 1; i < nResults; i++) {
-    if (data[i].geneDist == data[i+1].geneDist) {
-      warning("There are distance ties in the data for gene %d\n",geneNum);
-      break;
+    /* Will scan through the first nResults+1 distances in the */
+    /* data array, and if it detects any ties, will flag a R */
+    /* warning */
+    int i; /* Loop indices */
+    
+    /* If nResults == nRows, do not exceed nResults - otherwise exceed it */
+    /* by 1 in order to see if there were trailing ties */
+    if (nResults == nRows) {
+	nResults = nRows-1;
     }
-  }
+    
+    for (i = 1; i < nResults; i++) {
+	if (data[i].geneDist == data[i+1].geneDist) {
+	    warning("There are distance ties in the data for gene %d\n",geneNum);
+	    break;
+	}
+    }
 }
 
 static int distCompare(const void *p1, const void *p2)
 {
-  const gene_t *i = p1;
-  const gene_t *j = p2;
-
-  if (i->geneDist > j->geneDist) 
-    return (1);
-  if (i->geneDist < j->geneDist) 
-    return (-1);
-  return (0);
-  
+    const gene_t *i = p1;
+    const gene_t *j = p2;
+    
+    if (i->geneDist > j->geneDist) 
+	return (1);
+    if (i->geneDist < j->geneDist) 
+	return (-1);
+    return (0);
+    
 }
 
 static double mm_correlation(double *x, int nr, int nc, int i1, int i2) {
-  int i; /* Loop index */
-  int a,b; /* Used as array indices for i1 and i2 */
-  double xAvg, yAvg; /* Averages of the i1 and i2 rows */
-  double upTot = 0; /* Upper summation */
-  double botTotL, botTotR = 0; /* The lower two summations */
-  double botVal; /* Bottom value for Rho */
-  double Rho, dist;
-
-  xAvg = yAvg = 0;
-  a = i1;
-  b = i2;
-
-  /* Calculate the averages for the i1 and i2 rows */
-  for (i = 0; i < nc; i++) {
-    if (R_FINITE(x[a])) {
-      xAvg += x[a];
+    int i; /* Loop index */
+    int a,b; /* Used as array indices for i1 and i2 */
+    double xAvg, yAvg; /* Averages of the i1 and i2 rows */
+    double upTot = 0; /* Upper summation */
+    double botTotL, botTotR = 0; /* The lower two summations */
+    double botVal; /* Bottom value for Rho */
+    double Rho, dist;
+    
+    xAvg = yAvg = 0;
+    a = i1;
+    b = i2;
+    
+    /* Calculate the averages for the i1 and i2 rows */
+    for (i = 0; i < nc; i++) {
+	if (R_FINITE(x[a])) {
+	    xAvg += x[a];
+	}
+	if (R_FINITE(x[b])) {
+	    yAvg += x[b];
+	}
+	a += nr;
+	b += nr;
     }
-    if (R_FINITE(x[b])) {
-      yAvg += x[b];
+    xAvg /= (double)nc;
+    yAvg /= (double)nc;
+    
+    /* Reset a & b */
+    a = i1; b = i2;
+    
+    /* Build up the three summations in the equation */
+    for (i = 0; i < nc; i++) {
+	if (R_FINITE(x[a]) && R_FINITE(x[b])) {
+	    upTot += ((x[a] - xAvg) * (x[b] - yAvg));
+	    botTotL += pow((x[a] - xAvg),2);
+	    botTotR += pow((x[b] - yAvg),2);
+	}
+	a += nr;
+	b += nr;    
     }
-    a += nr;
-    b += nr;
-  }
-  xAvg /= (double)nc;
-  yAvg /= (double)nc;
-  
-  /* Reset a & b */
-  a = i1; b = i2;
-  
-  /* Build up the three summations in the equation */
-  for (i = 0; i < nc; i++) {
-    if (R_FINITE(x[a]) && R_FINITE(x[b])) {
-      upTot += ((x[a] - xAvg) * (x[b] - yAvg));
-      botTotL += pow((x[a] - xAvg),2);
-      botTotR += pow((x[b] - yAvg),2);
-    }
-    a += nr;
-    b += nr;    
-  }
-
-  /* Compute Rho & Distance (1 - R) */
-  botVal = sqrt((botTotL * botTotR));
-  Rho = upTot / botVal;
-  dist = 1 - Rho;
-
-  return(dist);
+    
+    /* Compute Rho & Distance (1 - R) */
+    botVal = sqrt((botTotL * botTotR));
+    Rho = upTot / botVal;
+    dist = 1 - Rho;
+    
+    return(dist);
 }
 
 static double mm_euclidean(double *x, int nr, int nc, int i1, int i2)
 {
     double dev, dist;
     int count, j;
-
+    
     count= 0;
     dist = 0;
     for(j = 0 ; j < nc ; j++) {
@@ -244,86 +244,79 @@ enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, CORRELATION, BINARY };
 
 void mm_distance(double *x, int *nr, int *nc, int *g, double *d, 
 		 int *iRow, int *nInterest, int *nResults, int *method) {
-
-  /*
-    x -> Data Array
-     nr -> Number of rows in X
-     nc -> number of columns in X
-     g -> The nResults closest genes to the genes of interest
-     d -> The distances of the genes from g, 1 to 1 mapping
-     iRow -> rows of X that we are interested in
-     nInterest -> Number of elements in iRow
-     nResults -> The top X results to pass back
-     method -> which distance method to use
-  */
-
-  int  i,j, k;  /* Loop indices */
-  int baseIndex; /* Used to index data arrays */
-  gene_t *tmp; /* Temporary array to hold the distance data */
-  double (*distfun)(double*, int, int, int, int) = NULL;
-
-  /* Sanity check the nResults vs. number of rows in the data */
-  if (*nResults > *nr) {
-    warning("Number of results selected is greater than number of rows, using the number of rows instead\n");
-    nResults = nr;
-  }
-  
-  /* Size of tmp == *nr, as each gene we're interested in will generate */
-  /* nr number of distance points */
-  tmp = (gene_t *)R_alloc(*nr, sizeof(gene_t));
-  
-  /* Determine which distance function to use */
-  switch(*method) {
-  case EUCLIDEAN:
-    distfun = mm_euclidean;
-    break;
-  case MAXIMUM:
-    distfun = mm_maximum;
-    break;
-  case MANHATTAN:
-    distfun = mm_manhattan;
-    break;
-  case CANBERRA:
-    distfun = mm_canberra;
-    break;
-  case CORRELATION:
-    distfun = mm_correlation;
-    break;
-  case BINARY:
-    distfun = mm_dist_binary;
-    break;
-  default:
-    error("distance(): invalid distance");
-  }
-  
-  for (j = 0; j < *nInterest; j++) {  
-    /* Get the distances for this gene, store in tmp array */
-
-    for(i = 0 ; i < (*nr) ; i++) {
-      tmp[i].geneNum = i; 
-      tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j], i);       
+    
+    /*
+      x -> Data Array
+      nr -> Number of rows in X
+      nc -> number of columns in X
+      g -> The nResults closest genes to the genes of interest
+      d -> The distances of the genes from g, 1 to 1 mapping
+      iRow -> rows of X that we are interested in
+      nInterest -> Number of elements in iRow
+      nResults -> The top X results to pass back
+      method -> which distance method to use
+    */
+    
+    int  i,j, k;  /* Loop indices */
+    int baseIndex; /* Used to index data arrays */
+    gene_t *tmp; /* Temporary array to hold the distance data */
+    double (*distfun)(double*, int, int, int, int) = NULL;
+    
+    /* Sanity check the nResults vs. number of rows in the data */
+    if (*nResults > *nr) {
+	warning("Number of results selected is greater than number of rows, using the number of rows instead\n");
+	nResults = nr;
     }
     
-    /* Run a sort on the temp array */
-    qsort(tmp, *nr, sizeof(gene_t), distCompare);    
-
-    /* Detect any ties */
-    detectTies(iRow[j], *nResults, *nr, tmp); 
-
-    /******
-    printf("Sorted Dists:\n");
-    for (k = 0; k < *nr; k++) {
-      printf("%d: %f\n", tmp[k].geneNum, tmp[k].geneDist);
-    }
-    *****/
+    /* Size of tmp == *nr, as each gene we're interested in will generate */
+    /* nr number of distance points */
+    tmp = (gene_t *)R_alloc(*nr, sizeof(gene_t));
     
-    /* Copy the 1<->nResults data points into the final array */
-    baseIndex = *nResults * j;
+    /* Determine which distance function to use */
+    switch(*method) {
+    case EUCLIDEAN:
+	distfun = mm_euclidean;
+	break;
+    case MAXIMUM:
+	distfun = mm_maximum;
+	break;
+    case MANHATTAN:
+	distfun = mm_manhattan;
+	break;
+    case CANBERRA:
+	distfun = mm_canberra;
+	break;
+    case CORRELATION:
+	distfun = mm_correlation;
+	break;
+    case BINARY:
+	distfun = mm_dist_binary;
+	break;
+    default:
+	error("distance(): invalid distance");
+    }
+    
+    for (j = 0; j < *nInterest; j++) {  
+	/* Get the distances for this gene, store in tmp array */
+	
+	for(i = 0 ; i < (*nr) ; i++) {
+	    tmp[i].geneNum = i; 
+	    tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j], i);       
+	}
+	
+	/* Run a sort on the temp array */
+	qsort(tmp, *nr, sizeof(gene_t), distCompare);    
+	
+	/* Detect any ties */
+	detectTies(iRow[j], *nResults, *nr, tmp); 
+	
+	/* Copy the 1<->nResults data points into the final array */
+	baseIndex = *nResults * j;
     for (k = 1; k <= *nResults; k++) {
-      g[baseIndex + (k-1)] = tmp[k].geneNum; 
+	g[baseIndex + (k-1)] = tmp[k].geneNum; 
       d[baseIndex + (k-1)] = tmp[k].geneDist; 
     }
-  }
+    }
 }
 
 

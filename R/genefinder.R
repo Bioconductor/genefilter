@@ -42,15 +42,15 @@ genefinder <- function (X, ilist, numResults=25, scale="none", method="euclidean
     if (scale == "none") {
         # no scaling
     } else
-        if (scale == "range") {
-            # scale input matrix using 'genescale'
-            X <- genescale(X)
-        } else
-            if (scale == "zscore") {
-                # scale using R's scale function
-                X <- scale(X)
-            } else
-                stop ("The scale method is invalid.")
+    if (scale == "range") {
+       # scale input matrix using 'genescale'
+        X <- genescale(X)
+    } else
+    if (scale == "zscore") {
+        # scale using R's scale function
+        X <- scale(X)
+    } else
+    stop ("The scale method is invalid.")
 
     if( !is.vector(ilist) )
         stop("the genes to be compared to must be in a vector")
@@ -71,22 +71,21 @@ genefinder <- function (X, ilist, numResults=25, scale="none", method="euclidean
     Genes <- array(dim=c(ninterest, numResults))
     Dists <- array(dim=c(ninterest, numResults))
     extCall <- .C("mm_distance",
-	                 X = as.double(X),
-                         nr= N,
-	                 nc= ncol(X),
-			 g = as.integer(Genes),
-			 d = as.double(Dists),
-	                 iRow  = as.integer(iRows),
-			 nInterest = as.integer(ninterest),
-			 nResults = as.integer(numResults),
-	                 method= as.integer(method),
-	                 DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")
+                  X = as.double(X),
+                  nr= N,
+                  nc= ncol(X),
+                  g = as.integer(Genes),
+                  d = as.double(Dists),
+                  iRow  = as.integer(iRows),
+                  nInterest = as.integer(ninterest),
+                  nResults = as.integer(numResults),
+                  method= as.integer(method),
+                  DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")
 
     Genes <- extCall$g
     Dists <- extCall$d
 
     return(list(indices=Genes, dists=Dists))
-
 }
 
 
