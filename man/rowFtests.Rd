@@ -6,12 +6,14 @@
 
 \usage{
 rowFtests(x, fac, var.equal = TRUE)
-rowttests(x, fac)} 
+rowttests(x, fac, tstatOnly = FALSE)} 
 
 \arguments{
   \item{x}{Matrix}
   \item{fac}{Factor, with \code{length(fac)=ncol(x)}. For
     \code{rowttests}, \code{fac} must have exactly two levels.}
+  \item{var.equal}{a logical variable indicating whether to calculate
+    p-values.  If \code{FALSE}, just the t-statistics are returned.}
   \item{var.equal}{a logical variable indicating whether to treat the
     variances in the samples as equal.  If 'TRUE', a simple F test for
     the equality of means in a one-way analysis of variance is

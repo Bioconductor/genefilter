@@ -69,7 +69,7 @@ rowFtests <- function(x, fac,var.equal=TRUE) {
 }
 
 ##--------------------------------------------------
-## 
+## rowttests
 ##--------------------------------------------------
 rowttests = function(x, fac, tstatOnly=FALSE) {
   if(missing(fac)) {
