@@ -53,6 +53,10 @@ colFtests(x, fac, var.equal = TRUE)
   If \code{fac} is missing, \code{rowttests} performs for each row of
   \code{x} a two-sided one-class t-test against the null hypothesis 'mean=0'.
 
+  \code{rowFtests} and \code{colFtests} are currently implemented using
+  matrix algebra in R. Compared to the \code{*ttests} functions,
+  they are slower and use more memory.
+
   If \code{var.equal} is 'FALSE', \code{nrow(x)+1} degree of freedoms
   are given, the first one is the first degree of freedom (it is the
   same for each row) and the other ones are the second degree of freedom
@@ -60,8 +64,10 @@ colFtests(x, fac, var.equal = TRUE)
 }
 \value{
   For the \code{row*} and \code{col*} functions, 
-  a list with the test statistics, p-values, degrees of freedom.
-  
+  a list with the test statistics, 
+  p-values, and degrees of freedom.
+  Additonally, the t-test functions return the differences
+  of group means.
 }
 \references{B. L. Welch (1951), On the comparison of several mean values: an
      alternative approach. Biometrika, *38*, 330-336}
@@ -94,13 +100,17 @@ colFtests(x, fac, var.equal = TRUE)
    s7 = summary(lm(x[1,]~f7))
    about.equal(s7$statistic$value, r7$statistic[1])
 
+   ## colttests
+   c2 = colttests(t(x), f2)
+   stopifnot(identical(r2, c2))
+
    ## this can be removed once the old fastT is gone
    x   = matrix(runif(1e7), nrow=1e4)
    ig1 = sample(ncol(x), ncol(x)/2)
    ig2 = (1:ncol(x))[-ig1]
 
    print(system.time(t1<-fastTNew(x, ig1, ig2)))
-   print(system.time(t2<-fastT(x, ig1, ig2,ratio=FALSE)))
+   print(system.time(t2<-fastT(x, ig1, ig2, ratio=FALSE)))
 
    about.equal(t1$statistic, t2$z,  1e-6)
    about.equal(t1$dm,        t2$dm, 1e-6)

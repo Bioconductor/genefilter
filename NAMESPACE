@@ -3,7 +3,8 @@ useDynLib(genefilter)
 
 export("Anova", "allNA", "anyNA", "coxfilter",
   "cv", "eSetFilter",
-  "fastT", "fastTNew", "ttest", "rowttests", "rowFtests",
+  "fastT", "fastTNew", "ttest",
+  "rowttests", "colttests", "rowFtests", "colFtests",     
   "filterfun", "gapFilter", 
   "genefilter", "genefinder", "genescale", "getFilterNames",
   "getFuncDesc", "getRdAsText", "isESet", "kOverA", "maxA", "pOverA",
