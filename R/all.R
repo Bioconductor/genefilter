@@ -59,7 +59,7 @@ Anova <- function(cov, p=0.05, na.rm=TRUE)
             cov <- cov[!drop]
         }
         m1 <- lm(x~cov)
-        m1s <- summary(m1)
+        m1s <- summary.lm(m1) # VC, 15XII01 -- problem w/generic summary in S4?
         fstat <- 1 - pf(m1s$fstat[1], m1s$fstat[2], m1s$fstat[3])
         if( fstat < p )
             return(TRUE)
