@@ -8,8 +8,8 @@
   and \code{na.rm} bound to the specified values. The function takes a
   single vector, \code{x}, as an argument.
   When the returned function is evaluated it returns \code{TRUE} if the
-  proportion of values in \code{x} that are larger than \code{A} exceeds
-  \code{p}. 
+  proportion of values in \code{x} that are larger than \code{A} is at
+  least \code{p}. 
 }
 \usage{
 pOverA(p=0.05, A=100, na.rm=TRUE)

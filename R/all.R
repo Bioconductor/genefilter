@@ -10,7 +10,7 @@ kOverA <- function(k, A=100, na.rm = TRUE) {
   function(x) {
       if(na.rm)
 	x <- x[!is.na(x)]
-      sum( x > A ) > k
+      sum( x > A ) >= k
   }
 }
 
@@ -23,7 +23,7 @@ pOverA <-  function(p=0.05, A=100, na.rm = TRUE) {
   function(x) {
       if(na.rm)
 	 x<-x[!is.na(x)]
-      sum( x > A )/length(x) > p
+      sum( x > A )/length(x) >= p
   }
 }
 
