@@ -37,6 +37,7 @@ Anova(cov, p=0.05, na.rm=TRUE)
 \seealso{\code{\link{kOverA}}, \code{\link{lm}} }
 
 \examples{
+  set.seed(123)
   af <- Anova(c(rep(1,5),rep(2,5)), .01)
   af(rnorm(10))
 }
