@@ -11,7 +11,7 @@
   our test and the gene will be selected.
 }
 \usage{
-gapFilter(Gap, IQR, Prop, na.rm=TRUE)
+gapFilter(Gap, IQR, Prop, na.rm=TRUE, neg.rm=TRUE)
 }
 \arguments{
   \item{Gap}{The size of the gap required to pass the test. }
@@ -20,6 +20,8 @@ gapFilter(Gap, IQR, Prop, na.rm=TRUE)
   end.}
   \item{na.rm}{If \code{TRUE} then \code{NA}'s will be removed before
     processing. }
+  \item{na.rm}{If \code{TRUE} then elements of \code{x} that are negative
+    will be removed before processing. }
 }
 \details{
   As stated above we are interested in 

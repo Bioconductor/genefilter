@@ -106,9 +106,10 @@ ttest <- function(m, p=0.05, na.rm=TRUE) {
 
 ##a filter based on gaps
 
-gapFilter <- function(Gap, IQR, Prop, na.rm=TRUE) {
+gapFilter <- function(Gap, IQR, Prop, na.rm=TRUE, neg.rm=TRUE) {
   function(x) {
      if(na.rm) x <- x[!is.na(x)]
+     if(neg.rm) x <- x[x>0]
      lenx <- length(x)
      if( lenx==0 || lenx < Prop+1 )
        return(FALSE)
