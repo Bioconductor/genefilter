@@ -180,6 +180,6 @@ void mm_distance(double *x, int *nr, int *nc, double *d, int *iRow, int *method)
 	error("distance(): invalid distance");
     }
 
-    for(i = 0 ; i <= (*nr) ; i++)
+    for(i = 0 ; i < (*nr) ; i++)
         d[i] = distfun(x, *nr, *nc, (*iRow)-1, i);
 }
