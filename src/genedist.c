@@ -296,19 +296,11 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
 	error("distance(): invalid distance");
     }
 
-    Rprintf("Testing ....\n");
     for (j = 0; j < *nInterest; j++) {  
 	/* Get the distances for this gene, store in tmp array */
-	Rprintf("Now checking row ....\n");
 	for(i = 0 ; i < (*nr) ; i++) {
-	    if (iRow[j] == i) {
-		tmp[i].geneNum = i;
-		tmp[i].geneDist = -1;
-	    }
-	    else {
-		tmp[i].geneNum = i; 
-		tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j]-1, i);       
-	    }
+	    tmp[i].geneNum = i; 
+	    tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j]-1, i);       
 	}
 	
 	/* Run a sort on the temp array */
@@ -319,7 +311,10 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
 	
 	/* Copy the 1<->nResults data points into the final array */
 	baseIndex = *nResults * j;
-	for (k = 1; k <= *nResults; k++) {
+	for (k = 0; k <= *nResults; k++) {
+	    if (tmp[k].geneNum == iRow[j]) {
+		continue;
+	    }
 	    g[baseIndex + (k-1)] = tmp[k].geneNum; 
 	    d[baseIndex + (k-1)] = tmp[k].geneDist; 
 	}
