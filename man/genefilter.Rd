@@ -14,7 +14,7 @@
 genefilter(expr, flist)
 }
 \arguments{
-  \item{expr}{A matrix or dataframe that the filter functions will be
+  \item{expr}{A matrix or \code{exprSet} that the filter functions will be
     applied to. }
   \item{flist}{A list of filter functions to apply to the array. }
 }

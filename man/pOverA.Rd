@@ -12,7 +12,7 @@
   \code{p}. 
 }
 \usage{
-pOverA(A=100, p=0.05, na.rm=TRUE)
+pOverA(p=0.05, A=100, na.rm=TRUE)
 }
 \arguments{
   \item{A}{The value to be exceeded. }
@@ -32,8 +32,8 @@ pOverA(A=100, p=0.05, na.rm=TRUE)
 \seealso{  \code{\link{cv}} }
 
 \examples{
-  ff<- pOverA(10, p=.1)
+  ff<- pOverA(p=.1, 10)
   ff(1:20)
   ff(1:5)
 }
-\keyword{manip }
+\keyword{manip}

@@ -19,7 +19,7 @@ maxA <- function(A=75, na.rm=TRUE) {
 }
 
 
-pOverA <-  function(A=100, p = .05 ,na.rm = TRUE) {
+pOverA <-  function(p=0.05, A=100, na.rm = TRUE) {
   function(x) {
       if(na.rm)
 	 x<-x[!is.na(x)]
@@ -127,7 +127,11 @@ gapFilter <- function(Gap, IQR, Prop, na.rm=TRUE, neg.rm=TRUE) {
 
 
 genefilter <- function(expr, flist)
+    {
+     if( inherits(expr, "exprSet") )
+       expr <- exprs(expr)
      apply(expr, 1, flist)
+}
 
 filterfun <- function(...) {
      flist <- list(...)
