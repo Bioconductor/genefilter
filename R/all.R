@@ -85,12 +85,13 @@ ttest <- function(m, p=0.05, na.rm=TRUE) {
     if( length(m) == 1)
         function(x) {
             n <- length(x)
+            if( m>n ) stop("m is larger than the number of samples")
             sub1 <- x[1:m]
-            sub2 <- x[(m+1):(m+n)]
+            sub2 <- x[(m+1):n]
             if(na.rm) {
                 drop <- is.na(x)
                 sub1 <- sub1[!drop[1:m]]
-                sub2 <- sub2[!drop[(m+1):(m+n)]]
+                sub2 <- sub2[!drop[(m+1):n]]
             }
             t.test(sub1, sub2 )$p.value < p
         }

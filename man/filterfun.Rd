@@ -20,7 +20,7 @@ filterfun(...)
  \code{filterfun} returns a function that takes a single argument. It
  binds the filter functions given to it in the environment of the
  returned function. These functions are applied sequentially (in the
- order they were given to \code{filterfun}. The function returns
+ order they were given to \code{filterfun}). The function returns
  \code{FALSE} (and exits) when the first filter function returns
  \code{FALSE} otherwise it returns \code{TRUE}.
 }
@@ -33,5 +33,5 @@ filterfun(...)
   ffun <- filterfun(cvfun)
   which <- genefilter(x, ffun)
   }
-\keyword{manip }
+\keyword{manip}
 

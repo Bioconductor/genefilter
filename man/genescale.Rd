@@ -5,9 +5,6 @@
   \code{genescale} returns a scaled version of the input matrix m by applying
   the following formula to each column of the matrix:
      {    y[i] = ( x[i] - min(x) ) / ( max(x) - min(x) ) }
-
-  \code{scaleVector} returns a scaled version of the input vector v by applying
-  the above formula to each element of the vector.
 }
 \usage{
 genescale(m, axis=2, method=c("Z", "R"), na.rm=TRUE)

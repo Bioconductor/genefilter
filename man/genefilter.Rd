@@ -18,12 +18,27 @@ genefilter(expr, flist)
     applied to. }
   \item{flist}{A list of filter functions to apply to the array. }
 }
+\details{
+   This package uses a very simple but powerful protocol for
+   \emph{filtering} genes. The user simply constructs any number of
+   tests that they want to apply. A test is simply a function (as
+   constructed using one of the many helper functions in this package)
+   that returns \code{TRUE} if the gene of interest passes the test (or
+   filter) and \code{FALSE} if the gene of interest fails.
 
+   The benefit of this approach is that each test is constructed
+   individually (and can be tested individually). The tests are then
+   applied sequentially to each gene. The function returns a logical
+   vector indicating whether the gene passed all tests functions or
+   failed at least one of them.
+   
+  }
 \value{
   A logical vector of length equal to the number of rows of \code{expr}.
   The values in that vector indicate whether the corresponding row of
   \code{expr} passed the set of filter functions.
 }
+
 \author{R. Gentleman }
 \seealso{\code{\link{genefilter}}, \code{\link{kOverA}} }
 

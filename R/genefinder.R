@@ -5,12 +5,12 @@
 
 genescale <- function (m, axis=2, method=c("Z", "R"), na.rm=TRUE) {
     ##scale by the range
-    RscaleVector <- function(v, na.rm=TRUE) {
+    RscaleVector <- function(v, na.rm) {
         mm <- range(v, na.rm=na.rm)
         (v - mm[1]) / (mm[2] - mm[1])
     }
     ##scale using Zscore
-    ZscaleVector <- function(v, na.rm=TRUE)
+    ZscaleVector <- function(v, na.rm)
         (v - mean(v, na.rm=na.rm))/sd(v, na.rm=na.rm)
 #
 # scales a matrix using the scaleVector function.
@@ -34,9 +34,9 @@ setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
     method="euclidean" )
     standardGeneric("genefinder"), where=where)
 
-setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY"),
-          function(X, ilist, numResults, scale,
-                        method) {
+setMethod("genefinder", c("exprSet", "vector", "ANY", "character",
+          "character"),
+          function(X, ilist, numResults, scale="none", method="euclidean") {
               ans <- genefinder(exprs(X), ilist, numResults, scale,
                         method=method)
           ans$names <- geneNames(X)[ans$indices]
@@ -45,55 +45,55 @@ setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY"),
 
 setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
          function (X, ilist, numResults, scale,
-                        method) {
-#
-#
+                        method=c("euclidean", "maximum", "manhattan",
+                        "canberra", "correlation", "binary")) {
     X <- as.matrix(X)
-    METHODS<-c("euclidean", "maximum", "manhattan", "canberra",
-                        "correlation", "binary")
-    method<-pmatch(method,METHODS)
+    METHOD <- c("euclidean", "maximum", "manhattan",
+                        "canberra", "correlation", "binary")
+    method<-pmatch(method, METHOD)
     if (is.na(method))
         stop ("The distance method is invalid.")
 
+    SCALE <- c("none", "range", "zscore")
+    scale <- SCALE[pmatch(scale, SCALE)]
+
     # perform scaling if requested.
     #
-    if (scale == "none") {
-        # no scaling
-    } else
-    if (scale == "range") {
-       # scale input matrix using 'genescale'
-        X <- genescale(X)
-    } else
-    if (scale == "zscore") {
-        # scale using R's scale function
-        X <- scale(X)
-    } else
-    stop ("The scale method is invalid.")
+    X <- switch(scale,
+                none=X,
+                range=genescale(X),
+                zscore=scale(X),
+                stop("The scaling method is invalid")
+                )
+    N <- nrow(X)
 
     if( !is.vector(ilist) )
         stop("the genes to be compared to must be in a vector")
 
     ninterest <- length(ilist);
 
+    if( is.character(ilist) ) {
+        iRows <- match(ilist, row.names(X))
+        names(iRows) <- ilist
+    }
+    else if ( is.numeric(ilist) ) {
+        iRows <- ilist
+        names(iRows) <- row.names(X)[ilist]
+    }
+    else
+        stop("invalid genes selected")
 
-    N <- nrow(X)
+    if( any(is.na(iRows)) )
+        stop("invalid genes selected")
 
     ## Do a sanity check on the requested genes in ilist -> if the
     ## gene exceeds the # of rows in the matrix, can not be processed.
     if (max(ilist) > N)
         stop("Requested genes exceed the dimensions of the supplied matrix.")
 
-    if( is.character(ilist) ) {
-        iRows <- match(ilist, row.names(X))
-        names(iRows) <- ilist
-    }
-    else if ( is.numeric(ilist) )
-        iRows <- ilist
-    else
-        stop("invalid genes selected")
 
-    Genes <- array(dim=c(ninterest, numResults))
-    Dists <- array(dim=c(ninterest, numResults))
+    Genes <- array(NA, dim=c(ninterest, numResults))
+    Dists <- array(NA, dim=c(ninterest, numResults))
     extCall <- .C("mm_distance",
                   X = as.double(X),
                   nr= N,

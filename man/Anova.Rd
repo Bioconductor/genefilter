@@ -18,6 +18,14 @@ Anova(cov, p=0.05, na.rm=TRUE)
   \item{na.rm}{If set to \code{TRUE} any \code{NA}'s will be removed. }
 }
 
+\details{
+  The function returned by \code{Anova} uses \code{lm} to fit a linear
+  model of the form
+  \code{lm(x ~ cov)}, where \code{x} is the set of gene expressions.
+  The F statistic for an overall effect is computed and if it has a
+  \emph{p}-value less than \code{p} the function returns \code{TRUE},
+  otherwise it returns \code{FALSE} for that gene.
+  }
 \value{
  \code{Anova} returns a function with bindings for \code{cov} and
  \code{p} that will perform a one-way ANOVA.
@@ -26,7 +34,7 @@ Anova(cov, p=0.05, na.rm=TRUE)
   effect for the covariate.
 }
 \author{R. Gentleman }
-\seealso{\code{\link{kOverA}} }
+\seealso{\code{\link{kOverA}}, \code{\link{lm}} }
 
 \examples{
   af <- Anova(c(rep(1,5),rep(2,5)), .01)
