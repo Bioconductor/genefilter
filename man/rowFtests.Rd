@@ -3,7 +3,7 @@
 \alias{rowFtests}
 \alias{rowttests}
 \alias{colttests}
-\alias{fastTNew}
+\alias{fastT}
 
 \title{t-tests and F-tests for rows or columns of a matrix}
 \description{t-tests and F-tests for rows or columns of a matrix}
@@ -11,7 +11,7 @@
 \usage{
 rowttests(x, fac, tstatOnly = FALSE) 
 colttests(x, fac, tstatOnly = FALSE)
-fastTNew(x, ig1, ig2)
+fastT(x, ig1, ig2)
 
 rowFtests(x, fac, var.equal = TRUE)
 colFtests(x, fac, var.equal = TRUE)
@@ -40,9 +40,8 @@ colFtests(x, fac, var.equal = TRUE)
 \details{
   \code{rowttests} and \code{colttests} are implemented in C and
   are reasonably fast and memory-efficient.
-  \code{fastTNew} is a wrapper for \code{rowttests}. It is intended
-  to replace \code{fastT}, which we need around to deal with legacy
-  code.
+  \code{fastT} is a wrapper for \code{rowttests}, useful
+  for some legacy code.
 
   If \code{fac} is specified, \code{rowttests} performs for each
   row of \code{x} a two-sided, two-class t-test with equal variances.
@@ -103,18 +102,6 @@ colFtests(x, fac, var.equal = TRUE)
    ## colttests
    c2 = colttests(t(x), f2)
    stopifnot(identical(r2, c2))
-
-   ## this can be removed once the old fastT is gone
-   x   = matrix(runif(1e7), nrow=1e4)
-   ig1 = sample(ncol(x), ncol(x)/2)
-   ig2 = (1:ncol(x))[-ig1]
-
-   print(system.time(t1<-fastTNew(x, ig1, ig2)))
-   print(system.time(t2<-fastT(x, ig1, ig2, ratio=FALSE)))
-
-   about.equal(t1$statistic, t2$z,  1e-6)
-   about.equal(t1$dm,        t2$dm, 1e-6)
-
 }
 
 

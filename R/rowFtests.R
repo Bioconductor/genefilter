@@ -101,7 +101,7 @@ colttests = function(x, fac, tstatOnly=FALSE) {
 ##--------------------------------------------------
 ## fastT
 ##--------------------------------------------------
-fastTNew = function(x, ig1, ig2) {
+fastT = function(x, ig1, ig2) {
   fac      = rep(NA, ncol(x))
   fac[ig1] = 0
   fac[ig2] = 1
