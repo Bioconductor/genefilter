@@ -3,6 +3,8 @@
 % Biobase.tex file will get overwritten.
 %
 %\VignetteIndexEntry{HowTo: Genefilter}
+%\VignetteDepends{genefilter}
+%\VignetteKeywords{Expression Analysis}
 
 \documentclass{article}
 
