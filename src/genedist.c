@@ -79,10 +79,11 @@ static double mm_correlation(double *x, int nr, int nc, int i1, int i2) {
     int a,b; /* Used as array indices for i1 and i2 */
     double xAvg, yAvg; /* Averages of the i1 and i2 rows */
     double upTot = 0; /* Upper summation */
-    double botTotL, botTotR = 0; /* The lower two summations */
+    double botTotL, botTotR; /* The lower two summations */
     double botVal; /* Bottom value for Rho */
     double Rho, dist;
-    
+
+    botTotL = botTotR = 0;
     xAvg = yAvg = 0;
     a = i1;
     b = i2;
@@ -100,7 +101,6 @@ static double mm_correlation(double *x, int nr, int nc, int i1, int i2) {
     }
     xAvg /= (double)nc;
     yAvg /= (double)nc;
-    
     /* Reset a & b */
     a = i1; b = i2;
     
@@ -110,11 +110,12 @@ static double mm_correlation(double *x, int nr, int nc, int i1, int i2) {
 	    upTot += ((x[a] - xAvg) * (x[b] - yAvg));
 	    botTotL += pow((x[a] - xAvg),2);
 	    botTotR += pow((x[b] - yAvg),2);
+		   x[b], yAvg, botTotR);
 	}
 	a += nr;
 	b += nr;    
     }
-    
+
     /* Compute Rho & Distance (1 - R) */
     botVal = sqrt((botTotL * botTotR));
     Rho = upTot / botVal;
