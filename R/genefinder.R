@@ -92,7 +92,7 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
 
     ## Do a sanity check on the requested genes in ilist -> if the
     ## gene exceeds the # of rows in the matrix, can not be processed.
-    if (max(ilist) > N)
+    if (max(iRows) > N)
         stop("Requested genes exceed the dimensions of the supplied matrix.")
 
 
