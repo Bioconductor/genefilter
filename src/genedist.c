@@ -35,6 +35,7 @@ typedef struct {
   double geneDist;
 } gene_t;
 
+
 void detectTies(int geneNum, int nResults, int nRows, gene_t *data) {
   /* Will scan through the first nResults+1 distances in the */
   /* data array, and if it detects any ties, will flag a R */
@@ -44,10 +45,10 @@ void detectTies(int geneNum, int nResults, int nRows, gene_t *data) {
   /* If nResults == nRows, do not exceed nResults - otherwise exceed it */
   /* by 1 in order to see if there were trailing ties */
   if (nResults == nRows) {
-    nResults++;
+    nResults = nRows-1;
   }
-
-  for (i = 1; i <= nResults; i++) {
+  
+  for (i = 1; i < nResults; i++) {
     if (data[i].geneDist == data[i+1].geneDist) {
       warning("There are distance ties in the data for gene %d\n",geneNum);
       break;
@@ -60,11 +61,16 @@ static int distCompare(const void *p1, const void *p2)
   const gene_t *i = p1;
   const gene_t *j = p2;
 
-  if (i->geneDist > j->geneDist)
+  if (i->geneDist > j->geneDist) 
     return (1);
-  if (i->geneDist < j->geneDist)
+  if (i->geneDist < j->geneDist) 
     return (-1);
   return (0);
+  
+}
+
+static double mm_correlation(double *x, int nr, int nc, int i1, int i2) {
+
 }
 
 static double mm_euclidean(double *x, int nr, int nc, int i1, int i2)
@@ -188,7 +194,7 @@ static double mm_dist_binary(double *x, int nr, int nc, int i1, int i2)
     return (double) dist / count;
 }
 
-enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, BINARY };
+enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, CORRELATION, BINARY };
 /* == 1,2,..., defined by order in the R function dist */
 
 void mm_distance(double *x, int *nr, int *nc, int *g, double *d, 
@@ -210,12 +216,6 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
   int baseIndex; /* Used to index data arrays */
   gene_t *tmp; /* Temporary array to hold the distance data */
   double (*distfun)(double*, int, int, int, int) = NULL;
-
-
-  /* Increase nResults by 1 as we will always have a 0 distance between */
-  /* the gene of interest and itself, and thus it should be taken out */
-  /* of the sorted list */
-  *nResults += 1;
 
   /* Sanity check the nResults vs. number of rows in the data */
   if (*nResults > *nr) {
@@ -241,6 +241,9 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
   case CANBERRA:
     distfun = mm_canberra;
     break;
+  case CORRELATION:
+    distfun = mm_correlation;
+    break;
   case BINARY:
     distfun = mm_dist_binary;
     break;
@@ -248,18 +251,19 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     error("distance(): invalid distance");
   }
   
-  for (j = 0; j < *nInterest; j++) {
+  for (j = 0; j < *nInterest; j++) {  
     /* Get the distances for this gene, store in tmp array */
+
     for(i = 0 ; i < (*nr) ; i++) {
-      tmp[i].geneNum = i;
-      tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j], i);
+      tmp[i].geneNum = i; 
+      tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j], i);       
     }
     
     /* Run a sort on the temp array */
-    qsort(tmp, *nr, sizeof(gene_t), distCompare);
-    
+    qsort(tmp, *nr, sizeof(gene_t), distCompare);    
+
     /* Detect any ties */
-    detectTies(iRow[j], *nResults, *nr, tmp);
+    detectTies(iRow[j], *nResults, *nr, tmp); 
 
     /******
     printf("Sorted Dists:\n");
@@ -270,10 +274,12 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     
     /* Copy the 1<->nResults data points into the final array */
     baseIndex = *nResults * j;
-    for (k = 1; k < *nResults; k++) {
-      g[baseIndex + (k-1)] = tmp[k].geneNum;
-      d[baseIndex + (k-1)] = tmp[k].geneDist;
+    for (k = 1; k <= *nResults; k++) {
+      g[baseIndex + (k-1)] = tmp[k].geneNum; 
+      d[baseIndex + (k-1)] = tmp[k].geneDist; 
     }
   }
 }
+
+
 

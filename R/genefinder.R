@@ -32,7 +32,7 @@ genefinder <- function (X, ilist, numResults=25, scale="none", method="euclidean
 #
 #
     X <- as.matrix(X)
-    METHODS<- c("euclidean","maximum","manhattan","canberra","binary")
+    METHODS<- c("euclidean","maximum","manhattan","canberra","correlation","binary")
     method<-pmatch(method,METHODS)
     if (is.na(method))
         stop ("The distance method is invalid.")
@@ -86,6 +86,7 @@ genefinder <- function (X, ilist, numResults=25, scale="none", method="euclidean
     Dists <- extCall$d
 
     return(list(indices=Genes, dists=Dists))
+
 }
 
 
