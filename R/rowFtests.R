@@ -2,7 +2,7 @@
 ## x: a numeric matrix with n rows ("genes") and d columns ("conditions")
 ## fac: a factor
 ##------------------------------------------------------------
-rowFtests <- function(x, fac,var.equal=TRUE) {
+rowFtests = function(x, fac,var.equal=TRUE) {
    
   sqr = function(x) x*x
   
@@ -69,23 +69,44 @@ rowFtests <- function(x, fac,var.equal=TRUE) {
 }
 
 ##--------------------------------------------------
+## colFtests
+##--------------------------------------------------
+colFtests = function(x, fac,var.equal=TRUE) 
+  rowFtests(t(x), fac, var.equal) 
+
+##--------------------------------------------------
 ## rowttests
 ##--------------------------------------------------
 rowttests = function(x, fac, tstatOnly=FALSE) {
-  if(missing(fac)) {
-    ## one group
-    sqr   = function(x) x*x
-    xavg  = rowMeans(x)
-    denom = sqrt(rowSums(sqr(x-xavg)) / ((ncol(x)-1)*ncol(x)) )
-    res   = list(statistic=xavg/denom, df=ncol(x)-1)
-  } else {
-    ## two groups
-    fac = checkfac(fac)    
-    res = .Call("rowcolttests", x, fac, as.integer(0), PACKAGE="genefilter")
-  }
+  f   = checkfac(fac)
+  res = .Call("rowcolttests", x, f$fac, f$nrgrp,
+               as.integer(0), PACKAGE="genefilter")
   if(!tstatOnly)
     res$p.value = 2*pt(abs(res$statistic), res$df, lower.tail = FALSE)
   return(res)
+}
+
+##--------------------------------------------------
+## colttests
+##--------------------------------------------------
+colttests = function(x, fac, tstatOnly=FALSE) {
+  f   = checkfac(fac)
+  res = .Call("rowcolttests", x, f$fac, f$nrgrp,
+               as.integer(1), PACKAGE="genefilter")
+  if(!tstatOnly)
+    res$p.value = 2*pt(abs(res$statistic), res$df, lower.tail = FALSE)
+  return(res)
+}
+
+##--------------------------------------------------
+## fastT
+##--------------------------------------------------
+fastTNew = function(x, ig1, ig2) {
+  fac      = rep(NA, ncol(x))
+  fac[ig1] = 0
+  fac[ig2] = 1
+  .Call("rowcolttests", x, as.integer(fac), as.integer(2),
+               as.integer(0), PACKAGE="genefilter")
 }
 
 ## ------------------------------------------------------------
@@ -93,11 +114,18 @@ rowttests = function(x, fac, tstatOnly=FALSE) {
 ## make sure it is an integer 
 ## ------------------------------------------------------------
 checkfac = function(fac) {
-  if(is.factor(fac))
-    fac = as.integer(fac)-1;
-  if(is.numeric(fac))
-    fac = as.integer(fac);
+  one = as.integer(1)
+  if(missing(fac)) {
+    nrgrp = one
+    fac   = integer(ncol(x))
+  } else if (is.factor(fac)) {
+    nrgrp = nlevels(fac)
+    fac   = as.integer(fac)-one
+  } else if(is.numeric(fac)) {
+    nrgrp = as.integer(max(fac))-one
+    fac   = as.integer(fac)
+  }
   if(!is.integer(fac))
     stop("'fac' must be factor, numeric, or integer")
-  return(fac)
+  return(list(fac=fac, nrgrp=nrgrp))
 }
