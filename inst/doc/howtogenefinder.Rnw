@@ -63,6 +63,7 @@ accessing the relevant component of \verb+closeg+.
 <<>>=
 closeg$"31539_r_at"
 Nms1 <- geneNames(eset)[closeg$"31539_r_at"$indices]
+Nms1
 @
 %$
 You could then take these names (from \verb+Nms1+) and the {\em
