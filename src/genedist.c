@@ -24,10 +24,12 @@
 #endif
 
 #include <float.h>
+#include <R.h>
+#include <Rinternals.h>
 #include "R_ext/Arith.h"
 #include "R_ext/Error.h"
 #include "R_ext/Applic.h" /* machar */
-/* #include "mva.h" */
+
 
 static double mm_euclidean(double *x, int nr, int nc, int i1, int i2)
 {
@@ -179,5 +181,5 @@ void mm_distance(double *x, int *nr, int *nc, double *d, int *iRow, int *method)
     }
 
     for(i = 0 ; i <= (*nr) ; i++)
-        d[i] = distfun(x, *nr, *nc, *iRow-1, i);
+        d[i] = distfun(x, *nr, *nc, (*iRow)-1, i);
 }

@@ -4,29 +4,29 @@
 # genefinder functions.
 
 
-scaleVector <- function(v) {
+scaleVector <- function(v, na.rm=TRUE) {
 #
 # Scales the elements of the vector v,
 # and returns the result as a vector.
 #
-    mm <- range(v)
+    mm <- range(v, na.rm=na.rm)
     result <- (v - mm[1]) / (mm[2] - mm[1])
     result
 }
 
 
 
-genescale <- function (m, axis=2) {
+genescale <- function (m, axis=2, na.rm=TRUE) {
 #
 # scales a matrix using the scaleVector function.
 #
    if( is.matrix(m) || is.data.frame(m) ) {
-       rval <- apply (m, axis, scaleVector)
+       rval <- apply (m, axis, scaleVector, na.rm=na.rm)
        if( axis==1 ) return(t(rval))
        return(rval)
    }
    else
-	scaleVector(m)
+	scaleVector(m, na.rm=na.rm)
 }
 
 
@@ -55,24 +55,26 @@ genefinder <- function (X, ilist, scale="none", method="euclidean") {
             } else
                 stop ("The scale method is invalid.")
 
-
+    if( !is.vector(ilist) )
+        stop("the genes to be compared to must be in a vector")
     ninterest <- length(ilist)
     if( is.character(ilist) ) {
         iRows <- match(ilist, row.names(X))
         names(iRows) <- ilist
     }
+    else if ( is.numeric(ilist) )
+        iRows <- ilist
+    else
+        stop("invalid genes selected")
     rval <- vector("list", length=ninterest)
+    N <- nrow(X)
     for (i in 1:ninterest) {
-        ## xvals <- as.numeric( X[ilist[i], ] )
-        ## rval[[i]] <- apply (X, 1, cor, xvals)
-
-        N <- nrow(X)
         rval [[i]] <- .C("mm_distance",
 	                 X = as.double(X),
                          nr= N,
 	                 nc= ncol(X),
 	                 d = double(N),
-	                 iRow  = as.integer(ilist[i]),
+	                 iRow  = as.integer(iRows[i]),
 	                 method= as.integer(method),
 	                 DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")$d
     }
