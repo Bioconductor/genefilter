@@ -70,7 +70,52 @@ static int distCompare(const void *p1, const void *p2)
 }
 
 static double mm_correlation(double *x, int nr, int nc, int i1, int i2) {
+  int i; /* Loop index */
+  int a,b; /* Used as array indices for i1 and i2 */
+  double xAvg, yAvg; /* Averages of the i1 and i2 rows */
+  double upTot = 0; /* Upper summation */
+  double botTotL, botTotR = 0; /* The lower two summations */
+  double botVal; /* Bottom value for Rho */
+  double Rho, dist;
 
+  xAvg = yAvg = 0;
+  a = i1;
+  b = i2;
+
+  /* Calculate the averages for the i1 and i2 rows */
+  for (i = 0; i < nc; i++) {
+    if (R_FINITE(x[a])) {
+      xAvg += x[a];
+    }
+    if (R_FINITE(x[b])) {
+      yAvg += x[b];
+    }
+    a += nr;
+    b += nr;
+  }
+  xAvg /= (double)nc;
+  yAvg /= (double)nc;
+  
+  /* Reset a & b */
+  a = i1; b = i2;
+  
+  /* Build up the three summations in the equation */
+  for (i = 0; i < nc; i++) {
+    if (R_FINITE(x[a]) && R_FINITE(x[b])) {
+      upTot += ((x[a] - xAvg) * (x[b] - yAvg));
+      botTotL += pow((x[a] - xAvg),2);
+      botTotR += pow((x[b] - yAvg),2);
+    }
+    a += nr;
+    b += nr;    
+  }
+
+  /* Compute Rho & Distance (1 - R) */
+  botVal = sqrt((botTotL * botTotR));
+  Rho = upTot / botVal;
+  dist = 1 - Rho;
+
+  return(dist);
 }
 
 static double mm_euclidean(double *x, int nr, int nc, int i1, int i2)
