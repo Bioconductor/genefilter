@@ -261,7 +261,7 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     int baseIndex; /* Used to index data arrays */
     gene_t *tmp; /* Temporary array to hold the distance data */
     double (*distfun)(double*, int, int, int, int) = NULL;
-    
+
     /* Sanity check the nResults vs. number of rows in the data */
     if (*nResults > *nr) {
 	warning("Number of results selected is greater than number of rows, using the number of rows instead\n");
@@ -298,24 +298,24 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     
     for (j = 0; j < *nInterest; j++) {  
 	/* Get the distances for this gene, store in tmp array */
-	
+
 	for(i = 0 ; i < (*nr) ; i++) {
 	    tmp[i].geneNum = i; 
-	    tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j], i);       
+	    tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j]-1, i);       
 	}
 	
 	/* Run a sort on the temp array */
 	qsort(tmp, *nr, sizeof(gene_t), distCompare);    
-	
+
 	/* Detect any ties */
 	detectTies(iRow[j], *nResults, *nr, tmp); 
 	
 	/* Copy the 1<->nResults data points into the final array */
 	baseIndex = *nResults * j;
-    for (k = 1; k <= *nResults; k++) {
-	g[baseIndex + (k-1)] = tmp[k].geneNum; 
-      d[baseIndex + (k-1)] = tmp[k].geneDist; 
-    }
+	for (k = 1; k <= *nResults; k++) {
+	    g[baseIndex + (k-1)] = tmp[k].geneNum; 
+	    d[baseIndex + (k-1)] = tmp[k].geneDist; 
+	}
     }
 }
 
