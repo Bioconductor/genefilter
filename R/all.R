@@ -1,6 +1,6 @@
 #copyright 2001 R. Gentleman
 
-#FILTER FUNCTIONS
+#FILTER FUNCTIONS -- some trivial changes
 
 allNA <- function(x) !all(is.na(x))
 
