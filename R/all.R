@@ -1,5 +1,6 @@
-"allNA" <- function(x) !all(is.na(x))
+allNA <- function(x) !all(is.na(x))
 
+anyNA <- function(x) !any(is.na(x))
 
 "genefilter" <-
 function(expr, flist) {
@@ -16,12 +17,13 @@ function(expr, flist) {
  genefilter2 <- function(expr, flist)
      apply(expr, 1, flist)
 
- filterfun <- function(flist) {
+ filterfun <- function(...) {
+     flist <- list(...)
      f <- function( x ) {
          for( fun in flist )
              if( ! fun(x) )
                  return(FALSE)
-         return TRUE
+         return(TRUE)
      }
      class(f) <- "filterfun"
      return(f)
@@ -35,8 +37,7 @@ function(expr, flist) {
   }
 }
 
-"maxA" <-
-function(A=75, na.rm=TRUE) {
+"maxA" <- function(A=75, na.rm=TRUE) {
     function(x) {max(x, na.rm=na.rm) >= A }
 }
 
@@ -47,10 +48,6 @@ function(A=75, na.rm=TRUE) {
 	 x<-x[!is.na(x)]
       sum( x > A )/length(x) > p
   }
-}
-
-"sd" <- function(x, na.rm=T) {
-  sqrt(var(x, na.rm=na.rm))
 }
 
 #coefficient of variation
@@ -65,7 +62,18 @@ function(A=75, na.rm=TRUE) {
     }
 }
 
-anova <- function(cov, p=0.05, na.rm=TRUE)
+sdom <- function(a=1, b=Inf, na.rm=TRUE) {
+    function(x) {
+        	sdx <- sd(x, na.rm=na.rm)
+        if(sdx == 0 ) return(FALSE)
+	val <- sdx/mean(x, na.rm=na.rm)
+        if(val < a ) return(FALSE)
+        if(val > b ) return(FALSE)
+        return(TRUE)
+            }
+}
+
+Anova <- function(cov, p=0.05, na.rm=TRUE)
 {
     function(x) {
         if( na.rm ) {

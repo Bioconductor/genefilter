@@ -1,45 +1,33 @@
 \name{maxA}
 \alias{maxA}
-%- Also NEED an `\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\title{ A filter function to filter according to the maximum. }
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+  \code{maxA} returns a function with the parameter \code{A} bound.
+  The returned function evaluates to \code{TRUE} if any element of its
+  argument is larger than \code{A}.
 }
 \usage{
-maxA(x, A=75, na.rm=TRUE)
+maxA(A=75, na.rm=TRUE)
 }
-%- maybe also `usage' for other objects documented here.
 \arguments{
-  \item{x}{ ~~Describe \code{x} here~~ }
-  \item{A}{ ~~Describe \code{A} here~~ }
-  \item{na.rm}{ ~~Describe \code{na.rm} here~~ }
+  \item{A}{The value that at least one element must exceed. }
+  \item{na.rm}{If \code{TRUE} then \code{NA}'s are removed. }
 }
-\details{
-  ~~ If necessary, more details than the __description__  above ~~
-}
+
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of `comp1'}
-  \item{comp2 }{Description of `comp2'}
-  ...
+ \code{maxA} returns a function with an environment containing a binding
+ for \code{A}.
+ 
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ }
 
- ~Make other sections like WARNING with \section{WARNING }{....} ~
+\author{R. Gentleman }
 
-\seealso{ ~~objects to SEE ALSO as \code{\link{~~fun~~}}, ~~~ }
+\seealso{\code{\link{poverA}} }
 
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	     or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function(x, A=75, na.rm=TRUE)
-	max(x, na.rm=na.rm) >= A
+   ff <- maxA(30)
+   ff(1:10)
+   ff(28:31)
 }
-\keyword{ ~kwd1 }% at least one, from doc/KEYWORDS
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{manip}
+

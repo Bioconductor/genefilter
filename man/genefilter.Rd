@@ -12,7 +12,7 @@ genefilter(expr, flist)
 }
 
 \arguments{
-  \item{expr}{ A matrix or dataframe of expressions. }
+  \item{expr}{ A matrix or dataframe to apply the filter functions to. }
   \item{flist}{ A list of filtering functions. }
 }
 \details{
@@ -42,8 +42,18 @@ As above.
         dimnames(Exp1) <- list(paste('x',1:ngenes,sep=''),
                           paste('sample',1:ncol(Exp1),sep=''))
    Exp1 <- round(Exp1)
-   s1.flist<-list(maxA, sdom, poverA)
+   mfun <- maxA()
+   sdfun <- sdom()
+   pAfun <- poverA()
+   s1.flist<-list(mfun, sdfun,pAfun)
    Expsub <- genefilter(Exp1, s1.flist)
 }
-\keyword{ ~kwd1 }% at least one, from doc/KEYWORDS
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{manip }
+
+
+
+
+
+
+
+

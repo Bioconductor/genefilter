@@ -1,42 +1,33 @@
 \name{allNA}
 \alias{allNA}
-%- Also NEED an `\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\alias{anyNA}
+\title{ A filter function to determine if all elements of a vector are NA. }
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+  \code{allNA} evaluates to \code{FALSE} if all elements of its
+  argument are \code{NA}. \code{anyNA} evaluates to \code{FALSE} if any
+  of the elements of its argument are \code{NA}.
 }
 \usage{
 allNA(x)
+anyNA(x)
 }
-%- maybe also `usage' for other objects documented here.
+
 \arguments{
-  \item{x}{ ~~Describe \code{x} here~~ }
+  \item{x}{The vector to test.}
 }
-\details{
-  ~~ If necessary, more details than the __description__  above ~~
-}
+
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of `comp1'}
-  \item{comp2 }{Description of `comp2'}
-  ...
+  \code{FALSE} if all elements of \code{x} are \code{NA}.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ }
 
- ~Make other sections like WARNING with \section{WARNING }{....} ~
+\author{R. Gentleman}
 
-\seealso{ ~~objects to SEE ALSO as \code{\link{~~fun~~}}, ~~~ }
+\seealso{\code{\link{poverA}}}
 
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	     or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function(x) !all(is.na(x))
+  allNA(NA)
+  allNA(1)
+  anyNA(1)
+  anyNA(NA)
 }
-\keyword{ ~kwd1 }% at least one, from doc/KEYWORDS
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{manip}
