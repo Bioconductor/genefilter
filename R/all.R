@@ -149,8 +149,8 @@ filterfun <- function(...) {
              fval <- fun(x)
              if( is.na(fval) || ! fval )
                  return(FALSE)
-             return(TRUE)
          }
+             return(TRUE)
      }
      class(f) <- "filterfun"
      return(f)
