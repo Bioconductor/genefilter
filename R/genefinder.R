@@ -1,4 +1,3 @@
-
 # genefinder.R
 #
 # genefinder functions.
