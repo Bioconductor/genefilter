@@ -295,14 +295,13 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     default:
 	error("distance(): invalid distance");
     }
-
+/**/    
     for (j = 0; j < *nInterest; j++) {  
 	/* Get the distances for this gene, store in tmp array */
+
 	for(i = 0 ; i < (*nr) ; i++) {
 	    tmp[i].geneNum = i; 
-	    /*    tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j]-1,
-		  i);  */
-	    tmp[i].geneDist = 500;
+	    tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j]-1, i);       
 	}
 	
 	/* Run a sort on the temp array */
@@ -310,21 +309,17 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
 
 	/* Detect any ties */
 	detectTies(iRow[j], *nResults, *nr, tmp); 
+
+	Rprintf("Got %d,%f\n",tmp[1].geneNum,tmp[1].geneDist);
 	
 	/* Copy the 1<->nResults data points into the final array */
 	baseIndex = *nResults * j;
-	for (k = 0; k <= *nResults; k++) {
-	    if (tmp[k].geneNum == iRow[j]) {
-		continue;
-	    }
+	for (k = 1; k <= *nResults; k++) {
 	    g[baseIndex + (k-1)] = tmp[k].geneNum; 
 	    d[baseIndex + (k-1)] = tmp[k].geneDist; 
 	}
     }
 }
-
-
-
 
 
 
