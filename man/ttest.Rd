@@ -31,7 +31,7 @@ ttest(m, p=0.05, na.rm=TRUE)
   }
 \value{
  \code{ttest} returns a function with bindings for \code{m} and
- \code{p} that will perform a t-test}.
+ \code{p} that will perform a t-test}
 }
 \author{R. Gentleman }
 \seealso{\code{\link{kOverA}}, \code{\link{Anova}}, \code{\link{t.test}} }
