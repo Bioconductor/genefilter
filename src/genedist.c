@@ -105,17 +105,17 @@ static double mm_correlation(double *x, double *wval, int nr, int nc, int i1, in
     /* Reset a & b */
     a = i1; b = i2;
     
-    /* Build up the three summations in the equation */
+  /* Build up the three summations in the equation */
     for (i = 0; i < nc; i++) {
-	if (R_FINITE(x[a]) && R_FINITE(x[b])) {
-	    wA = (wval[i] * x[a]);
-	    wB = (wval[i] * x[b]);
-	    upTot += ((wA - xAvg) * (wB - yAvg));
-	    botTotL += pow((wA - xAvg),2);
-	    botTotR += pow((wB - yAvg),2);
-	}
-	a += nr;
-	b += nr;    
+        if (R_FINITE(x[a]) && R_FINITE(x[b])) {
+            wA = (x[a] - xAvg);
+            wB = (x[b] - yAvg);
+            upTot += wval[i]*wA*wB;
+            botTotL += wval[i]*pow(wA,2);
+            botTotR += wval[i]*pow(wB,2);
+        }
+        a += nr;
+        b += nr;
     }
 
     /* Compute Rho & Distance (1 - R) */
@@ -124,31 +124,6 @@ static double mm_correlation(double *x, double *wval, int nr, int nc, int i1, in
     dist = 1 - Rho;
     
     return(dist);
-}
-
-/*count the number of places where there is a 'k' in both vectors
-  typically k=0, for SAGE data this is putting things that have
-  many k's in common close */
-static double mm_commonk(double *x, double *wvalue, int nr, int nc, 
-			   int i1, int i2) 
-{
-    double dist;
-    int count, j, ncommon;
-    
-    count= 0;
-    dist = 0;
-    ncommon = 0;
-    for(j = 0 ; j < nc ; j++) {
-	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
-	    if((x[i1] == wvalue[j]) && (x[i2]==wvalue[j]))
-	    ncommon++;
-	  count++;
-	}
-	i1 += nr;
-	i2 += nr;
-    }
-    if(count == 0) return NA_REAL;
-    return(count-ncommon);
 }
 
 static double mm_euclidean(double *x, double *wval, int nr, int nc, int i1, int i2)
@@ -237,7 +212,6 @@ static double mm_canberra(double *x, double *wval, int nr, int nc, int i1, int i
     for(j = 0 ; j < nc ; j++) {
 	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
 	    sum = fabs(x[i1] + x[i2]);
-	    /* apply the weight */
 	    sum *= wval[j];
 	    diff = fabs(x[i1] - x[i2]);
 	    diff *= wval[j];
@@ -263,28 +237,26 @@ static double mm_dist_binary(double *x, double *wval, int nr, int nc, int i1, in
     total = 0;
     count = 0;
     dist = 0;
+  for(j = 0 ; j < nc ; j++) {
+       if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
+           if(x[i1] || x[i2]){
+               count+= wval[j];
+               if( ! (x[i1] && x[i2]) ) dist+= wval[j];
+           }
+           total++;
+       }
+       i1 += nr;
+       i2 += nr;
+     }
 
-    for(j = 0 ; j < nc ; j++) {
-	w1 = wval[j] * x[i1];
-	w2 = wval[j] * x[i2];
-	if(R_FINITE(w1) && R_FINITE(w2)) {
-	    if(w1 || w2){
-		count++;
-		if( ! (w1 && w2) ) dist++;
-	    }
-	    total++;
-	}
-	i1 += nr;
-	i2 += nr;
-    }
+
 
     if(total == 0) return NA_REAL;
     if(count == 0) return 0;
     return (double) dist / count;
 }
 
-enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, CORRELATION, BINARY,
-       COMMONk};
+enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, CORRELATION, BINARY};
 /* == 1,2,..., defined by order in the R function dist */
 
 void mm_distance(double *x, int *nr, int *nc, int *g, double *d, 
@@ -338,9 +310,6 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     case BINARY:
 	distfun = mm_dist_binary;
 	break;
-    case COMMONk:
-        distfun = mm_commonk;
-        break;
     default:
 	error("distance(): invalid distance");
     }

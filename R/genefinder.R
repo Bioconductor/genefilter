@@ -50,10 +50,10 @@ setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY",
 setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
          function (X, ilist, numResults, scale, weights,
                         method=c("euclidean", "maximum", "manhattan",
-                        "canberra", "correlation", "binary", "commonk")) {
+                        "canberra", "correlation", "binary")) {
     X <- as.matrix(X)
     METHOD <- c("euclidean", "maximum", "manhattan",
-                        "canberra", "correlation", "binary", "commonk")
+                        "canberra", "correlation", "binary")
     method<-pmatch(method, METHOD)
     if (is.na(method))
         stop ("The distance method is invalid.")

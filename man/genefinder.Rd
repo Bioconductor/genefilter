@@ -29,7 +29,7 @@ genefinder(X, ilist, numResults=25, scale="none", weights, method="euclidean")
   \item{weights}{A vector of weights applied across the columns of
     \code{X}.  If no weights are supplied, no weights are applied}.
   \item{method}{ one of "euclidean", "maximum", "manhattan", "canberra", 
-        "correlation", "binary", "commonk".  }
+        "correlation", "binary".  }
 }
 \details{
   If the scale option is "range", then the input matrix is scaled using
@@ -42,12 +42,6 @@ genefinder(X, ilist, numResults=25, scale="none", weights, method="euclidean")
   The "correlation" option for the distance method will return a value
   equal to 1-correlation(x).
 
-  The "commonk" option will count the number of times both vectors have
-  the value \code{k}. The returned value is the length of the vector
-  minus the number of matches. This distance is of interest when
-  comparing SAGE libraries and the number of common SAGE libraries where
-  the count is zero is of interest.
-  
   See \code{\link{dist}} for a more detailed description of the distances.
 }
 \value{
