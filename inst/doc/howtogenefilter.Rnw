@@ -38,7 +38,7 @@ covariates. The covariates are named \verb+cov1+, \verb+cov2+ and
 \verb+cov3+. The first two have two levels and the last one has three.
 
 <<>>=
-library(genefilter)
+library("genefilter")
 data(eset)
 table(eset$cov1)
 table(eset$cov2)
@@ -176,7 +176,7 @@ Next we show how to use this function on the system dataset,
 \verb+geneData+.
 
 <<aggregate>>=
-  library(class)
+  library("class")
 
 
   ##scale the genes

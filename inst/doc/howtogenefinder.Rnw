@@ -49,7 +49,7 @@ measure used between genes. The possible values and their meanings are
 listed at the end of this document.
 
 <<>>=
- library(genefilter)
+ library("genefilter")
  data(eset)
  igenes<- c(300,333,355,419) ##the interesting genes
  closeg <- genefinder(eset, igenes, 10, method="euc", scale="none")
