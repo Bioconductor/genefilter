@@ -298,7 +298,7 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     
     for (j = 0; j < *nInterest; j++) {  
 	/* Get the distances for this gene, store in tmp array */
-	printf("Now checking row %d\n", iRow[j]);
+	warning("Now checking row");
 	for(i = 0 ; i < (*nr) ; i++) {
 	    if (iRow[j] == i) {
 		tmp[i].geneNum = i;
