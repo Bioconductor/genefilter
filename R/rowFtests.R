@@ -3,6 +3,11 @@
 ## fac: a factor
 ##------------------------------------------------------------
 rowFtests = function(x, fac,var.equal=TRUE) {
+  if(is(x, "exprSet")) {
+    if(is.character(fac))
+      fac = pData(x)[[fac]]
+    x   = exprs(x)
+  }
    
   sqr = function(x) x*x
   
@@ -78,6 +83,12 @@ colFtests = function(x, fac,var.equal=TRUE)
 ## rowttests
 ##--------------------------------------------------
 rowttests = function(x, fac, tstatOnly=FALSE) {
+  if(is(x, "exprSet")) {
+    if(is.character(fac))
+      fac = pData(x)[[fac]]
+    x   = exprs(x)
+  }
+  
   f   = checkfac(fac)
   res = .Call("rowcolttests", x, f$fac, f$nrgrp,
                as.integer(0), PACKAGE="genefilter")

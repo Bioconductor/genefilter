@@ -17,10 +17,16 @@ rowFtests(x, fac, var.equal = TRUE)
 colFtests(x, fac, var.equal = TRUE)
 }
 \arguments{
-  \item{x}{Numeric matrix. Must not contain \code{NA} values.}
-  \item{fac}{Factor. For the \code{row*} functions, its length must be
+  \item{x}{\code{exprSet} or numeric matrix. The matrix must not
+    contain \code{NA} values.}
+  \item{fac}{Factor; if \code{x} is an \code{exprSet}, this may also be
+    a character vector of length 1 with the name of a covariate
+    variable in \code{x}.
+
+    For the \code{row*} functions, the length of the factor must be
     the same as the number of columns of \code{x}.
-    For the \code{col*} functions, as the number of rows of \code{x}.
+    For the \code{col*} functions, it must be the same as the number
+    of rows of \code{x}.
     For the \code{*ttests} function, \code{fac} must have exactly
     two levels.}
   \item{tstatOnly}{a logical variable indicating whether to calculate
