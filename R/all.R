@@ -1,35 +1,12 @@
+#copyright 2001 R. Gentleman
+
+#FILTER FUNCTIONS
+
 allNA <- function(x) !all(is.na(x))
 
 anyNA <- function(x) !any(is.na(x))
 
-"genefilter" <-
-function(expr, flist) {
-      for(filt in flist) {
-          tmp <- apply(expr, 1, filt)
-          expr <- expr[tmp,]
-      }
-      return(expr)
-  }
-
-#genefilter2 and filterfun let us build a set of
-#routines that are applied to each row in order but
-#which drop out once the first false function is found
- genefilter2 <- function(expr, flist)
-     apply(expr, 1, flist)
-
- filterfun <- function(...) {
-     flist <- list(...)
-     f <- function( x ) {
-         for( fun in flist )
-             if( ! fun(x) )
-                 return(FALSE)
-         return(TRUE)
-     }
-     class(f) <- "filterfun"
-     return(f)
- }
-
-"kltA" <- function(k, A=100, na.rm = TRUE) {
+kltA <- function(k, A=100, na.rm = TRUE) {
   function(x) {
       if(na.rm)
 	x <- x[!is.na(x)]
@@ -37,12 +14,12 @@ function(expr, flist) {
   }
 }
 
-"maxA" <- function(A=75, na.rm=TRUE) {
+maxA <- function(A=75, na.rm=TRUE) {
     function(x) {max(x, na.rm=na.rm) >= A }
 }
 
 
-"poverA" <-  function(A=100, p = .05 ,na.rm = TRUE) {
+poverA <-  function(A=100, p = .05 ,na.rm = TRUE) {
   function(x) {
       if(na.rm)
 	 x<-x[!is.na(x)]
@@ -51,7 +28,7 @@ function(expr, flist) {
 }
 
 #coefficient of variation
-"cv" <- function(a=1, b=Inf, na.rm=TRUE) {
+cv <- function(a=1, b=Inf, na.rm=TRUE) {
   function(x) {
 	sdx <- sd(x, na.rm=na.rm)
         if(sdx == 0 ) return(FALSE)
@@ -90,6 +67,18 @@ Anova <- function(cov, p=0.05, na.rm=TRUE)
     }
 }
 
+coxfilter <- function(surt, cens, p)
+ {
+	function(x) {
+	   srvd <- coxph(Surv(surt,cens)~x)
+	   ltest <- -2*(srvd$loglik[1] - srvd$loglik[2])
+           pv <- 1 - pchisq(ltest, 1)
+           if( pv < p )
+             return(TRUE)
+           return(FALSE)
+       }
+}
+
 
 # normalize within rows
 
@@ -102,3 +91,28 @@ standardize <- function(x, na.rm=TRUE) {
     return(x)
 }
 
+# Apply type functions
+
+genefilter <- function(expr, flist) {
+      for(filt in flist) {
+          tmp <- apply(expr, 1, filt)
+          expr <- expr[tmp,]
+      }
+      return(expr)
+  }
+
+
+genefilter2 <- function(expr, flist)
+     apply(expr, 1, flist)
+
+filterfun <- function(...) {
+     flist <- list(...)
+     f <- function( x ) {
+         for( fun in flist )
+             if( ! fun(x) )
+                 return(FALSE)
+         return(TRUE)
+     }
+     class(f) <- "filterfun"
+     return(f)
+ }
