@@ -31,29 +31,29 @@ genescale <- function (m, axis=2, method=c("Z", "R"), na.rm=TRUE) {
 .initFinder <- function(where) {
 
 setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
-    method="euclidean" )
+    kvalue=0, method="euclidean" )
     standardGeneric("genefinder"), where=where)
 
-setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY",
+setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY",
           "ANY"),
-          function(X, ilist, numResults, scale,
+          function(X, ilist, numResults, scale, kvalue,
                    method) {
               gN <- geneNames(X)
               if (is.character(ilist))
                   ilist <- match(ilist,gN)
-              ans <- genefinder(exprs(X), ilist, numResults, scale,
+              ans <- genefinder(exprs(X), ilist, numResults, scale, kvalue,
                         method=method)
               names(ans) <- gN[ilist]
               ans
       }, where=where)
 
 setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
-         function (X, ilist, numResults, scale,
+         function (X, ilist, numResults, scale, kvalue,
                         method=c("euclidean", "maximum", "manhattan",
-                        "canberra", "correlation", "binary")) {
+                        "canberra", "correlation", "binary", "commonk")) {
     X <- as.matrix(X)
     METHOD <- c("euclidean", "maximum", "manhattan",
-                        "canberra", "correlation", "binary")
+                        "canberra", "correlation", "binary", "commonk")
     method<-pmatch(method, METHOD)
     if (is.na(method))
         stop ("The distance method is invalid.")
@@ -108,6 +108,7 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
                   nInterest = as.integer(ninterest),
                   nResults = as.integer(numResults),
                   method= as.integer(method),
+                  kvalue = as.double(kvalue),
                   DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")
 
     Genes <- extCall$g+1

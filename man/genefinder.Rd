@@ -2,8 +2,9 @@
 \alias{genefinder}
 \title{ Finds genes that have similar patterns of expression. }
 \description{
-  Given a matrix of gene expressions, and the indices of the genes of
-  interest (in the matrix), \code{genefinder} returns a list of the
+  Given an \code{exprSet} or a matrix of gene expressions, and the
+  indices of the genes of 
+  interest, \code{genefinder} returns a list of the
   \code{numbResults} closest genes.
   The user can specify one of the standard distance measures listed
   below.
@@ -14,7 +15,7 @@
   their distances.
 }
 \usage{
-genefinder(X, ilist, numResults=25, scale="none", method="euclidean")
+genefinder(X, ilist, numResults=25, scale="none", kvalue=0, method="euclidean")
 }
 \arguments{
   \item{X}{ A numeric matrix where columns represent patients, and rows
@@ -25,8 +26,9 @@ genefinder(X, ilist, numResults=25, scale="none", method="euclidean")
     distance to the greatest. }
   \item{scale}{ one of 'none', 'range', or 'zscore'. Scaling
     is carried out separately on each row.}
+  \item{kvalue}{for the "commonk" distance.}
   \item{method}{ one of "euclidean", "maximum", "manhattan", "canberra", 
-        "correlation", "binary".  }
+        "correlation", "binary", "commonk".  }
 }
 \details{
   If the scale option is "range", then the input matrix is scaled using
@@ -38,6 +40,12 @@ genefinder(X, ilist, numResults=25, scale="none", method="euclidean")
 
   The "correlation" option for the distance method will return a value
   equal to 1-correlation(x).
+
+  The "commonk" option will count the number of times both vectors have
+  the value \code{k}. The returned value is the length of the vector
+  minus the number of matches. This distance is of interest when
+  comparing SAGE libraries and the number of common SAGE libraries where
+  the count is zero is of interest.
   
   See \code{\link{dist}} for a more detailed description of the distances.
 }

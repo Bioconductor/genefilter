@@ -74,7 +74,7 @@ static int distCompare(const void *p1, const void *p2)
     
 }
 
-static double mm_correlation(double *x, int nr, int nc, int i1, int i2) {
+static double mm_correlation(double *x, double *kval, int nr, int nc, int i1, int i2) {
     int i; /* Loop index */
     int a,b; /* Used as array indices for i1 and i2 */
     double xAvg, yAvg; /* Averages of the i1 and i2 rows */
@@ -123,7 +123,32 @@ static double mm_correlation(double *x, int nr, int nc, int i1, int i2) {
     return(dist);
 }
 
-static double mm_euclidean(double *x, int nr, int nc, int i1, int i2)
+/*count the number of places where there is a 'k' in both vectors
+  typically k=0, for SAGE data this is putting things that have
+  many k's in common close */
+static double mm_commonk(double *x, double *kvalue, int nr, int nc, 
+			   int i1, int i2) 
+{
+    double dist;
+    int count, j, ncommon;
+    
+    count= 0;
+    dist = 0;
+    ncommon = 0;
+    for(j = 0 ; j < nc ; j++) {
+	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
+	  if( x[i1] == *kvalue && x[i2]==*kvalue)
+	    ncommon++;
+	  count++;
+	}
+	i1 += nr;
+	i2 += nr;
+    }
+    if(count == 0) return NA_REAL;
+    return(count-ncommon);
+}
+
+static double mm_euclidean(double *x, double *kval, int nr, int nc, int i1, int i2)
 {
     double dev, dist;
     int count, j;
@@ -144,7 +169,7 @@ static double mm_euclidean(double *x, int nr, int nc, int i1, int i2)
     return sqrt(dist);
 }
 
-static double mm_maximum(double *x, int nr, int nc, int i1, int i2)
+static double mm_maximum(double *x, double *kval, int nr, int nc, int i1, int i2)
 {
     double dev, dist;
     int count, j;
@@ -165,7 +190,7 @@ static double mm_maximum(double *x, int nr, int nc, int i1, int i2)
     return dist;
 }
 
-static double mm_manhattan(double *x, int nr, int nc, int i1, int i2)
+static double mm_manhattan(double *x, double *kval, int nr, int nc, int i1, int i2)
 {
     double dist;
     int count, j;
@@ -187,7 +212,7 @@ static double mm_manhattan(double *x, int nr, int nc, int i1, int i2)
 
 static double xmin = 0.0;
 
-static double mm_canberra(double *x, int nr, int nc, int i1, int i2)
+static double mm_canberra(double *x, double *kval, int nr, int nc, int i1, int i2)
 {
     double dist, sum, diff;
     int count, j;
@@ -218,7 +243,7 @@ static double mm_canberra(double *x, int nr, int nc, int i1, int i2)
     return dist;
 }
 
-static double mm_dist_binary(double *x, int nr, int nc, int i1, int i2)
+static double mm_dist_binary(double *x, double*kval, int nr, int nc, int i1, int i2)
 {
     int total, count, dist;
     int j;
@@ -244,12 +269,13 @@ static double mm_dist_binary(double *x, int nr, int nc, int i1, int i2)
     return (double) dist / count;
 }
 
-enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, CORRELATION, BINARY };
+enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, CORRELATION, BINARY,
+       COMMONk};
 /* == 1,2,..., defined by order in the R function dist */
 
 void mm_distance(double *x, int *nr, int *nc, int *g, double *d, 
-		 int *iRow, int *nInterest, int *nResults, int *method) {
-    
+		 int *iRow, int *nInterest, int *nResults, 
+		 int *method, double *kval) {
     /*
       x -> Data Array
       nr -> Number of rows in X
@@ -265,16 +291,17 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     int  i,j, k;  /* Loop indices */
     int baseIndex; /* Used to index data arrays */
     gene_t *tmp; /* Temporary array to hold the distance data */
-    double (*distfun)(double*, int, int, int, int) = NULL;
+    double (*distfun)(double*, double*, int, int, int, int) = NULL;
 
     /* Sanity check the nResults vs. number of rows in the data */
     if (*nResults > *nr) {
 	warning("Number of results selected is greater than number of rows, using the number of rows instead\n");
-	nResults = nr;
+	*nResults = *nr-1;
     }
     
-    /* Size of tmp == *nr, as each gene we're interested in will generate */
-    /* nr number of distance points */
+    /* Size of tmp == *nr, as each gene we're interested in will
+       generate *nr distance points */
+
     tmp = (gene_t *)R_alloc(*nr, sizeof(gene_t));
     
     /* Determine which distance function to use */
@@ -297,6 +324,9 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     case BINARY:
 	distfun = mm_dist_binary;
 	break;
+    case COMMONk:
+        distfun = mm_commonk;
+        break;
     default:
 	error("distance(): invalid distance");
     }
@@ -306,7 +336,7 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
 
 	for(i = 0 ; i < (*nr) ; i++) {
 	    tmp[i].geneNum = i; 
-	    tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j]-1, i);       
+	    tmp[i].geneDist = distfun(x, kval, *nr, *nc, iRow[j]-1, i);       
 	}
 	
 	/* Run a sort on the temp array */
