@@ -1,8 +1,8 @@
 Package: genefilter
 Title: Genefilter: filter genes
-Version: 1.0.7
+Version: 1.0.8
 Author: R. Gentleman, V Carey
 Description: Some basic functions for filtering genes 
 Maintainer: R. Gentleman <rgentlem@hsph.harvard.edu>
-Depends: survival
+Depends: survival, ctest
 License: LGPL
