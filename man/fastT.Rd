@@ -30,9 +30,6 @@ A list with three components
   \item{var.equal}{The value used for var.equal.}
 }
 \author{ R. Gray }
-
-\seealso{ \code{\link{permax}} }
-
 \examples{
  x = matrix(rnorm(1000), nc=10)
  gp1 = 1:4
