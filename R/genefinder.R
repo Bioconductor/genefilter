@@ -25,7 +25,7 @@ genescale <- function (m, axis=2) {
        if( axis==1 ) return(t(rval))
        return(rval)
    }
-   else 
+   else
 	scaleVector(m)
 }
 
@@ -57,6 +57,10 @@ genefinder <- function (X, ilist, scale="none", method="euclidean") {
 
 
     ninterest <- length(ilist)
+    if( is.character(ilist) ) {
+        iRows <- match(ilist, row.names(X))
+        names(iRows) <- ilist
+    }
     rval <- vector("list", length=ninterest)
     for (i in 1:ninterest) {
         ## xvals <- as.numeric( X[ilist[i], ] )
@@ -74,6 +78,8 @@ genefinder <- function (X, ilist, scale="none", method="euclidean") {
     }
     return(rval)
 }
+
+
 
 
 
