@@ -4,32 +4,30 @@
 # genefinder functions.
 
 
-scaleVector <- function(v, na.rm=TRUE) {
-#
-# Scales the elements of the vector v,
-# and returns the result as a vector.
-#
-    mm <- range(v, na.rm=na.rm)
-    result <- (v - mm[1]) / (mm[2] - mm[1])
-    result
-}
-
-
-
-genescale <- function (m, axis=2, na.rm=TRUE) {
+genescale <- function (m, axis=2, method=c("Z", "R"), na.rm=TRUE) {
+    ##scale by the range
+    RscaleVector <- function(v, na.rm=TRUE) {
+        mm <- range(v, na.rm=na.rm)
+        (v - mm[1]) / (mm[2] - mm[1])
+    }
+    ##scale using Zscore
+    ZscaleVector <- function(v, na.rm=TRUE)
+        (v - mean(v, na.rm=na.rm))/sd(v, na.rm=na.rm)
 #
 # scales a matrix using the scaleVector function.
 #
-   if( is.matrix(m) || is.data.frame(m) ) {
-       rval <- apply (m, axis, scaleVector, na.rm=na.rm)
-       if( axis==1 ) return(t(rval))
-       return(rval)
-   }
-   else
-	scaleVector(m, na.rm=na.rm)
+    which <- match.arg(method)
+    method <- switch(which,
+                     Z = ZscaleVector,
+                     R = RscaleVector)
+    if( is.matrix(m) || is.data.frame(m) ) {
+        rval <- apply (m, axis, method, na.rm=na.rm)
+        if( axis==1 ) return(t(rval))
+        return(rval)
+    }
+    else
+	method(m, na.rm=na.rm)
 }
-
-
 
 genefinder <- function (X, ilist, scale="none", method="euclidean") {
 #
