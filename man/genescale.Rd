@@ -3,30 +3,34 @@
 \alias{scaleVector}
 \title{Scales a matrix or vector.}
 \description{
-  genescale() returns a scaled version of the input matrix m by applying
+  \code{genescale} returns a scaled version of the input matrix m by applying
   the following formula to each column of the matrix:
      {    y[i] = ( x[i] - min(x) ) / ( max(x) - min(x) ) }
 
-  scaleVector() returns a scaled version of the input vector v by applying
+  \code{scaleVector} returns a scaled version of the input vector v by applying
   the above formula to each element of the vector.
 }
 \usage{
-genescale(m)
+genescale(m, axis)
 
 scaleVector(v)
 }
 
 \arguments{
-  \item{m}{Input must be a matrix with numeric elements. }
+  \item{m}{Input a matrix or a vector with numeric elements. }
   \item{v}{Input must be a vector with numeric elements. }
-
+  \item{axis}{An integer indicating which axis of \code{m} to apply
+    \code{scaleVector} to. }
 }
 \details{
 }
 \value{
-  Both functions return an identically sized, scaled version of the input.
+  Both functions return a scaled version of the input.
+  If \code{m} is a \code{matrix} or a \code{dataframe} then the
+  dimensions of the returned value agree with that of \code{m},
+  in either case the returned value is a \code{matrix}.
 }
-\references{ }
+
 \author{ M. Kajen }
 \note{ These are helper functions used by genefinder(). }
 

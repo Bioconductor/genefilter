@@ -16,11 +16,17 @@ scaleVector <- function(v) {
 
 
 
-genescale <- function (m) {
+genescale <- function (m, axis=2) {
 #
 # scales a matrix using the scaleVector function.
 #
-   apply (m, 2, scaleVector)
+   if( is.matrix(m) || is.data.frame(m) ) {
+       rval <- apply (m, axis, scaleVector)
+       if( axis==1 ) return(t(rval))
+       return(rval)
+   }
+   else 
+	scaleVector(m)
 }
 
 

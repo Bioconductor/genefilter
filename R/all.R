@@ -104,17 +104,6 @@ ttest <- function(m, p=0.05, na.rm=TRUE) {
   }
 
 
-# normalize within rows
-
-standardize <- function(x, na.rm=TRUE) {
-    sdx<- sd(x, na.rm=na.rm)
-    if(sdx == 0 )
-        x <- 0
-    else
-        x <- (x-mean(x, na.rm=na.rm))/sdx
-    return(x)
-}
-
 # Apply type functions
 
 genefilter <- function(expr, flist) {
