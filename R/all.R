@@ -31,7 +31,7 @@ poverA <-  function(A=100, p = .05 ,na.rm = TRUE) {
 cv <- function(a=1, b=Inf, na.rm=TRUE) {
   function(x) {
 	sdx <- sd(x, na.rm=na.rm)
-        if(sdx == 0 ) return(FALSE)
+        if(is.na(sdx) || sdx == 0 ) return(FALSE)
 	val <- mean(x, na.rm=na.rm)/sdx
         if(val < a ) return(FALSE)
         if(val > b ) return(FALSE)
@@ -42,7 +42,7 @@ cv <- function(a=1, b=Inf, na.rm=TRUE) {
 sdom <- function(a=1, b=Inf, na.rm=TRUE) {
     function(x) {
         	sdx <- sd(x, na.rm=na.rm)
-        if(sdx == 0 ) return(FALSE)
+        if(is.na(sdx) || sdx == 0 ) return(FALSE)
 	val <- sdx/mean(x, na.rm=na.rm)
         if(val < a ) return(FALSE)
         if(val > b ) return(FALSE)
