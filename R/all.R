@@ -145,10 +145,12 @@ filterfun <- function(...) {
      if( length(flist) == 1 && is.list(flist[[1]]) )
          flist <- flist[[1]]
      f <- function( x ) {
-         for( fun in flist )
-             if( ! fun(x) )
+         for( fun in flist ) {
+             fval <- fun(x)
+             if( is.na(fval) || ! fval )
                  return(FALSE)
-         return(TRUE)
+             return(TRUE)
+         }
      }
      class(f) <- "filterfun"
      return(f)
