@@ -315,7 +315,7 @@ setESetArgs <- function(filter){
 }
 
 isESet <- function(eSet){
-    if(missing(eSet) || class(eSet) != "exprSet"){
+    if(missing(eSet) || (!is(eSet, "exprSet"))) {
         tkmessageBox(title = "Input Error",
                      message = paste("filterMaster has to take",
                      "an object of exprSet"),
