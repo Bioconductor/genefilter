@@ -298,13 +298,16 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     
     for (j = 0; j < *nInterest; j++) {  
 	/* Get the distances for this gene, store in tmp array */
-
+	printf("Now checking row %d\n", iRow[j]);
 	for(i = 0 ; i < (*nr) ; i++) {
 	    if (iRow[j] == i) {
-		continue;
+		tmp[i].geneNum = i;
+		tmp[i].geneDist = -1;
 	    }
-	    tmp[i].geneNum = i; 
-	    tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j]-1, i);       
+	    else {
+		tmp[i].geneNum = i; 
+		tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j]-1, i);       
+	    }
 	}
 	
 	/* Run a sort on the temp array */
