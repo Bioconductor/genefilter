@@ -49,7 +49,7 @@ Anova <- function(cov, p=0.05, na.rm=TRUE)
         }
         m1 <- lm(x~cov)
         m2 <- lm(x~1)
-        av <- anova(m1,m2)
+        av <- anova(m2,m1)
         fstat <- av[["Pr(>F)"]][2]
         if( fstat < p )
             return(TRUE)
