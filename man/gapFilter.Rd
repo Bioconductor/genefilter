@@ -20,8 +20,8 @@ gapFilter(Gap, IQR, Prop, na.rm=TRUE, neg.rm=TRUE)
   end.}
   \item{na.rm}{If \code{TRUE} then \code{NA}'s will be removed before
     processing. }
-  \item{na.rm}{If \code{TRUE} then elements of \code{x} that are negative
-    will be removed before processing. }
+  \item{neg.rm}{ If \code{TRUE} then negative values in \code{x} will be
+    removed before processing.}
 }
 \details{
   As stated above we are interested in 
