@@ -8,3 +8,22 @@ Idea:
    then we call lm/glm/etc with the formula.
 
  This library should now be maintained at a make check level.
+
+Next:
+    Michael is working on a genefinder: methods for finding genes that
+  cluster like those in a specified list
+
+   I would like to get a geneplot function, just using image to disply the
+   data (it would be nice to be able to use the arrow keys to adjust the 
+   image; maybe tcltk).
+
+   We would like some clustering tools for genes and samples.
+   It would be nice to get dendrograms on the axes of the plot.
+   Color schemes?
+
+   Dan Carr suggested that there was a principle components method for
+   ordering the genes that did a bit better than the hierarchical clustering
+   we should track that down.
+
+
+   
