@@ -111,7 +111,7 @@ gapFilter <- function(Gap, IQR, Prop, na.rm=TRUE, neg.rm=TRUE) {
      if(na.rm) x <- x[!is.na(x)]
      if(neg.rm) x <- x[x>0]
      lenx <- length(x)
-     if( lenx==0 || lenx < Prop+1 )
+     if( lenx < 4 || lenx < Prop+1 )
        return(FALSE)
      srtd <- sort(x)
      lq <- lenx*.25
