@@ -79,6 +79,30 @@ coxfilter <- function(surt, cens, p) {
    }
 }
 
+ttest <- function(m, p=0.05, na.rm=TRUE) {
+    if( length(m) == 1)
+        function(x) {
+            n <- length(x)
+            sub1 <- x[1:m]
+            sub2 <- x[(m+1):(m+n)]
+            if(na.rm) {
+                drop <- is.na(x)
+                sub1 <- sub1[!drop[1:m]]
+                sub2 <- sub2[!drop[(m+1):(m+n)]]
+            }
+            t.test(sub1, sub2 )$p.value < p
+        }
+    else
+        function(x) {
+            if(na.rm) {
+                drop <- is.na(x) | is.na(m)
+                x<- x[!drop]
+                m<- m[!drop]
+            }
+            t.test(x~m)$p.value < p
+        }
+  }
+
 
 # normalize within rows
 
@@ -116,3 +140,8 @@ filterfun <- function(...) {
      class(f) <- "filterfun"
      return(f)
  }
+
+
+
+
+
