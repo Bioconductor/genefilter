@@ -1,21 +1,5 @@
 "allNA" <- function(x) !all(is.na(x))
 
-"fundiff" <- function(x, fun, na.rm=TRUE) {
-	drop <- is.na(x)
-	if( na.rm) {
-	   x <- x[!drop]
-           var <- var[!drop]
-        }
-        gps <- split(x, var)
-        if(length(gps)>2)
-           stop("wrong number of groups")
-        if(length(gps)<2)
-	   return(NA)
-        mns <- lapply(gps, fun$fun, fun$args)
-        if( abs(mns[[1]]-mns[[2]]) < fun$accept )
-          return(FALSE)
-        TRUE
-   }
 
 "genefilter" <-
 function(expr, flist) {
@@ -25,6 +9,23 @@ function(expr, flist) {
       }
       return(expr)
   }
+
+#genefilter2 and filterfun let us build a set of
+#routines that are applied to each row in order but
+#which drop out once the first false function is found
+ genefilter2 <- function(expr, flist)
+     apply(expr, 1, flist)
+
+ filterfun <- function(flist) {
+     f <- function( x ) {
+         for( fun in flist )
+             if( ! fun(x) )
+                 return(FALSE)
+         return TRUE
+     }
+     class(f) <- "filterfun"
+     return(f)
+ }
 
 "kltA" <- function(k, A=100, na.rm = TRUE) {
   function(x) {
@@ -39,26 +40,6 @@ function(A=75, na.rm=TRUE) {
     function(x) {max(x, na.rm=na.rm) >= A }
 }
 
-"mk2fun" <-
-function(fun2g, var2g) {
-    fundiff <- function(x, na.rm=TRUE) {
-	drop <- is.na(x)
-	if( na.rm) {
-	   x <- x[!drop]
-           var2g <- var2g[!drop]
-        }
-        gps <- split(x, var2g)
-        if(length(gps)>2)
-           stop("wrong number of groups")
-        if(length(gps)<2)
-	   return(NA)
-        mns <- lapply(gps, fun2g$fun, fun2g$args)
-        if( abs(mns[[1]]-mns[[2]]) < fun2g$accept )
-          return(FALSE)
-        TRUE
-     }
-     return(fundiff)
-   }
 
 "poverA" <-  function(A=100, p = .05 ,na.rm = TRUE) {
   function(x) {
@@ -87,29 +68,29 @@ function(fun2g, var2g) {
 anova <- function(cov, p=0.05, na.rm=TRUE)
 {
     function(x) {
-    if( na.rm ) {
-	drop <- is.na(x)
-        x <- x[!drop]
-        cov <- cov[!drop]
+        if( na.rm ) {
+            drop <- is.na(x)
+            x <- x[!drop]
+            cov <- cov[!drop]
+        }
+        m1 <- lm(x~cov)
+        m1s <- summary(m1)
+        fstat <- 1 - pf(m1s$fstat[1], m1s$fstat[2], m1s$fstat[3])
+        if( fstat < p )
+            return(TRUE)
+        return(FALSE)
     }
-    m1 <- lm(x~cov)
-    m1s <- summary(m1)
-    fstat <- 1 - pf(m1s$fstat[1], m1s$fstat[2], m1s$fstat[3])
-    if( fstat < p )
-      return(TRUE)
-    return(FALSE)
-}
 }
 
 
 # normalize within rows
 
- stdize <- function(x, na.rm=TRUE) {
-	sdx<- sd(x, na.rm=na.rm)
-        if(sdx == 0 ) 
-             x <- 0
-        else 
-           x <- (x-mean(x, na.rm=na.rm))/sdx
-        return(x)
-  }
-          
+standardize <- function(x, na.rm=TRUE) {
+    sdx<- sd(x, na.rm=na.rm)
+    if(sdx == 0 )
+        x <- 0
+    else
+        x <- (x-mean(x, na.rm=na.rm))/sdx
+    return(x)
+}
+
