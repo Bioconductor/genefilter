@@ -1,7 +1,7 @@
 Package: genefilter
 Title: Genefilter: filter genes
-Version: 0.5-1
+Version: 0.5-2
 Author: R. Gentleman, V Carey
-Description: Some basic functions for filtering genes (including ranking utils).
+Description: Some basic functions for filtering genes 
 Maintainer: R. Gentleman <rgentlem@hsph.harvard.edu>
 License: GPL2.0
