@@ -48,6 +48,7 @@ genefinder(X, ilist, numResults=25, scale="none", method="euclidean")
 \seealso{\code{\link{genescale}} }
 
 \examples{
+set.seed(12345)
 #create some fake expression profiles
 m1 <- matrix (1:12, 4, 3)
 v1 <- 1
