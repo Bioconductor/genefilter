@@ -75,6 +75,14 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
 
     ninterest <- length(ilist);
 
+
+    N <- nrow(X)
+
+    ## Do a sanity check on the requested genes in ilist -> if the
+    ## gene exceeds the # of rows in the matrix, can not be processed.
+    if (max(ilist) > N)
+        stop("Requested genes exceed the dimensions of the supplied matrix.")
+
     if( is.character(ilist) ) {
         iRows <- match(ilist, row.names(X))
         names(iRows) <- ilist
@@ -83,8 +91,6 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
         iRows <- ilist
     else
         stop("invalid genes selected")
-
-    N <- nrow(X)
 
     Genes <- array(dim=c(ninterest, numResults))
     Dists <- array(dim=c(ninterest, numResults))
