@@ -30,6 +30,17 @@
 #include "R_ext/Error.h"
 #include "R_ext/Applic.h" /* machar */
 
+static int intcompare(const void *p1, const void *p2)
+{
+  int i = *((int *)p1);
+  int j = *((int *)p2);
+  
+  if (i > j)
+    return (1);
+  if (i < j)
+    return (-1);
+  return (0);
+}
 
 static double mm_euclidean(double *x, int nr, int nc, int i1, int i2)
 {
@@ -155,10 +166,23 @@ static double mm_dist_binary(double *x, int nr, int nc, int i1, int i2)
 enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, BINARY };
 /* == 1,2,..., defined by order in the R function dist */
 
-void mm_distance(double *x, int *nr, int *nc, double *d, int *iRow, int *method)
+void mm_distance(double *x, int *nr, int *nc, double *d, int *iRow, int *numResults, int *method)
 {
     int  i;
+    size_t size;
+    double *tmp;
     double (*distfun)(double*, int, int, int, int) = NULL;
+
+    /* Check to insure that the number of requested results is not */
+    /* actually greater then the number of rows being acquired, if */
+    /* so, just use the number of rows */
+    if (*numResults > *nr) {
+      warning("Number of results selected is greater than number of rows, using the number of rows instead\n");
+      numResults = nr;
+    }
+
+    /* Allocate memory via R */
+    tmp = (double *)R_alloc(*nr, sizeof(double));
 
     switch(*method) {
     case EUCLIDEAN:
@@ -180,6 +204,15 @@ void mm_distance(double *x, int *nr, int *nc, double *d, int *iRow, int *method)
 	error("distance(): invalid distance");
     }
 
-    for(i = 0 ; i < (*nr) ; i++)
-        d[i] = distfun(x, *nr, *nc, (*iRow)-1, i);
+    /* Get the distances and feed them into the temp array */
+    for(i = 0 ; i < (*nr) ; i++) {
+      tmp[i] = distfun(x, *nr, *nc, (*iRow)-1, i);
+    }
+    /* Run a sort on the temp array */
+    qsort((void *)tmp, *nr, sizeof(double), intcompare);
+
+
+    /* Move over the numResults first cells in the sorted array */
+    size = *numResults * sizeof(double);
+    d = memmove(d, tmp, size);
 }

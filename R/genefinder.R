@@ -28,7 +28,7 @@ genescale <- function (m, axis=2, method=c("Z", "R"), na.rm=TRUE) {
 	method(m, na.rm=na.rm)
 }
 
-genefinder <- function (X, ilist, scale="none", method="euclidean") {
+genefinder <- function (X, ilist, numResults, scale="none", method="euclidean") {
 #
 #
     X <- as.matrix(X)
@@ -72,6 +72,7 @@ genefinder <- function (X, ilist, scale="none", method="euclidean") {
 	                 nc= ncol(X),
 	                 d = double(N),
 	                 iRow  = as.integer(iRows[i]),
+			 numResults = as.integer(numResults),
 	                 method= as.integer(method),
 	                 DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")$d
     }

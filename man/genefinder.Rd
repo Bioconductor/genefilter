@@ -3,17 +3,19 @@
 \title{ Finds genes that have similar patterns of expression. }
 \description{
   Given a matrix of gene expressions, and the indexes of the genes of
-  interest (in the matrix), genefinder() returns a list of distances
-  between each gene of interest, and the entire matrix.
+  interest (in the matrix), genefinder() returns a list of the numResult 
+  shortest distances between each gene of interest, and the entire matrix.
 }
 \usage{
-genefinder(X, ilist, scale="none", method="euclidean")
+genefinder(X, ilist, numResults, scale="none", method="euclidean")
 }
 \arguments{
   \item{X}{ A numeric matrix where columns represent patients, and rows
     represent genes. }
   \item{ilist}{ Vector of genes of interest. Contains indices of genes
     in matrix X. }
+  \item{numResults}{Number of results to display, starting from the least
+    distance to the greatest. }
   \item{scale}{ one of 'none', 'range', or 'zscore'. Selecting 'range'
     causes the input matrix to be scaled before other computations }
   \item{method}{ one of "euclidean", "maximum", "manhattan", "canberra", 
@@ -41,19 +43,21 @@ genefinder(X, ilist, scale="none", method="euclidean")
 \examples{
 m1 <- matrix (1:12, 4, 3)
 v1 <- 1
-genefinder (m1, v1)
+nr <- 2
+genefinder (m1, v1, nr)
 
 
 v2 <- c(1,3)
-genefinder (m1, v2)
+genefinder (m1, v2, nr)
 
-genefinder (m1, v2, scale='range')
+genefinder (m1, v2, nr, scale='range')
 
-genefinder (m1, v2, method='manhattan')
+genefinder (m1, v2, nr, method='manhattan')
 
 m2 <- matrix (rnorm(100), 10, 10)
 v3 <- c(2, 5, 6, 8)
-genefinder (m2, v3, scale='zscore')
+nr2 <- 6
+genefinder (m2, v3, nr2, scale='zscore')
 }
 \keyword{ manip }
 
