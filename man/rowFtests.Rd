@@ -5,7 +5,7 @@
 \description{F-test and t-test for rows of a matrix}
 
 \usage{
-rowFtests(x, fac,var.equal = TRUE)
+rowFtests(x, fac, var.equal = TRUE)
 rowttests(x, fac)} 
 
 \arguments{
@@ -29,7 +29,7 @@ rowttests(x, fac)}
   With the current implementation, \code{NA}s are not allowed. This
   could be changed if desirable.
 
-  If \code{var.equal} is 'FALSE' \code{nrow(x)} +1 degree of freedoms
+  If \code{var.equal} is 'FALSE' \code{nrow(x)+1} degree of freedoms
   are given, the first one is the first degree of freedom (it is the
   same for each row) and the other ones are the second degree of freedom (one for
   each row). 
@@ -39,7 +39,7 @@ A list with the test statistics, p-values, degrees of freedom.
 }
 \references{B. L. Welch (1951), On the comparison of several mean values: an
      alternative approach. Biometrika, *38*, 330-336}
-\author{Wolfgang Huber <w.huber@dkfz.de>}
+\author{Wolfgang Huber <huber@ebi.ac.uk>}
 \seealso{\code{\link[multtest:mt.teststat]{mt.teststat}}}
 \examples{
    x  = matrix(runif(9700), ncol=97)
