@@ -235,6 +235,20 @@ Now, both of our formulas (from section 1) share the environment
 specifying the data; it will be obtained automatically from the
 environment. 
 
+\section{A weighted analysis}
+
+The Li and Wong (2000) algorithm for estimating expression levels for
+gene chip samples also provides an estimate of the standard error of
+the expression level. These estimated standard errors can potentially
+be used in the analysis of the data.
+
+For example, since we have observations of the form $Y_i,
+\hat{\sigma}_i$ we could consider taking weighted averages, within
+groups. The weights would be determined by the estimated standard
+errors.
+
 
 
 \end{document}
+
+
