@@ -102,7 +102,7 @@ sum(wh3)
 
 Now we see that there are only 10 genes  that satisfy both conditions.
 
-Our last example in this HOWTO is to select genes that are
+Our last example is to select genes that are
 differentially expressed in at least one of the three groups defined
 by \verb+cov3+.
 To do that we use an Anova filter. This filter uses an analysis of
@@ -121,6 +121,84 @@ sum(wh4)
 %$
 We see that there are 14 genes that pass this filter and that are
 candidates for further exploration.
+
+
+\section{Aggregate Vignette}
+
+The function given below performs k--nearest neighbour classification
+using leave--one--out cross--validation.
+At the same time it aggregates the genes that were selected. The
+function returns the predicted classifications as its returned
+value. However, there is an additional side effect. The number of
+times that each gene was used (provided it was at least one) are
+recorded and stored in the environment of the aggregator \verb+Agg+.
+These can subsequently be retrieved and used for other purposes.
+
+<<aggregate>>=
+
+ knnCV <- function(EXPR, selectfun, cov, Agg, pselect = 0.01, Scale=FALSE) {
+   nc <- ncol(EXPR)
+   outvals <- rep(NA, nc)
+   for(i in 1:nc) {
+      v1 <- EXPR[,i]
+      expr <- EXPR[,-i]
+      glist <- selectfun(expr, cov[-i], p=pselect)
+      expr <- expr[glist,]
+      if( Scale ) {
+        expr <- scale(expr)
+        v1 <- as.vector(scale(v1[glist]))
+      }
+      else
+         v1 <- v1[glist]
+      out <- paste("iter ",i, " num genes= ", sum(glist), sep="")
+      print(out)
+      Aggregate(row.names(expr), Agg)
+      if( length(v1) == 1)
+         outvals[i] <- knn(expr, v1, cov[-i], k=5)
+      else
+          outvals[i] <- knn(t(expr), v1, cov[-i], k=5)
+    }
+    return(outvals)
+  }
+@
+%$
+
+<<aggregate>>=
+ gfun <- function(expr, cov, p=0.05) {
+    f2 <- ttest(cov, p=p)
+    ffun <- filterfun(f2)
+    which <- genefilter(expr, ffun)
+  }
+
+@
+
+Next we show how to use this function on the system dataset,
+\verb+geneData+.
+
+<<aggregate>>=
+  library(class)
+
+
+  ##scale the genes
+  ##genescale is a slightly more flexible "scale"
+  ##work on a subset -- for speed only
+  geneData <- genescale(exprs(eset)[1:75,], 1)
+
+  Agg <- new("aggregator")
+
+  testcase <- knnCV(geneData, gfun, eset$cov2, Agg, pselect=0.05)
+
+  genes.used <- multiget(ls(env=aggenv(Agg)), env=aggenv(Agg))
+  genes.counts <- as.numeric(genes.used)
+  names(genes.counts) <- names(genes.used)
+  sort(genes.counts)
+@
+%$
+  The variable \verb+genes.counts+ now contains, for each gene,
+  the number of times it was selected in the cross-validation.
+
+  One may also compare testcase with geneCov to see how well the
+  procedure worked at predicting.
 
 \end{document}
 
