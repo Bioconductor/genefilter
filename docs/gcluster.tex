@@ -1,0 +1,30 @@
+Notes from Cheng Li, on what he does for clustering:
+I basically followed the methods in the attached paper (page 2, upper-right
+corner).
+  
+it's not the standard avarage linkage, instead, after two genes (or nodes)
+are merged, the resultant node has expression profile as the avereage the
+the two merged ones (after standardization). A description for anther
+project using dchip is as follows:
+  
+Hierarchical clustering analysis (3) is used to group genes with same
+expression pattern. A genes is selected for clustering if (1) its expression
+values in the 20 samples has coefficient of variation (standard deviation /
+mean) between 0.5 to 10 (2) it is called ¡°Present¡± by GeneChip? in more
+than 5 samples. Then the expression values for a gene across the 20 samples
+are standardized to have mean 0 and standard deviation 1 by linear
+transformation, and the distance between two genes is defined as 1 - r where
+r is the standard correlation coefficient between the 20 standardize values
+of two genes. Two genes with the closest distance are first merged into a
+super-gene and connected by branches with length representing their
+distance, and are deleted for future merging. The expression level of the
+newly formed super-gene is the average of standardized expression levels of
+the two genes (average-linkage) for each sample. Then the next pair of genes
+(super-genes) with the smallest distance are chosen to merge and the process
+is repeated until all genes are merged into one cluster. The dendrogram in
+Figure ? illustrates the final clustering tree, where genes close to each
+other have high similarity in their standardized expression values across
+the 20 samples.
+  
+  
+
