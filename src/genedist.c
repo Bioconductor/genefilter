@@ -300,6 +300,9 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
 	/* Get the distances for this gene, store in tmp array */
 
 	for(i = 0 ; i < (*nr) ; i++) {
+	    if (iRow[j] == i) {
+		continue;
+	    }
 	    tmp[i].geneNum = i; 
 	    tmp[i].geneDist = distfun(x, *nr, *nc, iRow[j]-1, i);       
 	}
@@ -318,6 +321,9 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
 	}
     }
 }
+
+
+
 
 
 
