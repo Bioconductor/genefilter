@@ -45,3 +45,17 @@ To Do, Oct 1, 2001
  o genefinder needs to have a selection mechanism added to it. Michael will 
    probably be doing this.
 
+Notes by Vince, 25 Oct 2001:
+
+we would like to be able to keep track of the filters that
+were used to produce any given object.  it seems that we
+would also like to ensure that a function applied in a
+genefilter application is a filter function (i.e., only
+returns a logical vector of same dimension as input).
+so perhaps genefilter should accept a container of
+functions that are of the filter class.  it should also
+return an object that includes an attribute identifying
+the container in some unambiguous way.  if the output
+of genefilter can again be submitted to genefilter,
+this genesis attribute must be compounded.
+
