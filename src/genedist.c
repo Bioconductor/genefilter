@@ -295,10 +295,11 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
     default:
 	error("distance(): invalid distance");
     }
-    
+
+    Rprintf("Testing ....\n");
     for (j = 0; j < *nInterest; j++) {  
 	/* Get the distances for this gene, store in tmp array */
-	warning("Now checking row");
+	Rprintf("Now checking row ....\n");
 	for(i = 0 ; i < (*nr) ; i++) {
 	    if (iRow[j] == i) {
 		tmp[i].geneNum = i;
