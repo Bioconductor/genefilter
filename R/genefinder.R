@@ -31,24 +31,24 @@ genescale <- function (m, axis=2, method=c("Z", "R"), na.rm=TRUE) {
 .initFinder <- function(where) {
 
 setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
-    kvalue=0, method="euclidean" )
+    weights, method="euclidean" )
     standardGeneric("genefinder"), where=where)
 
 setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY",
           "ANY"),
-          function(X, ilist, numResults, scale, kvalue,
+          function(X, ilist, numResults, scale, weights,
                    method) {
               gN <- geneNames(X)
               if (is.character(ilist))
                   ilist <- match(ilist,gN)
-              ans <- genefinder(exprs(X), ilist, numResults, scale, kvalue,
+              ans <- genefinder(exprs(X), ilist, numResults, scale, weights,
                         method=method)
               names(ans) <- gN[ilist]
               ans
       }, where=where)
 
 setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
-         function (X, ilist, numResults, scale, kvalue,
+         function (X, ilist, numResults, scale, weights,
                         method=c("euclidean", "maximum", "manhattan",
                         "canberra", "correlation", "binary", "commonk")) {
     X <- as.matrix(X)
@@ -70,6 +70,7 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
                 stop("The scaling method is invalid")
                 )
     N <- nrow(X)
+    C <- ncol(X)
 
     if( !is.vector(ilist) )
         stop("the genes to be compared to must be in a vector")
@@ -90,6 +91,11 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
     if( any(is.na(iRows)) )
         stop("invalid genes selected")
 
+    if (missing(weights))
+        weights <- rep(1,C)
+    else if (length(weights) != C)
+        stop("Supplied weights do not match number of columns")
+
     ## Do a sanity check on the requested genes in ilist -> if the
     ## gene exceeds the # of rows in the matrix, can not be processed.
     if (max(iRows) > N)
@@ -108,7 +114,7 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
                   nInterest = as.integer(ninterest),
                   nResults = as.integer(numResults),
                   method= as.integer(method),
-                  kvalue = as.double(kvalue),
+                  weights = as.double(weights),
                   DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")
 
     Genes <- extCall$g+1

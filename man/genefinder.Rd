@@ -15,7 +15,7 @@
   their distances.
 }
 \usage{
-genefinder(X, ilist, numResults=25, scale="none", kvalue=0, method="euclidean")
+genefinder(X, ilist, numResults=25, scale="none", weights, method="euclidean")
 }
 \arguments{
   \item{X}{ A numeric matrix where columns represent patients, and rows
@@ -26,7 +26,8 @@ genefinder(X, ilist, numResults=25, scale="none", kvalue=0, method="euclidean")
     distance to the greatest. }
   \item{scale}{ one of 'none', 'range', or 'zscore'. Scaling
     is carried out separately on each row.}
-  \item{kvalue}{for the "commonk" distance.}
+  \item{weights}{A vector of weights applied across the columns of
+    \code{X}.  If no weights are supplied, no weights are applied}.
   \item{method}{ one of "euclidean", "maximum", "manhattan", "canberra", 
         "correlation", "binary", "commonk".  }
 }

@@ -74,10 +74,11 @@ static int distCompare(const void *p1, const void *p2)
     
 }
 
-static double mm_correlation(double *x, double *kval, int nr, int nc, int i1, int i2) {
+static double mm_correlation(double *x, double *wval, int nr, int nc, int i1, int i2) {
     int i; /* Loop index */
     int a,b; /* Used as array indices for i1 and i2 */
     double xAvg, yAvg; /* Averages of the i1 and i2 rows */
+    double wA, wB; /* Weighted x[a] and x[b] */
     double upTot = 0; /* Upper summation */
     double botTotL, botTotR; /* The lower two summations */
     double botVal; /* Bottom value for Rho */
@@ -91,10 +92,10 @@ static double mm_correlation(double *x, double *kval, int nr, int nc, int i1, in
     /* Calculate the averages for the i1 and i2 rows */
     for (i = 0; i < nc; i++) {
 	if (R_FINITE(x[a])) {
-	    xAvg += x[a];
+	    xAvg += (wval[i] * x[a]);
 	}
 	if (R_FINITE(x[b])) {
-	    yAvg += x[b];
+	    yAvg += (wval[i] * x[b]);
 	}
 	a += nr;
 	b += nr;
@@ -107,9 +108,11 @@ static double mm_correlation(double *x, double *kval, int nr, int nc, int i1, in
     /* Build up the three summations in the equation */
     for (i = 0; i < nc; i++) {
 	if (R_FINITE(x[a]) && R_FINITE(x[b])) {
-	    upTot += ((x[a] - xAvg) * (x[b] - yAvg));
-	    botTotL += pow((x[a] - xAvg),2);
-	    botTotR += pow((x[b] - yAvg),2);
+	    wA = (wval[i] * x[a]);
+	    wB = (wval[i] * x[b]);
+	    upTot += ((wA - xAvg) * (wB - yAvg));
+	    botTotL += pow((wA - xAvg),2);
+	    botTotR += pow((wB - yAvg),2);
 	}
 	a += nr;
 	b += nr;    
@@ -126,7 +129,7 @@ static double mm_correlation(double *x, double *kval, int nr, int nc, int i1, in
 /*count the number of places where there is a 'k' in both vectors
   typically k=0, for SAGE data this is putting things that have
   many k's in common close */
-static double mm_commonk(double *x, double *kvalue, int nr, int nc, 
+static double mm_commonk(double *x, double *wvalue, int nr, int nc, 
 			   int i1, int i2) 
 {
     double dist;
@@ -137,7 +140,7 @@ static double mm_commonk(double *x, double *kvalue, int nr, int nc,
     ncommon = 0;
     for(j = 0 ; j < nc ; j++) {
 	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
-	  if( x[i1] == *kvalue && x[i2]==*kvalue)
+	    if((x[i1] == wvalue[j]) && (x[i2]==wvalue[j]))
 	    ncommon++;
 	  count++;
 	}
@@ -148,17 +151,20 @@ static double mm_commonk(double *x, double *kvalue, int nr, int nc,
     return(count-ncommon);
 }
 
-static double mm_euclidean(double *x, double *kval, int nr, int nc, int i1, int i2)
+static double mm_euclidean(double *x, double *wval, int nr, int nc, int i1, int i2)
 {
     double dev, dist;
     int count, j;
     
     count= 0;
     dist = 0;
+
     for(j = 0 ; j < nc ; j++) {
 	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
 	    dev = (x[i1] - x[i2]);
 	    dist += dev * dev;
+	    /* apply weight */
+	    dist *= wval[j];
 	    count++;
 	}
 	i1 += nr;
@@ -169,7 +175,7 @@ static double mm_euclidean(double *x, double *kval, int nr, int nc, int i1, int 
     return sqrt(dist);
 }
 
-static double mm_maximum(double *x, double *kval, int nr, int nc, int i1, int i2)
+static double mm_maximum(double *x, double *wval, int nr, int nc, int i1, int i2)
 {
     double dev, dist;
     int count, j;
@@ -179,6 +185,8 @@ static double mm_maximum(double *x, double *kval, int nr, int nc, int i1, int i2
     for(j = 0 ; j < nc ; j++) {
 	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
 	    dev = fabs(x[i1] - x[i2]);
+	    /* apply the weight */
+	    dev *= wval[j];
 	    if(dev > dist)
 		dist = dev;
 	    count++;
@@ -190,7 +198,7 @@ static double mm_maximum(double *x, double *kval, int nr, int nc, int i1, int i2
     return dist;
 }
 
-static double mm_manhattan(double *x, double *kval, int nr, int nc, int i1, int i2)
+static double mm_manhattan(double *x, double *wval, int nr, int nc, int i1, int i2)
 {
     double dist;
     int count, j;
@@ -199,7 +207,7 @@ static double mm_manhattan(double *x, double *kval, int nr, int nc, int i1, int 
     dist = 0;
     for(j = 0 ; j < nc ; j++) {
 	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
-	    dist += fabs(x[i1] - x[i2]);
+	    dist += (wval[j] * fabs(x[i1] - x[i2]));	    
 	    count++;
 	}
 	i1 += nr;
@@ -212,7 +220,7 @@ static double mm_manhattan(double *x, double *kval, int nr, int nc, int i1, int 
 
 static double xmin = 0.0;
 
-static double mm_canberra(double *x, double *kval, int nr, int nc, int i1, int i2)
+static double mm_canberra(double *x, double *wval, int nr, int nc, int i1, int i2)
 {
     double dist, sum, diff;
     int count, j;
@@ -229,7 +237,10 @@ static double mm_canberra(double *x, double *kval, int nr, int nc, int i1, int i
     for(j = 0 ; j < nc ; j++) {
 	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
 	    sum = fabs(x[i1] + x[i2]);
+	    /* apply the weight */
+	    sum *= wval[j];
 	    diff = fabs(x[i1] - x[i2]);
+	    diff *= wval[j];
 	    if (sum > xmin || diff > xmin) {
 		dist += diff/sum;
 		count++;
@@ -243,20 +254,23 @@ static double mm_canberra(double *x, double *kval, int nr, int nc, int i1, int i
     return dist;
 }
 
-static double mm_dist_binary(double *x, double*kval, int nr, int nc, int i1, int i2)
+static double mm_dist_binary(double *x, double *wval, int nr, int nc, int i1, int i2)
 {
     int total, count, dist;
     int j;
+    double w1, w2; /* Weighted values */
 
     total = 0;
     count = 0;
     dist = 0;
 
     for(j = 0 ; j < nc ; j++) {
-	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
-	    if(x[i1] || x[i2]){
+	w1 = wval[j] * x[i1];
+	w2 = wval[j] * x[i2];
+	if(R_FINITE(w1) && R_FINITE(w2)) {
+	    if(w1 || w2){
 		count++;
-		if( ! (x[i1] && x[i2]) ) dist++;
+		if( ! (w1 && w2) ) dist++;
 	    }
 	    total++;
 	}
@@ -275,7 +289,7 @@ enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, CORRELATION, BINARY,
 
 void mm_distance(double *x, int *nr, int *nc, int *g, double *d, 
 		 int *iRow, int *nInterest, int *nResults, 
-		 int *method, double *kval) {
+		 int *method, double *wval) {
     /*
       x -> Data Array
       nr -> Number of rows in X
@@ -336,7 +350,8 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
 
 	for(i = 0 ; i < (*nr) ; i++) {
 	    tmp[i].geneNum = i; 
-	    tmp[i].geneDist = distfun(x, kval, *nr, *nc, iRow[j]-1, i);       
+	    tmp[i].geneDist = distfun(x, wval, *nr, *nc, 
+				      iRow[j]-1, i);       
 	}
 	
 	/* Run a sort on the temp array */
