@@ -23,8 +23,8 @@ genefinder(X, ilist, numResults=25, scale="none", method="euclidean")
     in matrix X. }
   \item{numResults}{Number of results to display, starting from the least
     distance to the greatest. }
-  \item{scale}{ one of 'none', 'range', or 'zscore'. Selecting 'range'
-    causes the input matrix to be scaled before other computations }
+  \item{scale}{ one of 'none', 'range', or 'zscore'. Scaling
+    is carried out separately on each row.}
   \item{method}{ one of "euclidean", "maximum", "manhattan", "canberra", 
         "correlation", "binary".  }
 }
@@ -34,8 +34,9 @@ genefinder(X, ilist, numResults=25, scale="none", method="euclidean")
   the 'scale' builtin with no arguments.
 
   The method option specifies the metric used for gene comparisons. The
-  metric is applied, column by column, for each gene specified in the ilist.
+  metric is applied, row by row, for each gene specified in \code{ilist}.
 
+  See \code{\link{dist}} for a more detailed description of the distances.
 }
 \value{
   The returned value is a list containing an entry for each gene

@@ -34,14 +34,13 @@ setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
     method="euclidean" )
     standardGeneric("genefinder"), where=where)
 
-setMethod("genefinder", c("exprSet", "vector", "ANY", "character",
-          "character"),
-          function(X, ilist, numResults, scale="none",
-                   method="euclidean") {
+setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY",
+          "ANY"),
+          function(X, ilist, numResults, scale,
+                   method) {
               gN <- geneNames(X)
               if (is.character(ilist))
                   ilist <- match(ilist,gN)
-
               ans <- genefinder(exprs(X), ilist, numResults, scale,
                         method=method)
               names(ans) <- gN[ilist]
