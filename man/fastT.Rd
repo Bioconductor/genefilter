@@ -6,7 +6,7 @@
   data matrix. 
 }
 \usage{
-fastT(data, ig1, ig2, var.equal=TRUE)
+fastT(data, ig1, ig2, var.equal=TRUE, ratio=TRUE)
 }
 \arguments{
   \item{data}{A matrix of numbers. }
@@ -15,8 +15,9 @@ fastT(data, ig1, ig2, var.equal=TRUE)
   \item{ig2}{The indices of the columns of \code{data} that correspond
     to group 2. }
   \item{var.equal}{a logical variable indicating whether to treat the two
-    variances as being equal. Currently, this parameter is
-    \emph{ignored}, and the pooled variance is always used.}
+    variances as being equal.}
+  \item{ratio}{a logical variable indicating whether to compute the
+    ratio of the group means or their difference.}
 }
 \details{
   Implemented in Fortran, by R. Gray. This is basically the same code as

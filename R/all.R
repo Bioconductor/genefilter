@@ -152,7 +152,7 @@ filterfun <- function(...) {
  }
 
 
-fastT = function(data, ig1, ig2, var.equal=TRUE) {
+fastT = function(data, ig1, ig2, var.equal=TRUE, ratio=TRUE) {
     ng1=length(ig1)
     ng2 = length(ig2)
     if( ncol(data) != ng1+ng2)
@@ -164,8 +164,8 @@ fastT = function(data, ig1, ig2, var.equal=TRUE) {
     dm = rep(0, nr)
     Z = .Fortran("fastt", d=as.single(outd), as.integer(nr),
            as.integer(ng1+ng2), as.integer(ng1), z = as.single(z),
-         dm = as.single(dm), var.equal=as.integer(TRUE),
-        PACKAGE="genefilter")
-    return(list(z = Z$z, dm=Z$dm, var.equal=Z$var.equal))
+         dm = as.single(dm), var.equal=as.integer(var.equal),
+         ratio = as.integer(ratio), PACKAGE="genefilter")
+    return(list(z = Z$z, dm=Z$dm, var.equal=Z$var.equal), ratio=ratio)
 }
 
