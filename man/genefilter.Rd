@@ -1,49 +1,49 @@
 \name{genefilter}
 \alias{genefilter}
-%- Also NEED an `\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\title{ A function to filter genes in an expressin array. }
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+ Genefilter takes a dataframe or matrix of expression data and a list of 
+filtering functions and sequentially applies the filtering functions to 
+the array. The reduced expression array (containing genes that passed all
+filters) is returned.
 }
 \usage{
 genefilter(expr, flist)
 }
-%- maybe also `usage' for other objects documented here.
+
 \arguments{
-  \item{expr}{ ~~Describe \code{expr} here~~ }
-  \item{flist}{ ~~Describe \code{flist} here~~ }
+  \item{expr}{ A matrix or dataframe of expressions. }
+  \item{flist}{ A list of filtering functions. }
 }
 \details{
-  ~~ If necessary, more details than the __description__  above ~~
+As above.
 }
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of `comp1'}
-  \item{comp2 }{Description of `comp2'}
-  ...
+ The subset of \code{expr} that passes all the filters.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ }
 
- ~Make other sections like WARNING with \section{WARNING }{....} ~
+\author{Robert Gentleman }
 
-\seealso{ ~~objects to SEE ALSO as \code{\link{~~fun~~}}, ~~~ }
+\seealso{  \code{\link{allNA}} }
 
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	     or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function(expr, flist) {
-      for(filt in flist) {
-          tmp <- apply(expr, 1, filt)
-          expr <- expr[tmp,]
-      }
-      return(expr)
-  }
+   #generate some data
+   set.seed(3333)
+   ngenes <- 1000
+   m1 <- rnorm(ngenes,4,1)
+   m2 <- rnorm(ngenes,4,1)
+   Exp1 <- cbind(matrix(exp(rnorm(ngenes*5,m1,1)),nrow=ngenes),
+                    matrix(exp(rnorm(ngenes*10,m2,1)),nrow=ngenes))
+   Exp1[Exp1<20] <- 20
+   sub <- Exp1>20 & Exp1<150
+   Exp1[sub] <- ifelse(runif(length(sub[sub]))<.5,20,Exp1[sub])
+   dimnames(Exp1) <- list(paste('x',format(1:ngenes,justify='l'),sep=''),
+         paste('sample',format(1:ncol(Exp1),justify='l'),sep=''))
+        dimnames(Exp1) <- list(paste('x',1:ngenes,sep=''),
+                          paste('sample',1:ncol(Exp1),sep=''))
+   Exp1 <- round(Exp1)
+   s1.flist<-list(maxA, sdom, poverA)
+   Expsub <- genefilter(Exp1, s1.flist)
 }
 \keyword{ ~kwd1 }% at least one, from doc/KEYWORDS
 \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
