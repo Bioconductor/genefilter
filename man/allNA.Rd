@@ -22,7 +22,7 @@ anyNA(x)
 
 \author{R. Gentleman}
 
-\seealso{\code{\link{poverA}}}
+\seealso{\code{\link{pOverA}}}
 
 \examples{
   allNA(NA)

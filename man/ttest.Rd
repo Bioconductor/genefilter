@@ -25,7 +25,7 @@ ttest(m, p=0.05, na.rm=TRUE)
  \code{p} that will perform a \code{\link{t.test}}.
 }
 \author{R. Gentleman }
-\seealso{\code{\link{kltA}}, \code{\link{Anova}} }
+\seealso{\code{\link{kOverA}}, \code{\link{Anova}} }
 
 \examples{
   dat <- c(rep(1,5),rep(2,5))

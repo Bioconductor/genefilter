@@ -6,7 +6,7 @@ allNA <- function(x) !all(is.na(x))
 
 anyNA <- function(x) !any(is.na(x))
 
-kltA <- function(k, A=100, na.rm = TRUE) {
+kOverA <- function(k, A=100, na.rm = TRUE) {
   function(x) {
       if(na.rm)
 	x <- x[!is.na(x)]
@@ -19,7 +19,7 @@ maxA <- function(A=75, na.rm=TRUE) {
 }
 
 
-poverA <-  function(A=100, p = .05 ,na.rm = TRUE) {
+pOverA <-  function(A=100, p = .05 ,na.rm = TRUE) {
   function(x) {
       if(na.rm)
 	 x<-x[!is.na(x)]

@@ -22,7 +22,7 @@ maxA(A=75, na.rm=TRUE)
 
 \author{R. Gentleman }
 
-\seealso{\code{\link{poverA}} }
+\seealso{\code{\link{pOverA}} }
 
 \examples{
    ff <- maxA(30)

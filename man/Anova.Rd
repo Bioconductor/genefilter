@@ -23,7 +23,7 @@ Anova(cov, p=0.05, na.rm=TRUE)
  \code{p} that will perform a one-way ANOVA.
 }
 \author{R. Gentleman }
-\seealso{\code{\link{kltA}} }
+\seealso{\code{\link{kOverA}} }
 
 \examples{
   af <- Anova(c(rep(1,5),rep(2,5)), .01)

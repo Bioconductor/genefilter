@@ -22,7 +22,7 @@ cv(a=1, b=Inf, na.rm=TRUE)
  with bindings for \code{a} and \code{b}.
 }
 \author{R. Gentleman }
-\seealso{\code{\link{poverA}}, \code{\link{kltA}} }
+\seealso{\code{\link{pOverA}}, \code{\link{kOverA}} }
 
 \examples{
   set.seed(-3)

@@ -25,11 +25,11 @@ genefilter(expr, flist)
   \code{expr} passed the set of filter functions.
 }
 \author{R. Gentleman }
-\seealso{\code{\link{genefilter}}, \code{\link{kltA}} }
+\seealso{\code{\link{genefilter}}, \code{\link{kOverA}} }
 
 \examples{
    set.seed(-1)
-   f1 <- kltA(5, 10)
+   f1 <- kOverA(5, 10)
    flist <- filterfun(f1, allNA)
    exprA <- matrix(rnorm(1000, 10), nc=10)
    ans <- genefilter(exprA, flist)
