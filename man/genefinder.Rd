@@ -73,11 +73,11 @@ genefinder (m2, v3, nr2, scale='zscore')
 	m2 <- matrix(rnorm(10000),1000,10)
 	v1 <- c(1,100,563,872,921,3,52,95,235,333)
 	nr <- 100
-	genefinder(m1,v1,nr2,scale='zscore',method='euclidean')
-	genefinder(m1,v1,nr2,scale='range', method='maximum')
-	genefinder(m1,v1,nr2,scale='zscore', method='canberra')
-	genefinder(m1,v1,nr2,scale='range', method='binary')
-	genefinder(m1,v1,nr2,scale='zscore',method='correlation')
+	genefinder(m2,v1,nr2,scale='zscore',method='euclidean')
+	genefinder(m2,v1,nr2,scale='range', method='maximum')
+	genefinder(m2,v1,nr2,scale='zscore', method='canberra')
+	genefinder(m2,v1,nr2,scale='range', method='binary')
+	genefinder(m2,v1,nr2,scale='zscore',method='correlation')
 	}
 
 }
