@@ -7,5 +7,4 @@ Maintainer: R. Gentleman <rgentlem@hsph.harvard.edu>
 Depends: R (>= 1.9.0), Biobase, survival, tkWidgets
 Suggests: class
 License: LGPL
-ReleaseLevel: devel
 
