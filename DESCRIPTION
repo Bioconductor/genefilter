@@ -1,0 +1,7 @@
+Package: the_name_of_the_package
+Title: What the package does
+Version: 1.0
+Author: Who wrote it
+Description: More about what it does
+Maintainer: Who to complain to <yourfault@somewhere.net>
+License: What license is it under?
