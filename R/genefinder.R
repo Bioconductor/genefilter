@@ -37,7 +37,7 @@ setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
 setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY"),
           function(X, ilist, numResults, scale,
                         method) {
-          ans <- genefinder(exprs(X), ilist, numResults, scale,
+              ans <- genefinder(exprs(X), ilist, numResults, scale,
                         method=method)
           ans$names <- geneNames(X)[ans$indices]
           ans
@@ -48,7 +48,6 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
                         method) {
 #
 #
-    print(method)
     X <- as.matrix(X)
     METHODS<-c("euclidean", "maximum", "manhattan", "canberra",
                         "correlation", "binary")
