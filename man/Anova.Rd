@@ -21,6 +21,9 @@ Anova(cov, p=0.05, na.rm=TRUE)
 \value{
  \code{Anova} returns a function with bindings for \code{cov} and
  \code{p} that will perform a one-way ANOVA.
+
+  The covariate can be continuous, in which case the test is for a linear 
+  effect for the covariate.
 }
 \author{R. Gentleman }
 \seealso{\code{\link{kOverA}} }
