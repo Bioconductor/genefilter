@@ -28,7 +28,7 @@ genescale <- function (m, axis=2, method=c("Z", "R"), na.rm=TRUE) {
 	method(m, na.rm=na.rm)
 }
 
-genefinder <- function (X, ilist, numResults, scale="none", method="euclidean") {
+genefinder <- function (X, ilist, numResults=25, scale="none", method="euclidean") {
 #
 #
     X <- as.matrix(X)
@@ -54,7 +54,9 @@ genefinder <- function (X, ilist, numResults, scale="none", method="euclidean") 
 
     if( !is.vector(ilist) )
         stop("the genes to be compared to must be in a vector")
-    ninterest <- length(ilist)
+
+    ninterest <- length(ilist);
+
     if( is.character(ilist) ) {
         iRows <- match(ilist, row.names(X))
         names(iRows) <- ilist
@@ -63,20 +65,27 @@ genefinder <- function (X, ilist, numResults, scale="none", method="euclidean") 
         iRows <- ilist
     else
         stop("invalid genes selected")
-    rval <- vector("list", length=ninterest)
+
     N <- nrow(X)
-    for (i in 1:ninterest) {
-        rval [[i]] <- .C("mm_distance",
+
+    Genes <- array(dim=c(ninterest, numResults))
+    Dists <- array(dim=c(ninterest, numResults))
+    extCall <- .C("mm_distance",
 	                 X = as.double(X),
                          nr= N,
 	                 nc= ncol(X),
-	                 d = double(N),
-	                 iRow  = as.integer(iRows[i]),
-			 numResults = as.integer(numResults),
+			 g = as.integer(Genes),
+			 d = as.double(Dists),
+	                 iRow  = as.integer(iRows),
+			 nInterest = as.integer(ninterest),
+			 nResults = as.integer(numResults),
 	                 method= as.integer(method),
-	                 DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")$d
-    }
-    return(rval)
+	                 DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")
+
+    Genes <- extCall$g
+    Dists <- extCall$d
+
+    return(list(indices=Genes, dists=Dists))
 }
 
 

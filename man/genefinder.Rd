@@ -2,12 +2,14 @@
 \alias{genefinder}
 \title{ Finds genes that have similar patterns of expression. }
 \description{
-  Given a matrix of gene expressions, and the indexes of the genes of
-  interest (in the matrix), genefinder() returns a list of the numResult 
-  shortest distances between each gene of interest, and the entire matrix.
+  Given a matrix of gene expressions, and the indices of the genes of
+  interest (in the matrix), genefinder() returns a list of the X closest
+  genes (measured through the desired distance method) to the genes
+  of interest (where X is the number of desired results returned) and
+  their distances.
 }
 \usage{
-genefinder(X, ilist, numResults, scale="none", method="euclidean")
+genefinder(X, ilist, numResults=25, scale="none", method="euclidean")
 }
 \arguments{
   \item{X}{ A numeric matrix where columns represent patients, and rows
@@ -32,9 +34,8 @@ genefinder(X, ilist, numResults, scale="none", method="euclidean")
 }
 \value{
   The returned value is a list containing an entry for each gene
-  specified in ilist. Each list entry is a vector containing the results
-  of the distance comparison, with the gene specified in ilist, and
-  every other row.
+  specified in ilist.  Each list entry contains an array of distances
+  for that gene of interest.
 }
 \author{ M. Kajen }
 
