@@ -200,5 +200,13 @@ Next we show how to use this function on the system dataset,
   One may also compare testcase with geneCov to see how well the
   procedure worked at predicting.
 
+\section{Session Information}
+
+The version number of R and packages loaded for generating the vignette were:
+
+<<echo=FALSE,results=tex>>=
+sessionInfo()
+@
+
 \end{document}
 

@@ -103,5 +103,13 @@ The \verb+method+ parameter can take the following values:
           only one is on amongst those in which at least one is on.
 \end{description}
 
+\section{Session Information}
+
+The version number of R and packages loaded for generating the vignette were:
+
+<<echo=FALSE,results=tex>>=
+sessionInfo()
+@
+
 \end{document}
 
