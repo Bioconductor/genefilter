@@ -1,59 +1,38 @@
 \name{genefilter}
 \alias{genefilter}
-\title{ A function to filter genes in an expressin array. }
+
+\title{A function to filter genes. }
 \description{
- Genefilter takes a dataframe or matrix of expression data and a list of 
-filtering functions and sequentially applies the filtering functions to 
-the array. The reduced expression array (containing genes that passed all
-filters) is returned.
+   \code{genefilter} filters genes in the array \code{expr} using the
+   filter functions in \code{flist}. It returns an array of logical
+   values (suitable for subscripting) of the same length as there are
+   rows in \code{expr}. For each row of \code{expr} the returned value
+   is \code{TRUE} if the row passed all the filter functions. Otherwise
+   it is set to \code{FALSE}.
 }
 \usage{
 genefilter(expr, flist)
 }
-
 \arguments{
-  \item{expr}{ A matrix or dataframe to apply the filter functions to. }
-  \item{flist}{ A list of filtering functions. }
+  \item{expr}{A matrix or dataframe that the filter functions will be
+    applied to. }
+  \item{flist}{A list of filter functions to apply to the array. }
 }
-\details{
-As above.
-}
+
 \value{
- The subset of \code{expr} that passes all the filters.
+  A logical vector of length equal to the number of rows of \code{expr}.
+  The values in that vector indicate whether the corresponding row of
+  \code{expr} passed the set of filter functions.
 }
-
-\author{Robert Gentleman }
-
-\seealso{  \code{\link{allNA}} }
+\author{R. Gentleman }
+\seealso{\code{\link{genefilter}}, \code{\link{kltA}} }
 
 \examples{
-   #generate some data
-   set.seed(3333)
-   ngenes <- 1000
-   m1 <- rnorm(ngenes,4,1)
-   m2 <- rnorm(ngenes,4,1)
-   Exp1 <- cbind(matrix(exp(rnorm(ngenes*5,m1,1)),nrow=ngenes),
-                    matrix(exp(rnorm(ngenes*10,m2,1)),nrow=ngenes))
-   Exp1[Exp1<20] <- 20
-   sub <- Exp1>20 & Exp1<150
-   Exp1[sub] <- ifelse(runif(length(sub[sub]))<.5,20,Exp1[sub])
-   dimnames(Exp1) <- list(paste('x',format(1:ngenes,justify='l'),sep=''),
-         paste('sample',format(1:ncol(Exp1),justify='l'),sep=''))
-        dimnames(Exp1) <- list(paste('x',1:ngenes,sep=''),
-                          paste('sample',1:ncol(Exp1),sep=''))
-   Exp1 <- round(Exp1)
-   mfun <- maxA()
-   sdfun <- sdom()
-   pAfun <- poverA()
-   s1.flist<-list(mfun, sdfun,pAfun)
-   Expsub <- genefilter(Exp1, s1.flist)
+   set.seed(-1)
+   f1 <- kltA(5, 10)
+   flist <- filterfun(f1, allNA)
+   exprA <- matrix(rnorm(1000, 10), nc=10)
+   ans <- genefilter(exprA, flist)
 }
-\keyword{manip }
-
-
-
-
-
-
-
+\keyword{manip}
 

@@ -12,7 +12,6 @@
 \usage{
 filterfun(...)
 }
-%- maybe also `usage' for other objects documented here.
 \arguments{
   \item{...}{Filtering functions. }
 }
@@ -26,8 +25,13 @@ filterfun(...)
  \code{FALSE} otherwise it returns \code{TRUE}.
 }
 \author{R. Gentleman }
-\seealso{\code{\link{genefilter2}} }
-
-
+\seealso{\code{\link{genefilter}} }
+\example{
+  set.seed(333)
+  x <- matrix(rnorm(100,2,1),nc=10)
+  cvfun <- cv(.5,2.5)
+  ffun <- filterfun(cvfun)
+  which <- genefilter(x, ffun)
+  }
 \keyword{manip }
 

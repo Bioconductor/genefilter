@@ -104,18 +104,36 @@ ttest <- function(m, p=0.05, na.rm=TRUE) {
   }
 
 
+##a filter based on gaps
+
+gapFilter <- function(Gap, IQR, Prop, na.rm=TRUE) {
+  function(x) {
+     if(na.rm) x <- x[!is.na(x)]
+     lenx <- length(x)
+     if( lenx==0 || lenx < Prop+1 )
+       return(FALSE)
+     srtd <- sort(x)
+     lq <- lenx*.25
+     uq <- lenx*.75
+     if( (srtd[uq] - srtd[lq]) > IQR )
+        return(TRUE)
+     if(Prop < 1)
+        bot <- lenx*Prop
+     else
+        bot <- Prop
+     top <- lenx - bot
+     lag1 <- srtd[2:lenx]-srtd[1:(lenx-1)]
+     if( max(lag1[bot:top]) > Gap )
+       return(TRUE)
+    return(FALSE)
+  }
+}
+
+
 # Apply type functions
 
-genefilter <- function(expr, flist) {
-      for(filt in flist) {
-          tmp <- apply(expr, 1, filt)
-          expr <- expr[tmp,]
-      }
-      return(expr)
-  }
 
-
-genefilter2 <- function(expr, flist)
+genefilter <- function(expr, flist)
      apply(expr, 1, flist)
 
 filterfun <- function(...) {
