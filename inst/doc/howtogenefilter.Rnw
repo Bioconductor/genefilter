@@ -1,0 +1,124 @@
+%
+% NOTE -- ONLY EDIT howtogenefilter.Rnw!!!
+% Biobase.tex file will get overwritten.
+%
+%\VignetteIndexEntry{HowTo: Genefilter}
+
+\documentclass{article}
+
+\usepackage{hyperref}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\newcommand{\classdef}[1]{%
+  {\em #1}
+}
+
+\begin{document}
+\title{How To Filter Genes}
+
+\maketitle
+
+\section*{Introduction}
+
+The {\em genefilter} package can be used to filter (select) genes from
+a microarray experiment according to a wide variety of different
+filtering mechanisms.
+To be concrete we will consider the artificial experiment contained
+in the \verb+eset+ example in the {\em Biobase} package.
+This experiment has 26 samples, there are 500 genes and 3
+covariates. The covariates are named \verb+cov1+, \verb+cov2+ and
+\verb+cov3+. The first two have two levels and the last one has three.
+
+<<>>=
+library(genefilter)
+data(eset)
+table(eset$cov1)
+table(eset$cov2)
+table(eset$cov3)
+@
+%$
+
+One dichotomy that is of interest is to split filters into the
+non--specific and the specific. Here, specific means that we are
+filtering with reference to some particular variable. For example if
+we want to select genes that are differentially expressed in the two
+groups defined by \verb+cov1+ that is a specific filter.
+If on the otherhand we want to select genes that are expressed in more
+than 5 samples then that is an example of a non--specific filter.
+
+First let's see how to perform a non--specific filter.
+Suppose we want to select genes that are expressed above 200 in at
+least 5 samples. To do that we use the function \verb+kOverA+.
+
+There are three steps that must be performed.
+\begin{enumerate}
+\item Create the filters function(s).
+\item Assemble them into a filtering function.
+\item Apply the filtering function to the expression matrix.
+\end{enumerate}
+
+<<>>=
+f1 <- kOverA(5, 200)
+ffun <- filterfun(f1)
+which <- genefilter(exprs(eset), ffun)
+sum(which)
+@
+
+Here \verb+f1+ is a filter, the function \verb+ffun+ is a filtering
+function and we finally apply it using \verb+genefilter+.
+There were 154 genes that had a level of more than 200 in at least 5 samples.
+
+To perform a specific filter lets select genes that are differentially
+expressed in the groups defined by \verb+cov2+.
+
+<<>>=
+tf1 <- ttest(eset$cov2, .1)
+ff2 <- filterfun(tf1)
+wh2 <- genefilter(exprs(eset), ff2)
+ sum(wh2)
+@
+%$
+Now we see that there are 31 genes that pass this selection
+procedure. In this example we chose a very large $p$--value because we
+have a very small sample and the covariate was made up.
+
+Suppose that we want to combine the two filters. We want those genes
+for which at least 5 are over 200 and which also are differentially
+expressed in the groups defined by \verb+cov2+.
+
+<<>>=
+ff3 <- filterfun(f1, tf1)
+wh3 <- genefilter(exprs(eset), ff3)
+sum(wh3)
+@
+
+Now we see that there are only 10 genes  that satisfy both conditions.
+
+Our last example in this HOWTO is to select genes that are
+differentially expressed in at least one of the three groups defined
+by \verb+cov3+.
+To do that we use an Anova filter. This filter uses an analysis of
+variance appraoch (via the \verb+lm+) function to test the hypothesis
+that at least one of the three group means is different from the other
+two. The test is applied, then the $p$--value computed. We select
+those genes that have a low $p$--value.
+
+<<>>=
+Afilter <- Anova(eset$cov3)
+aff <- filterfun(Afilter)
+wh4 <- genefilter(exprs(eset), aff)
+sum(wh4)
+
+@
+%$
+We see that there are 14 genes that pass this filter and that are
+candidates for further exploration.
+
+\end{document}
+
