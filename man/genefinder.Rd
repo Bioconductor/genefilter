@@ -36,6 +36,9 @@ genefinder(X, ilist, numResults=25, scale="none", method="euclidean")
   The method option specifies the metric used for gene comparisons. The
   metric is applied, row by row, for each gene specified in \code{ilist}.
 
+  The "correlation" option for the distance method will return a value
+  equal to 1-correlation(x).
+  
   See \code{\link{dist}} for a more detailed description of the distances.
 }
 \value{
