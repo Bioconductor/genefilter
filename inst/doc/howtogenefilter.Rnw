@@ -188,7 +188,7 @@ Next we show how to use this function on the system dataset,
 
   testcase <- knnCV(geneData, gfun, eset$cov2, Agg, pselect=0.05)
 
-  genes.used <- multiget(ls(env=aggenv(Agg)), env=aggenv(Agg))
+  genes.used <- as.list(aggenv(Agg))
   genes.counts <- as.numeric(genes.used)
   names(genes.counts) <- names(genes.used)
   sort(genes.counts)
