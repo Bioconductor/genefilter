@@ -60,7 +60,12 @@ static int distCompare(const void *p1, const void *p2)
 {
     const gene_t *i = p1;
     const gene_t *j = p2;
-    
+
+    if (!R_FINITE(i->geneDist ))
+      return(1);
+    if (!R_FINITE(j->geneDist))
+      return(-1);
+
     if (i->geneDist > j->geneDist) 
 	return (1);
     if (i->geneDist < j->geneDist) 
