@@ -1,2 +1,2 @@
 require("Biobase")
-require("ctest")
+require("stats")
