@@ -12,6 +12,7 @@
         where <- pos.to.env(where)
     }
   .initRank(where)
+  .initFinder(where)
   cacheMetaData(as.environment(where))
   }
 

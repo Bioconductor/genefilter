@@ -28,11 +28,30 @@ genescale <- function (m, axis=2, method=c("Z", "R"), na.rm=TRUE) {
 	method(m, na.rm=na.rm)
 }
 
-genefinder <- function (X, ilist, numResults=25, scale="none", method="euclidean") {
+.initFinder <- function(where) {
+
+setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
+    method="euclidean" )
+    standardGeneric("genefinder"), where=where)
+
+setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY"),
+          function(X, ilist, numResults, scale,
+                        method) {
+          ans <- genefinder(exprs(X), ilist, numResults, scale,
+                        method=method)
+          ans$names <- geneNames(X)[ans$indices]
+          ans
+      }, where=where)
+
+setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
+         function (X, ilist, numResults, scale,
+                        method) {
 #
 #
+    print(method)
     X <- as.matrix(X)
-    METHODS<- c("euclidean","maximum","manhattan","canberra","correlation","binary")
+    METHODS<-c("euclidean", "maximum", "manhattan", "canberra",
+                        "correlation", "binary")
     method<-pmatch(method,METHODS)
     if (is.na(method))
         stop ("The distance method is invalid.")
@@ -84,8 +103,9 @@ genefinder <- function (X, ilist, numResults=25, scale="none", method="euclidean
 
     Genes <- extCall$g
     Dists <- extCall$d
-
     return(list(indices=Genes, dists=Dists))
+}, where=where)
+
 }
 
 
