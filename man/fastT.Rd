@@ -6,7 +6,7 @@
   data matrix. 
 }
 \usage{
-fastT(data, ig1, ig2, var.equal=FALSE)
+fastT(data, ig1, ig2, var.equal=TRUE)
 }
 \arguments{
   \item{data}{A matrix of numbers. }
@@ -15,10 +15,8 @@ fastT(data, ig1, ig2, var.equal=FALSE)
   \item{ig2}{The indices of the columns of \code{data} that correspond
     to group 2. }
   \item{var.equal}{a logical variable indicating whether to treat the two
-          variances as being equal. If \code{TRUE} then the pooled variance
-          is used to estimate the variance otherwise the Welch (or
-          Satterthwaite) approximation to the degrees of freedom is
-          used.}
+    variances as being equal. Currently, this parameter is
+    \emph{ignored}, and the pooled variance is always used.}
 }
 \details{
   Implemented in Fortran, by R. Gray. This is basically the same code as
@@ -41,5 +39,8 @@ A list with three components
  gp2 = 5:10
  ans = fastT(x, gp1, gp2)
 
+ for(i in 1:nrow(x))
+   stopifnot(abs(ans$z[i] -  t.test(x[i, gp1], x[i, gp2],
+       var.equal=TRUE)$statistic) < 1e-6)
 }
 \keyword{htest }
