@@ -70,7 +70,9 @@ Anova <- function(cov, p=0.05, na.rm=TRUE)
 coxfilter <- function(surt, cens, p) {
    autoload("coxph", "survival")
    function(x) {
-       srvd <- coxph(Surv(surt,cens)~x)
+       srvd <- try(coxph(Surv(surt,cens)~x))
+       if( inherits(srvd, "try-error") )
+           return(FALSE)
        ltest <- -2*(srvd$loglik[1] - srvd$loglik[2])
        pv <- 1 - pchisq(ltest, 1)
        if( pv < p )
