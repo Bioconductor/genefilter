@@ -29,9 +29,10 @@ coxfilter(surt, cens, p)
 
 \examples{
    set.seed(-5)
-   sfun<- coxfilter(rexp(10), ifelse(runif(10) < .7, 1, 0), .05)
+   sfun <- coxfilter(rexp(10), ifelse(runif(10) < .7, 1, 0), .05)
+   ffun <- filterfun(sfun)
    dat <- matrix(rnorm(1000), ncol=10)
-   out <- genefilter(dat, list(sfun))
+   out <- genefilter(dat, ffun)
 }
 \keyword{manip}
 
