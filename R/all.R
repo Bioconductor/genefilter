@@ -27,23 +27,12 @@ pOverA <-  function(A=100, p = .05 ,na.rm = TRUE) {
   }
 }
 
-#coefficient of variation
-cv <- function(a=1, b=Inf, na.rm=TRUE) {
-  function(x) {
-	sdx <- sd(x, na.rm=na.rm)
-        if(is.na(sdx) || sdx == 0 ) return(FALSE)
-	val <- mean(x, na.rm=na.rm)/sdx
-        if(val < a ) return(FALSE)
-        if(val > b ) return(FALSE)
-        return(TRUE)
-    }
-}
 
-sdom <- function(a=1, b=Inf, na.rm=TRUE) {
+cv <- function(a=1, b=Inf, na.rm=TRUE) {
     function(x) {
         	sdx <- sd(x, na.rm=na.rm)
         if(is.na(sdx) || sdx == 0 ) return(FALSE)
-	val <- sdx/mean(x, na.rm=na.rm)
+	val <- sdx/abs(mean(x, na.rm=na.rm))
         if(val < a ) return(FALSE)
         if(val > b ) return(FALSE)
         return(TRUE)

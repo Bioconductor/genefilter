@@ -29,7 +29,7 @@ pOverA(A=100, p=0.05, na.rm=TRUE)
 }
 \author{R. Gentleman}
 
-\seealso{  \code{\link{sdom}} }
+\seealso{  \code{\link{cv}} }
 
 \examples{
   ff<- pOverA(10, p=.1)
