@@ -310,8 +310,6 @@ void mm_distance(double *x, int *nr, int *nc, int *g, double *d,
 	/* Detect any ties */
 	detectTies(iRow[j], *nResults, *nr, tmp); 
 
-	Rprintf("Got %d,%f\n",tmp[1].geneNum,tmp[1].geneDist);
-	
 	/* Copy the 1<->nResults data points into the final array */
 	baseIndex = *nResults * j;
 	for (k = 1; k <= *nResults; k++) {
