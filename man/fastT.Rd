@@ -26,7 +26,7 @@ fastT(data, ig1, ig2, var.equal=FALSE)
   single precision.
 }
 \value{
-A list with two components
+A list with three components
   \item{z }{A vector of row-wise t-statistics.}
   \item{dm }{A vector of row-wise difference in mean.}
   \item{var.equal}{The value used for var.equal.}
