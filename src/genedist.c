@@ -162,9 +162,9 @@ static double mm_euclidean(double *x, double *wval, int nr, int nc, int i1, int 
     for(j = 0 ; j < nc ; j++) {
 	if(R_FINITE(x[i1]) && R_FINITE(x[i2])) {
 	    dev = (x[i1] - x[i2]);
-	    dist += dev * dev;
-	    /* apply weight */
-	    dist *= wval[j];
+	    dev = dev * dev;
+	    /* Apply weight and add the total */
+	    dist += (wval[j] * dev);
 	    count++;
 	}
 	i1 += nr;
