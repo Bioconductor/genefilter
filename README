@@ -9,7 +9,7 @@ Idea:
 
  This library should now be maintained at a make check level.
 
-Next:
+Next: (see geneplotter for some of these features)
     Michael is working on a genefinder: methods for finding genes that
   cluster like those in a specified list
 
@@ -26,4 +26,22 @@ Next:
    we should track that down.
 
 
-   
+To Do, Oct 1, 2001
+
+ o Get some sort of ranking information for the genelists selected by either
+   genefilter or genefilter2
+
+ o Determine how to use the SE's that come from Li and Wong model-based 
+   expressions, implement these and document.
+
+ o Some papers (Tusher et al and Efron, plus I think Bob Gray in permax) have
+   used a small constant to adjust the standard error estimates in the 
+   denominator of t-stats. The idea seems to be that if the expression is low
+   and the se is small we still are not interested, so these genes should be
+   discounted somehow.
+   If there is something real here then all other model based filters should
+   probably incorporate that.
+
+ o genefinder needs to have a selection mechanism added to it. Michael will 
+   probably be doing this.
+
