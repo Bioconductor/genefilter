@@ -141,6 +141,9 @@ genefilter <- function(expr, flist)
 
 filterfun <- function(...) {
      flist <- list(...)
+ #let the user supply a list
+     if( length(flist) == 1 && is.list(flist[[1]]) )
+         flist <- flist[[1]]
      f <- function( x ) {
          for( fun in flist )
              if( ! fun(x) )
