@@ -65,7 +65,7 @@ rowFtests <- function(x, fac,var.equal=TRUE) {
   
   ## p-value for F-test
   pval   <- pf(fstat, dff, dfr, lower.tail = FALSE)
-  return(list(statistic=fstat, pvalue=pval, dof=c(dff,dfr)))
+  return(list(statistic=fstat, p.value=pval, dof=c(dff,dfr)))
 }
 
 rowttests <- function(x, fac) {
@@ -100,6 +100,6 @@ rowttests <- function(x, fac) {
     tstat <- (xavg2 - xavg1) / denom
   }
   pval  <- 2*pt(abs(tstat), dof, lower.tail = FALSE)
-  return(list(statistic=tstat, pvalue=pval, dof=dof))
+  return(list(statistic=tstat, p.value=pval, dof=dof))
 }
 
