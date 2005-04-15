@@ -11,7 +11,7 @@
 \usage{
 rowttests(x, fac, tstatOnly = FALSE) 
 colttests(x, fac, tstatOnly = FALSE)
-fastT(x, ig1, ig2)
+fastT(x, ig1, ig2, var.equal = TRUE)
 
 rowFtests(x, fac, var.equal = TRUE)
 colFtests(x, fac, var.equal = TRUE)
