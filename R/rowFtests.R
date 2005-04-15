@@ -136,7 +136,7 @@ fastT = function(x, ig1, ig2, var.equal=TRUE) {
            as.integer(ng1+ng2), as.integer(ng1), z = as.single(z),
          dm = as.single(dm), var.equal=as.integer(var.equal),
          ratio = as.integer(as.integer(0)), PACKAGE="genefilter")
-    return(list(z = Z$z, dm=Z$dm, var.equal=Z$var.equal, ratio=ratio))
+    return(list(z = Z$z, dm=Z$dm, var.equal=Z$var.equal))
 }
 
 ## ------------------------------------------------------------
