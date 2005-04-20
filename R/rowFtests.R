@@ -128,7 +128,7 @@ fastT = function(x, ig1, ig2, var.equal=TRUE) {
     if( ncol(x) != ng1+ng2)
         stop("wrong sets of columns")
 
-    outd = x[,c(ig1, ig2)]
+    outd = x[,c(ig1, ig2),drop=FALSE]
     nr = nrow(outd)
     z = rep(0, nr)
     dm = rep(0, nr)
