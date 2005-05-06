@@ -144,18 +144,22 @@ fastT = function(x, ig1, ig2, var.equal=TRUE) {
 ## make sure it is an integer 
 ## ------------------------------------------------------------
 checkfac = function(fac) {
-  one = as.integer(1)
   if(missing(fac)) {
-    nrgrp = one
     fac   = integer(ncol(x))
-  } else if (is.factor(fac)) {
-    nrgrp = nlevels(fac)
-    fac   = as.integer(fac)-one
-  } else if(is.numeric(fac)) {
-    nrgrp = as.integer(max(fac))-one
+  }
+  if(is.numeric(fac)) {
+    nrgrp = as.integer(max(fac)+1)
     fac   = as.integer(fac)
   }
+  ## this must precede the factor test
+  if(is.character(fac))
+    fac = factor(fac)
+
+  if (is.factor(fac)) {
+    nrgrp = nlevels(fac)
+    fac   = as.integer(as.integer(fac)-1)
+  } 
   if(!is.integer(fac))
-    stop("'fac' must be factor, numeric, or integer")
+    stop("'fac' must be factor, character, numeric, or integer")
   return(list(fac=fac, nrgrp=nrgrp))
 }
