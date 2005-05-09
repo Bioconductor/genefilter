@@ -108,7 +108,7 @@ The \verb+method+ parameter can take the following values:
 The version number of R and packages loaded for generating the vignette were:
 
 <<echo=FALSE,results=tex>>=
-sessionInfo()
+toLatex(sessionInfo())
 @
 
 \end{document}
