@@ -19,7 +19,7 @@ coxfilter(surt, cens, p)
 }
 
 \value{
-  Calls to the \code{\link{coxph}} function in the \code{survival}
+  Calls to the \code{\link[survival]{coxph}} function in the \code{survival}
     library are used to fit a Cox model. The filter function returns
     \code{TRUE} if the p-value in the fit is less than \code{p}.
 }
