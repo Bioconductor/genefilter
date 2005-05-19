@@ -1,5 +1,7 @@
+import("Biobase")
+import("survival")
 
-useDynLib(genefilter)
+useDynLib("genefilter")
 
 export("Anova", "allNA", "anyNA", "coxfilter",
   "cv", "eSetFilter",
@@ -7,7 +9,8 @@ export("Anova", "allNA", "anyNA", "coxfilter",
   "rowttests", "colttests", "rowFtests", "colFtests",
   "rowSds",
   "filterfun", "gapFilter", 
-  "genefilter", "genefinder", "genescale", "getFilterNames",
+  "genefilter", "genescale", "getFilterNames",
   "getFuncDesc", "getRdAsText", "isESet", "kOverA", "maxA", "pOverA",
   "parseArgs", "parseDesc", "setESetArgs", "showESet") 
 
+exportMethods("genefinder")

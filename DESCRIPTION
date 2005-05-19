@@ -1,6 +1,6 @@
 Package: genefilter
 Title: genefilter: filter genes
-Version: 1.6.1
+Version: 1.6.2
 Date: 6 Mai 2005
 Author: R. Gentleman, V. Carey, W. Huber
 Description: Some basic functions for filtering genes 
@@ -8,4 +8,4 @@ Maintainer: R. Gentleman <rgentlem@hsph.harvard.edu>
 Depends: R (>= 2.1.0), Biobase, survival
 Suggests: class, tkWidgets
 License: LGPL
-
+SaveImage: yes
