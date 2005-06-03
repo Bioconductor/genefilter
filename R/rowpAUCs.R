@@ -1,4 +1,4 @@
-rowPAUCs <- function(x, fac, cutpts, p=0.1){
+rowpAUCs <- function(x, fac, cutpts, p=0.1){
 
   fac = as.integer(fac)
   if (!all(sort(unique(fac)) == c(0, 1)))
