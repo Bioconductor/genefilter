@@ -1,11 +1,11 @@
-\name{rowPAUCs}
-\alias{rowPAUCs}
+\name{rowpAUCs}
+\alias{rowpAUCs}
 
 \title{Fixme.}
 \description{Fixme.}
 
 \usage{
-rowPAUCs(x, fac, cutpts, p=0.1)
+rowpAUCs(x, fac, cutpts, p=0.1)
 }
 \arguments{
   \item{x}{\code{exprSet} or numeric matrix. The matrix must not
@@ -31,7 +31,7 @@ rowPAUCs(x, fac, cutpts, p=0.1)
    f2 = floor(runif(ncol(x))*2)
 
    r1 = rowttests(x, f2)
-   r2 = rowPAUCs(x, f2)
+   r2 = rowpAUCs(x, f2)
 
  if(interactive())
    plot(r1$statistic, r2$BLA)
