@@ -90,8 +90,8 @@ rowttests = function(x, fac, tstatOnly=FALSE) {
   }
   
   f   = checkfac(fac)
-  if(f$nrgrp!=2)
-    stop("Number of groups must be 2 for 'rowttests'.")
+  if(f$nrgrp>2)
+    stop("Number of groups must be <= 2 for 'rowttests'.")
   
   res = .Call("rowcolttests", x, f$fac, f$nrgrp,
                as.integer(0), PACKAGE="genefilter")

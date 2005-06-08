@@ -24,8 +24,8 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
     int i, j, grp, dof;
     double z;
 
-    /* Currently we only provide for one- and two-sample t-tests (nrgrp=0 or
-       1), but it should be possible to generalize this code to more samples
+    /* Currently we only provide for one- and two-sample t-tests (nrgrp=1 or
+       2), but it should be possible to generalize this code to more samples
        (F-test) without too many changes */
 
     int n[2];   
