@@ -33,6 +33,9 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
     double* s[2];
     double* ss[2];
 
+    if(nrgrp>2)
+	error("Please do not use 'nrgrp' >2 with 'rowcolttests'");
+
     /* allocate and initialize storage for intermediate quantities
        (namely first and second moments for each group) */
     for(grp=0; grp<nrgrp; grp++) {
