@@ -85,7 +85,7 @@ colFtests = function(x, fac,var.equal=TRUE)
 rowttests = function(x, fac, tstatOnly=FALSE) {
   if(is(x, "exprSet")) {
     if(is.character(fac))
-      fac = pData(x)[[fac]]
+      fac = as.integer(factor(pData(x)[[fac]]))-1
     x   = exprs(x)
   }
   
