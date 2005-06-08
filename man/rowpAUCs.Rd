@@ -34,10 +34,10 @@ rowpAUCs(x, fac, cutpts, p=0.1)
   A list with the calculated specificities and sensitivities for each
   row as matrices, and the corresponding pAUCs.  
 }
-\references{Pepe MS, Longton G, Anderson GL, Schummer M.,  Selecting
+\references{Pepe MS, Longton G, Anderson GL, Schummer M.:  Selecting
     differentially expressed genes from microarray experiments. \emph{Biometrics. 2003 Mar;59(1):133-42.}}
 \author{Florian Hahne <f.hahne@dkfz.de>}
-\seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca}, \link[ROC:pAUC]{pAUC}}}
+\seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca}, \link[ROC:AUC]{pAUC}}}
 \examples{
   
    x  = matrix(runif(9700), ncol=97)
