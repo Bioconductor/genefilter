@@ -1,10 +1,20 @@
+doCuts = function(x){
+  sx = sort(as.numeric(x))
+  delta = min(diff(sx))/2
+  cutpts = c(sx - delta, sx[length(sx)] + delta)
+}
+
+
 rowpAUCs <- function(x, fac, cutpts, p=0.1){
+  if(is(x, "exprSet")) {
+     if(is.character(fac))
+       fac = as.integer(factor(pData(x)[[fac]]))-1
+     x   = exprs(x)
+  }
+  f = checkfac(fac)
+  if(f$nrgrp != 2 || length(f$fac) != ncol(x) || length(unique(f$fac)) !=2 )
+    stop("'fac' must be factor with 2 levels and length 'ncol(x)'")
 
-  fac = as.integer(fac)
-  if (!all(sort(unique(fac)) == c(0, 1)))
-        stop("'fac' variable must take values 0 or 1")
-
-  ## TO DO: also cater for exprSets, as in rowttests
   if(!is.matrix(x))
     stop("'x' must be a matrix.")
 
@@ -13,19 +23,13 @@ rowpAUCs <- function(x, fac, cutpts, p=0.1){
   
   # cutpoints
   if (missing(cutpts)) {
-    doCuts = function(w){
-      w = as.numeric(w)
-      sw = sort(w)
-      delta = min(diff(sw))/2
-      cutpts = c(sw - delta, sw[length(sw)] + delta)
-    }
     cutpts = t(apply(x, 1, doCuts))
   } else {
-    if(length(cutpts)<1)
+    if(length(cutpts)<2)
       stop("invalid number of cutpoints")
     if(!is.matrix(cutpts))
       cutpts <- matrix(cutpts, ncol=length(cutpts), nrow=nrow(x), byrow=TRUE)
-    else if(ncol(cutpts) != ncol(x))
+    if(ncol(cutpts) != ncol(x))
       stop("invalid cutpoints matrix") 
   }
 
@@ -35,6 +39,6 @@ rowpAUCs <- function(x, fac, cutpts, p=0.1){
   spec = sens = matrix(0, nrow=nd[1], ncol=nc)
   pAUC = numeric(nd[1])
   return(invisible(.C("pAUC", data=x, nd=nd, cutpts=cutpts, nc=nc,
-            truth=fac, spec=spec, sens=sens, pAUC=pAUC,
+            truth=as.integer(f$fac), spec=spec, sens=sens, pAUC=pAUC,
             p=p))[6:8])
 }
