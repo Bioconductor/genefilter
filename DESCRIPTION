@@ -4,7 +4,7 @@ Version: 1.7.5
 Date: 8. Juni 2005
 Author: R. Gentleman, V. Carey, W. Huber
 Description: Some basic functions for filtering genes
-Maintainer: R. Gentleman <rgentlem@hsph.harvard.edu>
+Maintainer: R. Gentleman <rgentlem@fhcrc.org>
 Depends: R (>= 2.1.0), Biobase, survival
 Suggests: class, tkWidgets
 License: LGPL
