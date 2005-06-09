@@ -163,6 +163,9 @@ checkfac = function(fac) {
     fac   = as.integer(as.integer(fac)-1)
   } 
   if(!is.integer(fac))
-    stop("'fac' must be factor, character, numeric, or integer")
+    stop("'fac' must be factor, character, numeric, or integer.")
+  if(any(fac<0))
+    stop("'fac' must not be negative.")
+    
   return(list(fac=fac, nrgrp=nrgrp))
 }
