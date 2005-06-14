@@ -169,7 +169,7 @@ getFuncDesc <- function(lib = "genefilter", funcs = getFilterNames()){
 
     lines <- getRdAsText(lib)
     for(i in funcs){
-        rd <- lines[grep(paste("\\\\name{", i, "}", sep = ""), lines)]
+        rd <- lines[grep(paste("\\\\name\\{", i, "\\}", sep = ""), lines)]
         desc <- parseDesc(rd)
         args <- parseArgs(rd)
         if(length(args) > 0){
@@ -185,8 +185,8 @@ getFuncDesc <- function(lib = "genefilter", funcs = getFilterNames()){
 }
 
 getRdAsText <- function(lib){
-    fileName <- file.path(.path.package(lib), "man",
-                          paste(lib, ".Rd", sep = ""))
+    fileName <- gzfile(file.path(.path.package(lib), "man",
+                          paste(lib, ".Rd.gz", sep = "")), open = "r")
     lines <- readLines(fileName)
 
     lines <- paste(lines, sep = "", collapse = " ")
@@ -195,20 +195,20 @@ getRdAsText <- function(lib){
 }
 
 parseDesc <- function(text){
-    descRExp <- ".*\\\\description{(.*)}.*\\\\usage{.*"
+    descRExp <- ".*\\\\description\\{(.*)\\}.*\\\\usage\\{.*"
     text <- gsub(descRExp, "\\1", text)
-    text <- gsub("(\\\\[a-zA-Z]*{|})", "", text)
+    text <- gsub("(\\\\[a-zA-Z]*\\{|\\})", "", text)
     return(text)
 }
 
 parseArgs <- function(text){
     argsList <- list()
-    text <- gsub(".*\\\\arguments{(.*)}.*\\\\details{.*", "\\1", text)
-    text <- gsub(".*\\\\arguments{(.*)}.*\\\\value{.*", "\\1", text)
-    text <- unlist(strsplit(text, "\\\\item{"))
-    text <- gsub("(\\\\[a-zA-Z]*{|})", "", text)
+    text <- gsub(".*\\\\arguments\\{(.*)\\}.*\\\\details\\{.*", "\\1", text)
+    text <- gsub(".*\\\\arguments\\{(.*)\\}.*\\\\value\\{.*", "\\1", text)
+    text <- unlist(strsplit(text, "\\\\item\\{"))
+    text <- gsub("(\\\\[a-zA-Z]*\\{|\\})", "", text)
     for(i in text){
-        i <- unlist(strsplit(i, "{"))
+        i <- unlist(strsplit(i, "\\{"))
         if(length(i) > 1){
             argsList[[i[1]]] <- i[2]
         }
