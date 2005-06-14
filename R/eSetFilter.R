@@ -259,7 +259,7 @@ setESetArgs <- function(filter){
     ftFun <- list()
 
     args <- getRdAsText("genefilter")
-    args <- args[grep(paste("\\\\name{", filter, "}", sep = ""), args)]
+    args <- args[grep(paste("\\\\name\\{", filter, "\\}", sep = ""), args)]
     args <- parseArgs(args)
     argValues <- formals(filter)
 
@@ -306,7 +306,7 @@ setESetArgs <- function(filter){
     tkwait.window(base)
     if(END){
         for(i in names(argValues)){
-            argValues[[i]] <- formatArg(tclvalue(argsVar[[i]]))
+            argValues[[i]] <- tkWidgets:::formatArg(tclvalue(argsVar[[i]]))
         }
         return(argValues)
     }else{
