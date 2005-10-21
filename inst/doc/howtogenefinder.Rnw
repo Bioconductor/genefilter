@@ -5,7 +5,7 @@
 %\VignetteIndexEntry{HowTo: Genefinder}
 %\VignetteDepends{genefilter}
 %\VignetteKeywords{Expression Analysis}
-%\VignettePackage{genefinder}
+%\VignettePackage{genefilter}
 \documentclass{article}
 
 \usepackage{hyperref}
