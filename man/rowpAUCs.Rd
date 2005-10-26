@@ -26,10 +26,6 @@ rowpAUCs(x, fac, cutpts, p=0.1)
   the curve (pAUC) for a given data matrix or \code{exprSet}. The
   function is implemented in C and thus reasonably fast and memory
   efficient.
-  
-  The definition of the pAUC uses a naive trapezoidal rule
-  which, although less accurate, is faster than
-  more elaborate integrators. 
 }
 \value{
   A list with the calculated specificities and sensitivities for each
@@ -40,7 +36,7 @@ rowpAUCs(x, fac, cutpts, p=0.1)
 \author{Florian Hahne <f.hahne@dkfz.de>}
 \seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca}, \link[ROC:AUC]{pAUC}}}
 \examples{
-  
+
    data(eset)
 
    r1 = rowttests(eset, "cov2")
@@ -49,6 +45,21 @@ rowpAUCs(x, fac, cutpts, p=0.1)
  if(interactive()) {
    plot(r2$pAUC, r1$statistic, pch=16)
    plot(1-r2$spec[1,], r2$sens[1,], pch=16)
+ }
+
+ ## this compares performance and output of rowpAUCs to function pAUC in
+ ## package ROC 
+ if(require(ROC)){
+
+  myRule = function(x) {
+    pAUC(rocdemo.sca(truth = pData(eset)$cov2-1, data = x, rule = dxrule.sca), t0 = 0.1)
+  }
+  cat("computation time:\n")
+  cat("function pAUC: ")
+  print(system.time(r3 <- esApply(eset[1:100, ], 1, myRule)))
+  cat("function rowpAUCs: ")
+  print(system.time(r2 <- rowpAUCs(eset[1:100, ], "cov2")))
+  plot(r3, r2$pAUC, xlab="function pAUC", ylab="function rowpAUCs", main="pAUCs")
  }
 }
 

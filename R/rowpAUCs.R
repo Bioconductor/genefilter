@@ -34,11 +34,13 @@ rowpAUCs <- function(x, fac, cutpts, p=0.1){
   }
 
   #memory allocation 
-  nd = as.integer(dim(x))
-  nc = as.integer(ncol(cutpts))
-  spec = sens = matrix(0, nrow=nd[1], ncol=nc)
-  pAUC = numeric(nd[1])
-  return(invisible(.C("pAUC", data=x, nd=nd, cutpts=cutpts, nc=nc,
-            truth=as.integer(f$fac), spec=spec, sens=sens, pAUC=pAUC,
-            p=p))[6:8])
+  #nd = as.integer(dim(x))
+  #nc = as.integer(ncol(cutpts))
+  #spec = sens = matrix(0, nrow=nd[1], ncol=nc)
+  #pAUC = numeric(nd[1])
+  #return(invisible(.C("pAUC", data=x, nd=nd, cutpts=cutpts, nc=nc,
+  #          truth=as.integer(f$fac), spec=spec, sens=sens, pAUC=pAUC,
+  #          p=p))[6:8])
+  res <- .Call("pAUC", x, cutpts, as.integer(f$fac), p, PACKAGE="genefilter")
+  return(res)
 }
