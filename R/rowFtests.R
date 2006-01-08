@@ -2,7 +2,7 @@
 ## x: a numeric matrix with n rows ("genes") and d columns ("conditions")
 ## fac: a factor
 ##------------------------------------------------------------
-rowFtests = function(x, fac,var.equal=TRUE) {
+rowFtests = function(x, fac, var.equal=TRUE) {
   if(is(x, "exprSet")) {
     if(is.character(fac))
       fac = pData(x)[[fac]]
@@ -16,7 +16,7 @@ rowFtests = function(x, fac,var.equal=TRUE) {
   fac <- fac[!is.na(fac)]
 
   ## Number of levels (groups)
-  k      <- nlevels(fac)
+  k <- nlevels(fac)
 
   ## xm: a nrow(x) x nlevels(fac) matrix with the means of each factor
   ## level
@@ -92,7 +92,7 @@ rowttests = function(x, fac, tstatOnly=FALSE) {
   f   = checkfac(fac)
   if(f$nrgrp>2)
     stop("Number of groups must be <= 2 for 'rowttests'.")
-  
+
   res = .Call("rowcolttests", x, f$fac, f$nrgrp,
                as.integer(0), PACKAGE="genefilter")
   if(!tstatOnly)
@@ -164,7 +164,8 @@ checkfac = function(fac) {
   } 
   if(!is.integer(fac))
     stop("'fac' must be factor, character, numeric, or integer.")
-  if(any(fac<0))
+  
+  if(any(fac<0, na.rm=TRUE))
     stop("'fac' must not be negative.")
     
   return(list(fac=fac, nrgrp=nrgrp))

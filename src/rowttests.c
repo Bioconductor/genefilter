@@ -54,7 +54,7 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
 	    for(i=0; i<nr; i++) {
 		for(j=0; j<nc; j++) {
 		    grp = fac[j];
-		    if(!R_IsNA(grp)) {
+		    if(grp!=R_NaInt) {
 			z = x[i+nr*j];
 			s[grp][i]  += z;
 			ss[grp][i] += z*z;
@@ -65,7 +65,7 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
 	case 1:  /* by column */
 	    for(i=0; i<nr; i++) {
 		grp = fac[i];
-		if(!R_IsNA(grp)) {
+		if(grp!=R_NaInt) {
 		    for(j=0; j<nc; j++) {
 			z = x[i+nr*j];
 			s[grp][j]  += z;
@@ -81,7 +81,7 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
     /* determine group sizes */
     for(i=0; i<no; i++) {
 	grp = fac[i];
-	if(!R_IsNA(grp))
+	if(grp!=R_NaInt)
 	    n[grp]++;
     }
 
@@ -180,9 +180,14 @@ SEXP rowcolttests(SEXP _x, SEXP _fac, SEXP _nrgrp, SEXP _which)
 	  error("'which' must be 0 or 1.");
   }
   
+  /* this does not seem to work since R_IsNA is declared as:
+               int R_IsNA(double);
+     in Arith.h */
+  /* if(! (R_IsNA(fac[i]) || ((fac[i]>=0)&&(fac[i]<nrgrp))) ) */
+  
   fac = INTEGER(_fac);
   for(i=0; i<no; i++)
-      if(! (R_IsNA(fac[i]) || ((fac[i]>=0)&&(fac[i]<nrgrp))) )
+      if(! ((fac[i]==R_NaInt) || ((fac[i]>=0)&&(fac[i]<nrgrp))) )
 	  error("Elements of 'fac' must be >=0 and < 'nrgrp'.");
   /* done with fac */
 
