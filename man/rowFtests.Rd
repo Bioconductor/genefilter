@@ -91,23 +91,36 @@ colFtests(x, fac, var.equal = TRUE)
    about.equal = function(x,y,tol=1e-10)
      stopifnot(all(abs(x-y) < tol))
 
-   s1 = t.test(x[1,])
-   about.equal(s1$statistic, r1$statistic[1])
-   about.equal(s1$p.value,   r1$p.value[1])
+   for (j in 1:nrow(x)) {
+     s1 = t.test(x[j,])
+     about.equal(s1$statistic, r1$statistic[j])
+     about.equal(s1$p.value,   r1$p.value[j])
 
-   s2 = t.test(x[1,] ~ f2, var.equal=TRUE)
-   about.equal(s2$statistic, r2$statistic[1])
-   about.equal(s2$p.value,   r2$p.value[1])
+     s2 = t.test(x[j,] ~ f2, var.equal=TRUE)
+     about.equal(s2$statistic, r2$statistic[j])
+     about.equal(s2$p.value,   r2$p.value[j])
 
-   dm = -diff(tapply(x[1,], f2, mean))
-   about.equal(dm, r2$dm[1])
+     dm = -diff(tapply(x[j,], f2, mean))
+     about.equal(dm, r2$dm[j])
 
-   s7 = summary(lm(x[1,]~f7))
-   about.equal(s7$statistic$value, r7$statistic[1])
+     s7 = summary(lm(x[j,]~f7))
+     about.equal(s7$statistic$value, r7$statistic[j])
+   }
 
    ## colttests
    c2 = colttests(t(x), f2)
    stopifnot(identical(r2, c2))
+ 
+   ## missing values
+   f2n = f2
+   f2n[sample(length(f2n), 3)] = NA
+   r2n = rowttests(x, f2n)
+   for(j in 1:nrow(x)) {
+     s2n = t.test(x[j,] ~ f2n, var.equal=TRUE)
+     about.equal(s2n$statistic, r2n$statistic[j])
+     about.equal(s2n$p.value,   r2n$p.value[j])
+  }
+
 }
 
 

@@ -151,7 +151,7 @@ checkfac = function(fac) {
     fac   = integer(ncol(x))
   }
   if(is.numeric(fac)) {
-    nrgrp = as.integer(max(fac)+1)
+    nrgrp = as.integer(max(fac, na.rm=TRUE)+1)
     fac   = as.integer(fac)
   }
   ## this must precede the factor test
