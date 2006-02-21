@@ -37,10 +37,10 @@ rowpAUCs(x, fac, cutpts, p=0.1)
 \seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca}, \link[ROC:AUC]{pAUC}}}
 \examples{
 
-   data(eset)
+   data(sample.exprSet.1)
 
-   r1 = rowttests(eset, "cov2")
-   r2 = rowpAUCs(eset, "cov2")
+   r1 = rowttests(sample.exprSet.1, "cov2")
+   r2 = rowpAUCs(sample.exprSet.1, "cov2")
 
  if(interactive()) {
    plot(r2$pAUC, r1$statistic, pch=16)
@@ -52,13 +52,13 @@ rowpAUCs(x, fac, cutpts, p=0.1)
  if(require(ROC)){
 
   myRule = function(x) {
-    pAUC(rocdemo.sca(truth = pData(eset)$cov2-1, data = x, rule = dxrule.sca), t0 = 0.1)
+    pAUC(rocdemo.sca(truth = pData(sample.exprSet.1)$cov2-1, data = x, rule = dxrule.sca), t0 = 0.1)
   }
   cat("computation time:\n")
   cat("function pAUC: ")
-  print(system.time(r3 <- esApply(eset[1:100, ], 1, myRule)))
+  print(system.time(r3 <- esApply(sample.exprSet.1[1:100, ], 1, myRule)))
   cat("function rowpAUCs: ")
-  print(system.time(r2 <- rowpAUCs(eset[1:100, ], "cov2")))
+  print(system.time(r2 <- rowpAUCs(sample.exprSet.1[1:100, ], "cov2")))
   plot(r3, r2$pAUC, xlab="function pAUC", ylab="function rowpAUCs", main="pAUCs")
  }
 }
