@@ -154,6 +154,8 @@ SEXP rowcolttests(SEXP _x, SEXP _fac, SEXP _nrgrp, SEXP _which)
       error("'nrgrp' must be integer of length 1.");
   nrgrp = INTEGER(_nrgrp)[0];
 
+  no = nt = -1; /* initialize - this is just to make some overeager compilers happy */
+
   /* check input argument fac */
   if(!isInteger(_fac))
       error("'fac' must be an integer.");
