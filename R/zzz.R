@@ -7,3 +7,6 @@
    }
  }
 
+.onUnload <- function( libpath ) {
+  library.dynam.unload( "genefilter", libpath )
+}
