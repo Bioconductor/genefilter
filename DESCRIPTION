@@ -1,7 +1,7 @@
 Package: genefilter
 Title: genefilter: filter genes
-Version: 1.9.4
-Date: 1. Maerz 2006
+Version: 1.9.5
+Date: 6. Maerz 2006
 Author: R. Gentleman, V. Carey, W. Huber
 Description: Some basic functions for filtering genes
 biocViews: Statistics, Microarray

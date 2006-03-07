@@ -10,12 +10,14 @@ shorth <- function(x, na.rm=FALSE) {
     q     <- which(diffs==min(diffs))
 
     ## deal with ties: if they lie within 5%, simply take the average
-    ## otherwise, generate an error 
-    if (max(q)-min(q) <= 0.05*length(x)) {
+    ## otherwise, generate an error
+    maxq = max(q)
+    minq = min(q)
+    if (maxq-minq <= 0.05*length(x)) {
       q <- mean(q)
     } else {
-      stop(paste("Encountered a tie in the calculation of q: ", q, "\n",
-                 sx[q], "\n", sx[q+width], "\n"))
+      stop(paste("Encountered a tie, this could mean that the distribution does not have a well-defined peak.\nq=",
+                 minq, "...", maxq, "\nvalues: ", signif(sx[minq],4), "...", signif(sx[minq+width],4), "\n", sep=""))
     }
     rv <- mean(sx[q:(q+width-1)])
   }
