@@ -1,4 +1,4 @@
-shorth <- function(x, na.rm=FALSE) {
+shorth <- function(x, na.rm=FALSE, tieLimit=0.05) {
   stopifnot(is.numeric(x))
   if (na.rm)
     x <- x[!is.na(x)]
@@ -13,7 +13,7 @@ shorth <- function(x, na.rm=FALSE) {
     ## otherwise, generate an error
     maxq = max(q)
     minq = min(q)
-    if (maxq-minq <= 0.05*length(x)) {
+    if (maxq-minq <= tieLimit * length(x)) {
       q <- mean(q)
     } else {
       stop(paste("Encountered a tie, this could mean that the distribution does not have a well-defined peak.\nq=",
