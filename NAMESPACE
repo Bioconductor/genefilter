@@ -8,7 +8,7 @@ export("Anova", "allNA", "anyNA", "coxfilter",
   "fastT", "ttest", "shorth",
   "rowttests", "colttests", "rowFtests", "colFtests",
   "rowSds", "rowpAUCs",
-  "filterfun", "gapFilter", 
+  "filterfun", "findLargest", "gapFilter", 
   "genefilter", "genescale", "getFilterNames",
   "getFuncDesc", "getRdAsText", "isESet", "kOverA", "maxA", "pOverA",
   "parseArgs", "parseDesc", "setESetArgs", "showESet") 
