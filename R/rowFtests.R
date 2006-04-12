@@ -3,10 +3,11 @@
 ## fac: a factor
 ##------------------------------------------------------------
 rowFtests = function(x, fac, var.equal=TRUE) {
-  if(is(x, "exprSet")) {
-    if(is.character(fac))
-      fac = pData(x)[[fac]]
-    x   = exprs(x)
+  if(inherits(x, "exprSet")) {
+    if(!missing(fac))
+      if(is.character(fac))
+        fac = as.integer(factor(pData(x)[[fac]]))-1
+    x = exprs(x)
   }
    
   sqr = function(x) x*x
@@ -83,13 +84,16 @@ colFtests = function(x, fac,var.equal=TRUE)
 ## rowttests
 ##--------------------------------------------------
 rowttests = function(x, fac, tstatOnly=FALSE) {
-  if(is(x, "exprSet")) {
-    if(is.character(fac))
-      fac = as.integer(factor(pData(x)[[fac]]))-1
-    x   = exprs(x)
+  if(inherits(x, "exprSet")) {
+    if(!missing(fac))
+      if(is.character(fac))
+        fac = as.integer(factor(pData(x)[[fac]]))-1
+    x = exprs(x)
   }
-  
-  f   = checkfac(fac)
+
+  if(missing(fac))
+    fac = integer(ncol(x))
+  f = checkfac(fac)
   if(f$nrgrp>2)
     stop("Number of groups must be <= 2 for 'rowttests'.")
 
@@ -104,7 +108,13 @@ rowttests = function(x, fac, tstatOnly=FALSE) {
 ## colttests
 ##--------------------------------------------------
 colttests = function(x, fac, tstatOnly=FALSE) {
-  f   = checkfac(fac)
+
+  if(missing(fac))
+    fac = integer(ncol(x))
+  f = checkfac(fac)
+  if(f$nrgrp>2)
+    stop("Number of groups must be <= 2 for 'colttests'.")
+  
   res = .Call("rowcolttests", x, f$fac, f$nrgrp,
                as.integer(1), PACKAGE="genefilter")
   if(!tstatOnly)
@@ -147,9 +157,7 @@ fastT = function(x, ig1, ig2, var.equal=TRUE) {
 ## make sure it is an integer 
 ## ------------------------------------------------------------
 checkfac = function(fac) {
-  if(missing(fac)) {
-    fac   = integer(ncol(x))
-  }
+
   if(is.numeric(fac)) {
     nrgrp = as.integer(max(fac, na.rm=TRUE)+1)
     fac   = as.integer(fac)
