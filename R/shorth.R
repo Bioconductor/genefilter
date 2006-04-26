@@ -1,4 +1,4 @@
-shorth <- function(x, na.rm=FALSE, tieLimit=0.05) {
+shorth <- function(x, na.rm=FALSE, tie.action="mean", tie.limit=0.05) {
   stopifnot(is.numeric(x))
   if (na.rm)
     x <- x[!is.na(x)]
@@ -9,15 +9,24 @@ shorth <- function(x, na.rm=FALSE, tieLimit=0.05) {
     diffs <- sx[(width+1):length(x)] - sx[1:(length(x)-width)]
     q     <- which(diffs==min(diffs))
 
-    ## deal with ties: if they lie within 5%, simply take the average
-    ## otherwise, generate an error
-    maxq = max(q)
-    minq = min(q)
-    if (maxq-minq <= tieLimit * length(x)) {
-      q <- mean(q)
-    } else {
-      stop(paste("Encountered a tie, this could mean that the distribution does not have a well-defined peak.\nq=",
-                 minq, "...", maxq, "\nvalues: ", signif(sx[minq],4), "...", signif(sx[minq+width],4), "\n", sep=""))
+    if(length(q)>1) {
+      ## deal with ties:
+      maxq = max(q)
+      minq = min(q)
+      ## take the action specified in "tie.action"
+      q <- switch(tie.action,
+                  mean = {
+                    if (maxq-minq <= tie.limit * length(x)) {
+                      mean(q)
+                    } else {
+                      stop(paste("Encountered a tie, and the difference between minimal and maximal value is larger than 'length(x)*tie.limit'.",
+                                 "This could mean that the distribution does not have a single well-defined mode.",
+                                 paste("q=", minq, "...", maxq, ",  values=", signif(sx[minq],4), "...", signif(sx[minq+width],4), sep=""), sep="\n"))
+                    }},
+                    max  = maxq, ## largest midpoint (maxq)
+                    min  = minq, # smallest midpoint (minq)
+                    stop(sprintf("Invalid value '%s' for argument 'tie.action'", tie.action))
+                  )
     }
     rv <- mean(sx[q:(q+width-1)])
   }
