@@ -5,7 +5,6 @@
 \alias{getRdAsText}
 \alias{parseDesc}
 \alias{parseArgs}
-\alias{eSet}
 \alias{setESetArgs}
 \alias{isESet}
 \alias{showESet}
