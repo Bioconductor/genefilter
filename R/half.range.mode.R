@@ -13,7 +13,7 @@ half.range.mode <- function( data, B, B.sample, beta = .5, diag = FALSE ) {
        beta = as.double( beta ),
        diag = as.integer( diag ),
        M = double(1),
-       PACKAGE = "symp"
+       PACKAGE = "genefilter"
        )$M
 
   }
@@ -36,7 +36,7 @@ half.range.mode <- function( data, B, B.sample, beta = .5, diag = FALSE ) {
                      beta = as.double( beta ),
                      diag = as.integer( diag ),
                      M = double(1),
-                     PACKAGE = "symp"
+                     PACKAGE = "genefilter"
                      )$M
                 }
                 )

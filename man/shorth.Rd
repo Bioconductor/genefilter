@@ -27,6 +27,7 @@
 
 \value{The midpoint of the short of \code{x}.}
 \author{Wolfgang Huber \url{http://www.ebi.ac.uk/huber}, Ligia Pedroso Bras}
+\seealso{\code{\link{half.range.mode}}}
 
 \examples{
  

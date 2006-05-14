@@ -66,6 +66,6 @@ half.range.mode(data, B, B.sample, beta = 0.5, diag = FALSE)
 }
 
 \author{Richard Bourgon <bourgon@stat.berkeley.edu>}
-
+\seealso{\code{\link{shorth}}}
 \keyword{univar}
 \keyword{robust}

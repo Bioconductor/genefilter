@@ -5,7 +5,7 @@ useDynLib("genefilter")
 
 export("Anova", "allNA", "anyNA", "coxfilter",
   "cv", "eSetFilter",
-  "fastT", "ttest", "shorth",
+  "fastT", "ttest", "shorth", "half.range.mode",
   "rowttests", "colttests", "rowFtests", "colFtests",
   "rowSds", "rowpAUCs",
   "filterfun", "findLargest", "gapFilter", 
