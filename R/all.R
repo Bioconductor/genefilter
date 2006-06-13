@@ -129,7 +129,8 @@ gapFilter <- function(Gap, IQR, Prop, na.rm=TRUE, neg.rm=TRUE) {
 
 genefilter <- function(expr, flist)
     {
-     if( inherits(expr, "exprSet") )
+     if(inherits(expr, "exprSet") ||
+        inherits(expr, "ExpressionSet"))
        expr <- exprs(expr)
      apply(expr, 1, flist)
 }
