@@ -81,30 +81,6 @@ colFtests = function(x, fac,var.equal=TRUE)
   rowFtests(t(x), fac, var.equal) 
 
 ##--------------------------------------------------
-## rowttests
-##--------------------------------------------------
-rowttests = function(x, fac, tstatOnly=FALSE) {
-  if(inherits(x, "exprSet")) {
-    if(!missing(fac))
-      if(is.character(fac))
-        fac = as.integer(factor(pData(x)[[fac]]))-1
-    x = exprs(x)
-  }
-
-  if(missing(fac))
-    fac = integer(ncol(x))
-  f = checkfac(fac)
-  if(f$nrgrp>2)
-    stop("Number of groups must be <= 2 for 'rowttests'.")
-
-  res = .Call("rowcolttests", x, f$fac, f$nrgrp,
-               as.integer(0), PACKAGE="genefilter")
-  if(!tstatOnly)
-    res$p.value = 2*pt(abs(res$statistic), res$df, lower.tail = FALSE)
-  return(res)
-}
-
-##--------------------------------------------------
 ## colttests
 ##--------------------------------------------------
 colttests = function(x, fac, tstatOnly=FALSE) {

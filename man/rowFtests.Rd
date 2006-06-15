@@ -1,7 +1,17 @@
 \name{rowFtests}
 \alias{colFtests}
 \alias{rowFtests}
+
 \alias{rowttests}
+\alias{rowttests,matrix,factor-method}
+\alias{rowttests,matrix,missing-method}
+\alias{rowttests,exprSet,factor-method}
+\alias{rowttests,exprSet,character-method}
+\alias{rowttests,exprSet,missing-method}
+\alias{rowttests,ExpressionSet,factor-method}
+\alias{rowttests,ExpressionSet,character-method}
+\alias{rowttests,ExpressionSet,missing-method}
+
 \alias{colttests}
 \alias{fastT}
 
