@@ -36,7 +36,7 @@ setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY",
           "ANY"),
           function(X, ilist, numResults, scale, weights,
                    method) {
-              gN <- geneNames(X)
+              gN <- featureNames(X)
               if (is.character(ilist))
                   ilist <- match(ilist,gN)
               ans <- genefinder(exprs(X), ilist, numResults, scale, weights,
