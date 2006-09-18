@@ -8,6 +8,7 @@ Maintainer: Biocore Team <biocpkgs@lists.fhcrc.org>
 Depends: R (>= 2.1.0), methods, Biobase, survival
 Suggests: class, hgu95av2
 Uses: tkWidgets
-License: LGPL
+License: The Artistic License, Version 2.0
 SaveImage: yes
+LazyData: yes
 
