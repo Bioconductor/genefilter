@@ -154,7 +154,7 @@ filterfun <- function(...) {
 
 
 findLargest = function(gN, testStat, data="hgu133plus2") {
-    LLe = get(paste(data, "LOCUSID", sep=""))
+    LLe = get(paste(data, "ENTREZID", sep=""))
     lls = unlist(mget(gN, LLe))
     if(length(testStat) != length(gN) )
         stop("testStat and gN must be the same length")

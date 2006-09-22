@@ -37,7 +37,7 @@ findLargest(gN, testStat, data = "hgu133plus2")
 \examples{
   library("hgu95av2")
   set.seed(124)
-  gN = sample(ls(hgu95av2LOCUSID), 200)
+  gN = sample(ls(hgu95av2ENTREZID), 200)
   stats = rnorm(200)
   findLargest(gN, stats, "hgu95av2")
 
