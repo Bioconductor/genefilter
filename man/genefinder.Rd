@@ -1,6 +1,7 @@
 \name{genefinder}
 \alias{genefinder}
 \alias{genefinder,exprSet,vector-method}
+\alias{genefinder,ExpressionSet,vector-method}
 \alias{genefinder,matrix,vector-method}
 \title{ Finds genes that have similar patterns of expression. }
 \description{

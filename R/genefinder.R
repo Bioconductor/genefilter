@@ -32,6 +32,19 @@ setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
     weights, method="euclidean" )
     standardGeneric("genefinder"))
 
+setMethod("genefinder", c("ExpressionSet", "vector", "ANY", "ANY", "ANY",
+          "ANY"),
+          function(X, ilist, numResults, scale, weights,
+                   method) {
+              gN <- featureNames(X)
+              if (is.character(ilist))
+                  ilist <- match(ilist,gN)
+              ans <- genefinder(exprs(X), ilist, numResults, scale, weights,
+                        method=method)
+              names(ans) <- gN[ilist]
+              ans
+      })
+
 setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY",
           "ANY"),
           function(X, ilist, numResults, scale, weights,
