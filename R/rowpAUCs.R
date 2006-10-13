@@ -6,12 +6,12 @@ doCuts = function(x){
 
 
 rowpAUCs <- function(x, fac, cutpts, p=0.1){
-  if(is(x, "exprSet")) {
+  if(is(x, "exprSet") | is(x, "eSet")) {
      if(is.character(fac))
        fac = as.integer(factor(pData(x)[[fac]]))-1
      x   = exprs(x)
   }
-  f = checkfac(fac)
+  f = genefilter:::checkfac(fac)
   if(f$nrgrp != 2 || length(f$fac) != ncol(x) || length(unique(f$fac)) !=2 )
     stop("'fac' must be factor with 2 levels and length 'ncol(x)'")
 
