@@ -6,7 +6,8 @@ doCuts = function(x){
 
 
 rowpAUCs <- function(x, fac, cutpts, p=0.1){
-  if(is(x, "exprSet") | is(x, "eSet")) {
+    ## FIXME: this should become generic and method
+  if(is(x, "exprSet") || is(x, "ExpressionSet")) {
      if(is.character(fac))
        fac = as.integer(factor(pData(x)[[fac]]))-1
      x   = exprs(x)

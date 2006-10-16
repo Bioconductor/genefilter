@@ -30,6 +30,7 @@ setMethod("rowttests", signature(x="matrix", fac="missing"),
 
 setMethod("rowttests", signature(x="exprSet", fac="missing"),
           function(x, fac, tstatOnly=FALSE) {
+              .Deprecated(msg=Biobase:::EXPRSET_DEPR_MSG)           
               x <- exprs(x)
               fac <- integer(ncol(x))
               rowttests(x, fac=fac, tstatOnly=tstatOnly)
@@ -38,6 +39,7 @@ setMethod("rowttests", signature(x="exprSet", fac="missing"),
 
 setMethod("rowttests", signature(x="exprSet", fac="factor"),
           function(x, fac, tstatOnly=FALSE) {
+              .Deprecated(msg=Biobase:::EXPRSET_DEPR_MSG)
               x <- exprs(x)
               rowttests(x, fac=fac, tstatOnly=tstatOnly)
           })
@@ -45,6 +47,7 @@ setMethod("rowttests", signature(x="exprSet", fac="factor"),
 
 setMethod("rowttests", signature(x="exprSet", fac="character"),
           function(x, fac, tstatOnly=FALSE) {
+              .Deprecated(msg=Biobase:::EXPRSET_DEPR_MSG)
               if (length(fac) != 1)
                 stop("fac must be length 1 character or a factor")
               fac <- factor(pData(x)[[fac]])

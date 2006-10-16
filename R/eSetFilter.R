@@ -231,7 +231,7 @@ showESet <- function(eSet){
               paste(names(vl), ": ", vl[1:length(vl)], sep = ""))
 
     base <- tktoplevel()
-    tktitle(base) <- "BioC exprSet viewer"
+    tktitle(base) <- "BioC ExpressionSet viewer"
     dataDescFrame <- tkframe(base)
     data <- makeViewer(dataDescFrame, vHeight = 10, vWidth = 25,
                        vScroll = TRUE, hScroll = TRUE,
@@ -315,10 +315,11 @@ setESetArgs <- function(filter){
 }
 
 isESet <- function(eSet){
-    if(missing(eSet) || (!is(eSet, "exprSet"))) {
+    if(missing(eSet) ||
+       (!is(eSet, "exprSet") || !is(eSet, "ExpressionSet"))) {
         tkmessageBox(title = "Input Error",
                      message = paste("filterMaster has to take",
-                     "an object of exprSet"),
+                     "an object of class ExpressionSet"),
                      icon = "warning",
                      type = "ok")
         return(FALSE)

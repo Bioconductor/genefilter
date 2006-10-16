@@ -3,7 +3,8 @@
 ## fac: a factor
 ##------------------------------------------------------------
 rowFtests = function(x, fac, var.equal=TRUE) {
-  if(inherits(x, "exprSet")) {
+    ## FIXME: this should become a generic and method
+  if(is(x, "exprSet") || is(x, "ExpressionSet")) {
     if(!missing(fac))
       if(is.character(fac))
         fac = as.integer(factor(pData(x)[[fac]]))-1

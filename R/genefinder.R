@@ -49,6 +49,7 @@ setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY",
           "ANY"),
           function(X, ilist, numResults, scale, weights,
                    method) {
+              .Deprecated(msg=Biobase:::EXPRSET_DEPR_MSG)
               gN <- featureNames(X)
               if (is.character(ilist))
                   ilist <- match(ilist,gN)
