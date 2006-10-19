@@ -1,7 +1,7 @@
 Package: genefilter
 Title: genefilter: methods for filtering genes from microarray experiments
-Version: 1.13.2
-Author: R. Gentleman, V. Carey, W. Huber
+Version: 1.13.3
+Author: R. Gentleman, V. Carey, W. Huber, F. Hahne
 Description: Some basic functions for filtering genes
 biocViews: Statistics, Microarray
 Maintainer: Biocore Team <biocpkgs@lists.fhcrc.org>

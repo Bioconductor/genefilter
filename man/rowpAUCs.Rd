@@ -5,7 +5,7 @@
 \description{Fast rowwise calculation of ROC curves and pAUC.}
 
 \usage{
-rowpAUCs(x, fac, cutpts, p=0.1)
+rowpAUCs(x, fac, cutpts, p=0.1, common=FALSE)
 }
 \arguments{
   \item{x}{\code{exprSet} or numeric matrix. The matrix must not
@@ -18,7 +18,10 @@ rowpAUCs(x, fac, cutpts, p=0.1)
     calculation of the ROC curves. Smaller numbers may further speed up
     computations. If missing, the ROC curves are calculated between data
     points.}
-  \item{p}{Numeric vector of length 1. Limit in (0,1) to integrate pAUC to.}
+  \item{p}{Numeric vector of length 1. Limit in (0,1) to integrate pAUC
+    to.}
+  \item{common}{Calculate common cutpoints for the whole dataset. If
+    \code{FALSE} cutpoints are calculated for each row individually.}
 }
 \details{
   Rowwise calculation of Receiver Operating

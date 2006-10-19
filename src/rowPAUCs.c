@@ -21,10 +21,10 @@ void pAUC_c(double *data, int nrd, int ncd,
 
   int i, j, k, pred, d, rsum, csum, rcount, ccount;
   double *x, *y;
-  double a, tmp;
+  double a, tmp, lim;
 
-  x   = (double *) R_alloc(ncc, sizeof(double));
-  y   = (double *) R_alloc(ncc, sizeof(double));
+  x   = (double *) R_alloc(ncc+1, sizeof(double));
+  y   = (double *) R_alloc(ncc+1, sizeof(double));
 
   /* this code computes roc for a given n * n matrix at given 
      cut points */
@@ -41,17 +41,17 @@ void pAUC_c(double *data, int nrd, int ncd,
 			 csum+=(1-pred);
 			 ccount++;
 		  }
-      }   /* for j */
+      }   /* for j (columns)*/
       sens[i] = (double)rsum/rcount;
       spec[i] = (double)csum/ccount;
-    }   /* for i */
+    }   /* for i (cutpoints)*/
     
 
     /* this computes pAUC for roc curve in row k*/
     for(i=k,d=0; i<ncc*nrd; i+=nrd,d++){
       x[d] = 1 - spec[i];
       y[d] = sens[i];
-    }
+    }/* for i,d */
 
 
     if(x[0] > x[d]){   /* reverse order if necessary */ 
@@ -60,17 +60,22 @@ void pAUC_c(double *data, int nrd, int ncd,
         tmp=y[i]; y[i]=y[j]; y[j]=tmp;
       } 
     }
-    a = 0;
-    if(x[0]<=(*p))
-      a = (x[0]-0) * y[0];
+
+    /* fill x and y to span the whole interval [0,1] */
+    x[ncc+1]=1;
+    y[ncc+1]=y[ncc];
+
+    /* compute area by trapezoidal rule*/
+    lim = x[0] < (*p) ? x[0] : *p;
+    a = (lim*y[0])/2;
     i=1;
-    while(x[i]<=(*p)){
-      a += (x[i]-x[i-1]) * (y[i]+y[i-1]);
+    while(x[i] < (*p)){
+      a += ((x[i]-x[i-1])*(y[i]-y[i-1])/2)+((x[i]-x[i-1])*y[i-1]);
       i++;
     }
-    if(x[i-1]<=(*p))
-      a += (*p - x[i-1]) * (y[i]+y[i-1]);
-    area[k] = 0.5*a;   
+    if(i > 2)
+      a += (((*p)-x[i-1])*(y[i]-y[i-1])/2)+(((*p)-x[i-1])*y[i-1]);
+    area[k] = a;   
   }
 }
 
