@@ -52,7 +52,7 @@ double half_range_mode( double *start, double *end, double beta, int diag ) {
 
     N_prime = *( max_element( counts.begin(), counts.end() ) );
 
-    for ( i = 0; i < counts.size(); i++ ) if ( counts[i] == N_prime ) J.push_back( i );
+    for ( i = 0; i < (int) counts.size(); i++ ) if ( counts[i] == N_prime ) J.push_back( i );
     
     // Do we have more than one maximal interval?
 
@@ -65,7 +65,7 @@ double half_range_mode( double *start, double *end, double beta, int diag ) {
     else {
 
       // Yes.. What's the smallest range?
-      for ( i = 0; i < J.size(); i++ ) w_range.push_back( start[ J[i] + N_prime - 1 ] - start[ J[i] ] );
+      for ( i = 0; i < (int) J.size(); i++ ) w_range.push_back( start[ J[i] + N_prime - 1 ] - start[ J[i] ] );
       w_prime = *( min_element( w_range.begin(), w_range.end() ) );
 
       // Set new start and end. We skip the more cumbersome V.min and V.max of the Bickel algorithm
@@ -73,7 +73,11 @@ double half_range_mode( double *start, double *end, double beta, int diag ) {
       i = 0;
       while( w_range[ i ] > w_prime ) i++;
       new_start = start + J[i];
-      for ( ; i < J.size(); i++ ) if ( w_range[ i ] == w_prime ) new_end = start + J[i] + N_prime; 
+      new_end = start + J[i] + N_prime;
+      
+      // If there are any more maximal-count, minimal-range intervals, adjust
+      // new_end accordingly.
+      for ( i++; i < (int) J.size(); i++ ) if ( w_range[ i ] == w_prime ) new_end = start + J[i] + N_prime; 
       
     }
     
