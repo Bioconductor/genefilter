@@ -28,9 +28,6 @@ genescale <- function (m, axis=2, method=c("Z", "R"), na.rm=TRUE) {
 	method(m, na.rm=na.rm)
 }
 
-setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
-    weights, method="euclidean" )
-    standardGeneric("genefinder"))
 
 setMethod("genefinder", c("ExpressionSet", "vector", "ANY", "ANY", "ANY",
           "ANY"),

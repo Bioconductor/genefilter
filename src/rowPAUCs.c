@@ -11,23 +11,23 @@
 #include <stdlib.h>
 
 /*-----------------------------------------------------------------
-internal c function for calculation of pAUCs
+internal c function for calculation of ROC curves and pAUCs
 -----------------------------------------------------------------*/
 
-void pAUC_c(double *data, int nrd, int ncd, 
-            double *cutp, int ncc, 
-            int *truth, 
-	    double *spec, double *sens, double *area, double *p) {
+void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc, 
+            int *truth, double *spec, double *sens, double *area, 
+	    double *auc, double *p) {
 
   int i, j, k, pred, d, rsum, csum, rcount, ccount;
   double *x, *y;
-  double a, tmp, lim;
+  double a, ta, tmp, lim, xsum, ysum;
 
   x   = (double *) R_alloc(ncc+1, sizeof(double));
   y   = (double *) R_alloc(ncc+1, sizeof(double));
 
   /* this code computes roc for a given n * n matrix at given 
      cut points */
+  printf("Computing ROC curves for %d rows at %d cutpoints ...\n", nrd, ncc);
   for(k=0; k<nrd; k++){   /* iterate over rows (genes) */
     for(i=k; i<ncc*nrd; i+=nrd){   /* iterate over cut points */
       rsum = csum = rcount = ccount = 0;  
@@ -47,35 +47,67 @@ void pAUC_c(double *data, int nrd, int ncd,
     }   /* for i (cutpoints)*/
     
 
+
+
     /* this computes pAUC for roc curve in row k*/
     for(i=k,d=0; i<ncc*nrd; i+=nrd,d++){
       x[d] = 1 - spec[i];
       y[d] = sens[i];
+      xsum += x[d];
+      ysum += y[d];
     }/* for i,d */
 
-
-    if(x[0] > x[d]){   /* reverse order if necessary */ 
-      for(i=0, j=d-1; i<(d/2); i++, j--){
+    /*rotate 180° if necessary*/
+    if(xsum > ysum){
+      for(i=k,d=0; i<ncc*nrd; i+=nrd,d++){
+	spec[i] = 1 - sens[i];
+        sens[i] = x[d];
+	x[d] = 1-x[d];
+	y[d] = 1-y[d];
+      }/* for i,d */
+    }
+    d--;
+   
+    /* reverse order if necessary */
+    if(x[0] > x[d]){    
+      for(i=0, j=d; i<=(d+1)/2; i++, j--){
         tmp=x[i]; x[i]=x[j]; x[j]=tmp;
         tmp=y[i]; y[i]=y[j]; y[j]=tmp;
       } 
-    }
-
-    /* fill x and y to span the whole interval [0,1] */
-    x[ncc+1]=1;
-    y[ncc+1]=y[ncc];
+    } 
+    x[ncc] = 1;
+    y[ncc] = y[ncc-1];
 
     /* compute area by trapezoidal rule*/
-    lim = x[0] < (*p) ? x[0] : *p;
-    a = (lim*y[0])/2;
+    lim = x[0] < (*p) ? x[0] : *p; /*right border of first segment*/
+    a = (lim*y[0])/2; /*area of 1. segement (from x1=0 to x2=lim)*/
     i=1;
     while(x[i] < (*p)){
-      a += ((x[i]-x[i-1])*(y[i]-y[i-1])/2)+((x[i]-x[i-1])*y[i-1]);
+      a += ((x[i]-x[i-1])*(y[i]-y[i-1])/2) + ((x[i]-x[i-1])*y[i-1]);
       i++;
     }
-    if(i > 2)
-      a += (((*p)-x[i-1])*(y[i]-y[i-1])/2)+(((*p)-x[i-1])*y[i-1]);
-    area[k] = a;   
+   
+    if(i > 2) /*last segment (from xn to p)*/
+      a += (((*p)-x[i-1])*(y[i]-y[i-1])/2) + (((*p)-x[i-1])*y[i-1]);
+    ta = a;
+    /*compute full AUC and flip curve if necessary*/ 
+    if((*p) < 1){
+      ta =  ta += ((x[i]-(*p))*(y[i]-y[i-1])/2) + ((x[i]-(*p))*y[i-1]);
+      i++;
+      while(i < ncc+1 && x[i] < 1){
+	ta =  ta += ((x[i]-x[i-1])*(y[i]-y[i-1])/2) + ((x[i]-x[i-1])*y[i-1]);
+	i++;
+      }
+      ta =  ta += ((1-x[i-1])*(1-y[i-1])/2) + ((1-x[i-1])*y[i-1]);
+    }
+    if((*p)==1 && ta < 0.5){ /*rotate 180° if area < 0.5*/
+      a = (*p) - a;
+      ta = 1-ta;
+    }
+    if(a>1)
+      error("Internal error");
+    area[k] = a;
+    auc[k] = ta;
   }
 }
 
@@ -88,12 +120,12 @@ void pAUC_c(double *data, int nrd, int ncd,
      p:        numeric in 0<p<1, limit to integrate pAUC to 
 ------------------------------------------------------------------*/
 
-SEXP pAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p)
+SEXP ROCpAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p)
 { 
   SEXP dimData;  /* dimensions of data */
   SEXP dimCutpts;  /* dimensions of cutpts */
   SEXP res, namesres;      /* return value: a list */
-  SEXP spec, sens, area;  /* list elements for constructing 
+  SEXP spec, sens, area, auc;  /* list elements for constructing 
                               the return value */
   SEXP dim; /* dimensions for spec and sens matrices in return value */
 
@@ -158,24 +190,28 @@ SEXP pAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p)
   SET_DIM(sens, dim); 
 
   PROTECT(area = allocVector(REALSXP, nrd));
+  PROTECT(auc = allocVector(REALSXP, nrd));
 
   /* Do it! */
   /* note nrc is the same as nrd */
-  pAUC_c(data, nrd, ncd, cutp, ncc, truth, REAL(spec), REAL(sens), REAL(area), p);
+  ROCpAUC_c(data, nrd, ncd, cutp, ncc, truth, REAL(spec), REAL(sens), 
+	 REAL(area), REAL(auc), p);
 
   /* return value: a list with  elements spec sens and pAUC */
-  PROTECT(res = allocVector(VECSXP, 3));
+  PROTECT(res = allocVector(VECSXP, 4));
   SET_VECTOR_ELT(res, 0, spec);
   SET_VECTOR_ELT(res, 1, sens);
   SET_VECTOR_ELT(res, 2, area);
+  SET_VECTOR_ELT(res, 3, auc);
 
 
-  PROTECT(namesres = allocVector(STRSXP, 3));
+  PROTECT(namesres = allocVector(STRSXP, 4));
   SET_STRING_ELT(namesres, 0, mkChar("spec"));
   SET_STRING_ELT(namesres, 1, mkChar("sens"));
   SET_STRING_ELT(namesres, 2, mkChar("pAUC"));
+  SET_STRING_ELT(namesres, 3, mkChar("AUC"));
   setAttrib(res, R_NamesSymbol, namesres);
 
-  UNPROTECT(6); /* done with res, namesres, spec, sens, dim, pAUC */
+  UNPROTECT(7); /* done with res, namesres, spec, sens, dim, pAUC */
   return(res);
 }

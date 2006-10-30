@@ -1,53 +1,84 @@
-\name{rowpAUCs}
+\name{rowpAUCs-methods}
+\docType{methods}
+\alias{rowpAUCs-methods}
 \alias{rowpAUCs}
+\alias{rowpAUCs,matrix,factor-method}
+\alias{rowpAUCs,matrix,numeric-method}
+\alias{rowpAUCs,exprSet,ANY-method}
+\alias{rowpAUCs,exprSet,character-method}
+\alias{rowpAUCs,ExpressionSet,ANY-method}
+\alias{rowpAUCs,ExpressionSet,character-method}
 
-\title{Rowwise ROC and pAUC}
-\description{Fast rowwise calculation of ROC curves and pAUC.}
+\title{Rowwise ROC and pAUC computation}
+\description{Methods for fast rowwise computation of ROC curves and
+  (partial) area under the curve (pAUC).}
 
 \usage{
-rowpAUCs(x, fac, cutpts, p=0.1, common=FALSE)
+rowpAUCs(x, fac, p=0.1, jitter=FALSE, caseNames=c("1", "2"))
 }
 \arguments{
-  \item{x}{\code{exprSet} or numeric matrix. The matrix must not
-    contain \code{NA} values.}
-  \item{fac}{Factor; if \code{x} is an \code{exprSet}, this may also be
-    a character vector of length 1 with the name of a covariate
-    variable in \code{x}. \code{fac} must have exactly 2 levels.}
-  \item{cutpts}{Matrix with same number of rows as \code{x} or vector
-    of length greater than 1. It specifies the thresholds for the
-    calculation of the ROC curves. Smaller numbers may further speed up
-    computations. If missing, the ROC curves are calculated between data
-    points.}
+  \item{x}{\code{ExpressionSet}, \code{exprSet} or numeric matrix. The
+matrix must not contain \code{NA} values. Note that the use of
+\code{exprSet} is deprecated.}
+  \item{fac}{Factor; if \code{x} is an \code{ExpressionSet} or
+\code{exprSet}, this may also be a character vector of length 1 with the
+name of a covariate variable in \code{x}. \code{fac} must have exactly 2
+levels.}
+ 
   \item{p}{Numeric vector of length 1. Limit in (0,1) to integrate pAUC
     to.}
-  \item{common}{Calculate common cutpoints for the whole dataset. If
-    \code{FALSE} cutpoints are calculated for each row individually.}
+  \item{jitter}{Add small amount of jitter to the data. This can improve
+    the look of the ROC curve when most of the values in \code{x} are
+    actually the same since cutpoints are calculated between data
+    values.}
+  \item{caseNames}{caseNames}{ The
+      names of the two classification cases.}
 }
 \details{
   Rowwise calculation of Receiver Operating
   Characteristic (ROC) curves and the corresponding partial area under
-  the curve (pAUC) for a given data matrix or \code{exprSet}. The
+  the curve (pAUC) for a given data matrix or \code{ExpressionSet}. The
   function is implemented in C and thus reasonably fast and memory
-  efficient.
+  efficient. Cutpoints are calculated before the first, in between and
+  after the last data value. Note: If the total area under the curve is
+  smaller 0.5 it is flipped for plotting and computation of \code{pAUC}.
 }
+\section{Methods}{
+  \describe{
+    Methods exist for \code{rowPAUCs}:
+    \item{rowPAUCs}{\code{signature(x="matrix", fac="factor")}}
+    \item{rowPAUCs}{\code{signature(x="matrix", fac="numeric")}}
+    \item{rowPAUCs}{\code{signature(x="exprSet")}}
+    \item{rowPAUCs}{\code{signature(x="exprSet", fac="character")}}
+    \item{rowPAUCs}{\code{signature(x="ExpressionSet")}}
+    \item{rowPAUCs}{\code{signature(x="ExpressionSet", fac="character")}}
+  }
+}
+
 \value{
-  A list with the calculated specificities and sensitivities for each
-  row as matrices, and the corresponding pAUCs.  
+  An object of class \code{\link[genefilter:rowROC]{rowROC}} with the
+  calculated specificities and sensitivities for each row and the
+  corresponding pAUCs and AUCs values. See
+  \code{\link[genefilter:rowROC]{rowROC}} for details.
 }
-\references{Pepe MS, Longton G, Anderson GL, Schummer M.:  Selecting
+
+\references{Pepe MS, Longton G, Anderson GL,
+Schummer M.: Selecting
     differentially expressed genes from microarray experiments. \emph{Biometrics. 2003 Mar;59(1):133-42.}}
 \author{Florian Hahne <f.hahne@dkfz.de>}
-\seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca}, \link[ROC:AUC]{pAUC}}}
+\seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca},
+    \link[ROC:AUC]{pAUC}, \link[genefilter:rowROC]{rowROC}}}
 \examples{
 
-   data(sample.exprSet.1)
+   data(sample.ExpressionSet)
 
-   r1 = rowttests(sample.exprSet.1, "cov2")
-   r2 = rowpAUCs(sample.exprSet.1, "cov2")
+   r1 = rowttests(sample.ExpressionSet, "sex")
+   r2 = rowpAUCs(sample.ExpressionSet, "sex", p=0.1)
 
  if(interactive()) {
-   plot(r2$pAUC, r1$statistic, pch=16)
-   plot(1-r2$spec[1,], r2$sens[1,], pch=16)
+   plot(area(r2), r1$statistic, pch=16)
+   sel <- which(area(r2, TRUE) > 0.7)
+   plot(r2[sel])
  }
 
  ## this compares performance and output of rowpAUCs to function pAUC in
@@ -55,14 +86,16 @@ rowpAUCs(x, fac, cutpts, p=0.1, common=FALSE)
  if(require(ROC)){
 
   myRule = function(x) {
-    pAUC(rocdemo.sca(truth = pData(sample.exprSet.1)$cov2-1, data = x, rule = dxrule.sca), t0 = 0.1)
+    pAUC(rocdemo.sca(truth = as.integer(sample.ExpressionSet$sex)-1 ,
+data = x, rule = dxrule.sca), t0 = 0.1)
   }
-  cat("computation time:\n")
+  nGenes = 100
+  cat("computation time for ", nGenes, "genes:\n")
   cat("function pAUC: ")
-  print(system.time(r3 <- esApply(sample.exprSet.1[1:100, ], 1, myRule)))
+  print(system.time(r3 <- esApply(sample.ExpressionSet[1:nGenes, ], 1, myRule)))
   cat("function rowpAUCs: ")
-  print(system.time(r2 <- rowpAUCs(sample.exprSet.1[1:100, ], "cov2")))
-  plot(r3, r2$pAUC, xlab="function pAUC", ylab="function rowpAUCs", main="pAUCs")
+  print(system.time(r2 <- rowpAUCs(sample.ExpressionSet[1:nGenes, ], "sex")))
+  plot(r3, area(r2), xlab="function pAUC", ylab="function rowpAUCs", main="pAUCs")
  }
 }
 

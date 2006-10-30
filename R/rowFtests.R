@@ -2,14 +2,12 @@
 ## x: a numeric matrix with n rows ("genes") and d columns ("conditions")
 ## fac: a factor
 ##------------------------------------------------------------
-rowFtests = function(x, fac, var.equal=TRUE) {
-    ## FIXME: this should become a generic and method
-  if(is(x, "exprSet") || is(x, "ExpressionSet")) {
-    if(!missing(fac))
-      if(is.character(fac))
-        fac = as.integer(factor(pData(x)[[fac]]))-1
-    x = exprs(x)
-  }
+
+## ==========================================================================
+## core rowFtests method for objects of class matrix
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethod("rowFtests", signature(x="matrix", fac="factor"),
+ function(x, fac, var.equal=TRUE) {
    
   sqr = function(x) x*x
   
@@ -73,8 +71,42 @@ rowFtests = function(x, fac, var.equal=TRUE) {
   ## p-value for F-test
   pval   <- pf(fstat, dff, dfr, lower.tail = FALSE)
   return(list(statistic=fstat, p.value=pval, dof=c(dff,dfr)))
-}
+})
+## ==========================================================================
 
+## ==========================================================================
+## rowFtests methods for objects of class ExpressionSet
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethod("rowFtests", signature(x="ExpressionSet", fac="factor"),
+ function(x, fac, var.equal=TRUE)
+   rowFtests(x=exprs(x), fac=fac, var.equal=var.equal)
+          )
+setMethod("rowFtests", signature(x="ExpressionSet", fac="character"),
+ function(x, fac, var.equal=TRUE){
+   fac = factor(as.integer(factor(pData(x)[[fac]]))-1)
+   rowFtests(x=exprs(x), fac=fac, var.equal=var.equal)
+          })
+## ==========================================================================
+
+## ==========================================================================
+## rowFtests methods for objects of class exprSet
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setMethod("rowFtests", signature(x="exprSet", fac="factor"),
+ function(x, fac, var.equal=TRUE){
+   .Deprecated(msg=Biobase:::EXPRSET_DEPR_MSG)      
+   rowFtests(x=exprs(x), fac=fac, var.equal=var.equal)
+          })
+setMethod("rowFtests", signature(x="exprSet", fac="character"),
+ function(x, fac, var.equal=TRUE){
+   .Deprecated(msg=Biobase:::EXPRSET_DEPR_MSG)
+   fac = factor(as.integer(factor(pData(x)[[fac]]))-1)
+   rowFtests(x=exprs(x), fac=fac, var.equal=var.equal)
+          })
+## ==========================================================================
+
+
+
+          
 ##--------------------------------------------------
 ## colFtests
 ##--------------------------------------------------

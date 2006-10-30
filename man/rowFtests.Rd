@@ -1,6 +1,11 @@
 \name{rowFtests}
 \alias{colFtests}
 \alias{rowFtests}
+\alias{rowFtests,matrix,factor-method}
+\alias{rowFtests,exprSet,factor-method}
+\alias{rowFtests,exprSet,character-method}
+\alias{rowFtests,ExpressionSet,factor-method}
+\alias{rowFtests,ExpressionSet,character-method}
 
 \alias{rowttests}
 \alias{rowttests,matrix,factor-method}
