@@ -82,7 +82,8 @@ experiments. \emph{Biometrics. 2003 Mar;59(1):133-42.}}
   \code{\link[genefilter:rowpAUCs]{rowpAUCs}}
 }
 \examples{
- data(sample.ExpressionSet)
+require(genefilter)
+data(sample.ExpressionSet)
 roc <- rowpAUCs(sample.ExpressionSet, "sex", p=0.5)
 roc
 area(roc[1:3])

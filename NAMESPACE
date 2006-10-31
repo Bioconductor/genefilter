@@ -8,10 +8,13 @@ export("Anova", "allNA", "anyNA", "coxfilter",
   "cv", "eSetFilter",
   "fastT", "ttest", "shorth", "half.range.mode",
   "rowttests", "colttests", "rowFtests", "colFtests",
-  "rowSds", "rowpAUCs",
+  "rowSds",
   "filterfun", "findLargest", "gapFilter", 
   "genefilter", "genescale", "getFilterNames",
   "getFuncDesc", "getRdAsText", "isESet", "kOverA", "maxA", "pOverA",
   "parseArgs", "parseDesc", "setESetArgs", "showESet") 
 
-exportMethods("genefinder")
+exportClasses("rowROC")
+exportMethods("genefinder", "show", "plot", "[", "sens", "spec",
+              "area", "pAUC", "AUC", "rowpAUCs")
+
