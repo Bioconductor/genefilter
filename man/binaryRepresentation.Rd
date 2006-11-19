@@ -10,7 +10,8 @@
     all numbers in \code{n}.}
 }
 
-\details{The implementation of this function is naive and slow (it could be done much more elegantly in C), but I have found
+\details{The implementation of this function is naive and slow (it
+  really should be done in C), but I have found
   it useful in several different places and so decided to put it in this
   package. 
 }
