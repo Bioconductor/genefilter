@@ -1,7 +1,7 @@
 shorth <- function(x, na.rm=FALSE, tie.action="mean", tie.limit=0.05) {
   stopifnot(is.numeric(x))
   if (na.rm)
-    x <- x[!is.finite(x)]
+    x <- x[is.finite(x)]
 
   rv <- if(length(x)==0) {
     as.numeric(NA)

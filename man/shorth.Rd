@@ -5,7 +5,9 @@
 \usage{shorth(x, na.rm=FALSE, tie.action="mean", tie.limit=0.05)}
 \arguments{
   \item{x}{Numeric}
-  \item{na.rm}{Logical. If \code{TRUE}, then \code{NA} values are ignored.}
+  \item{na.rm}{Logical. If \code{TRUE}, then non-finite (according to
+    \code{\link{is.finite}}) values in \code{x} are ignored. Otherwise,
+    presence of non-finite or \code{NA} values will lead to an error message.}
   \item{tie.action}{Character scalar. See details.}
   \item{tie.limit}{Numeric scalar. See details.}
 }
