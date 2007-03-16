@@ -1,6 +1,6 @@
 Package: genefilter
 Title: genefilter: methods for filtering genes from microarray experiments
-Version: 1.13.8
+Version: 1.13.9
 Author: R. Gentleman, V. Carey, W. Huber, F. Hahne
 Description: Some basic functions for filtering genes
 biocViews: Statistics, Microarray
@@ -11,4 +11,19 @@ Imports: AnnotationDbi
 License: The Artistic License, Version 2.0
 SaveImage: yes
 LazyData: yes
+Collate: AllClasses.R
+         AllGenerics.R
+         all.R
+         eSetFilter.R
+         genefinder.R
+         half.range.mode.R
+         nsFilter.R
+         rowFtests.R
+         rowROC-accessors.R
+         rowSds.R
+         rowpAUCs-methods.R
+         rowttests-methods.R
+         shorth.R
+         zzz.R
+
 

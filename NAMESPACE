@@ -17,5 +17,5 @@ export("Anova", "allNA", "anyNA", "coxfilter",
 
 exportClasses("rowROC")
 exportMethods("genefinder", "show", "plot", "[", "sens", "spec",
-              "area", "pAUC", "AUC", "rowpAUCs")
+              "area", "pAUC", "AUC", "rowpAUCs", "nsFilter")
 

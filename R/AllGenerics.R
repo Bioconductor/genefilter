@@ -27,3 +27,15 @@ setGeneric("area", function(object, total=FALSE) standardGeneric("area"))
 setGeneric("rowpAUCs", function(x, fac, p=0.1, jitter=FALSE,
                                 caseNames=c("1", "2"))
            standardGeneric("rowpAUCs"))
+
+setGeneric("nsFilter", signature="eset",
+           function(eset,
+                    require.entrez=TRUE,
+                    require.symbol=TRUE,
+                    require.GOBP=FALSE,
+                    require.GOCC=FALSE,
+                    require.GOMF=FALSE,
+                    remove.dupEntrez=TRUE,
+                    var.func=IQR, var.cutoff=0.5, var.filter=TRUE)
+           standardGeneric("nsFilter"))
+
