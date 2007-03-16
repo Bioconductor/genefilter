@@ -2,6 +2,7 @@ import("methods")
 import("AnnotationDbi")
 import("Biobase")
 import("survival")
+importFrom("graphics", "plot")
 
 useDynLib("genefilter")
 

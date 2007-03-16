@@ -11,9 +11,6 @@ setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
 setGeneric("rowttests", function(x, fac, tstatOnly=FALSE)
            standardGeneric("rowttests"))
 
-if(!isGeneric("plot"))
-  setGeneric("plot", useAsDefault=plot)
-
 setGeneric("pAUC", function(object, p) standardGeneric("pAUC"))
 
 setGeneric("AUC", function(object) standardGeneric("AUC"))
