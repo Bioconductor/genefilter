@@ -1,5 +1,6 @@
 import("methods")
 import("AnnotationDbi")
+importFrom("annotate", "getAnnMap")
 import("Biobase")
 import("survival")
 importFrom("graphics", "plot")

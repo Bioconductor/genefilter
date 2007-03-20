@@ -12,11 +12,12 @@ setMethod("nsFilter", "ExpressionSet",
               if (!is.function(var.func))
                 stop("'var.func' must be a function")
 
-              annPkg <- annotation(eset)
-              if (nchar(annPkg) == 0)
+              annChip <- annotation(eset)
+              if (nchar(annChip) == 0)
                 stop("'eset' must have a valid annotation slot")
               getAnnEnv <- function(map) {
-                  get(paste(annPkg, map, sep=""))
+                  getAnnMap(map=map, chip=annChip
+                            type=c("env", "db"), load=TRUE)
               }
 
               nfeat <- function(eset) length(featureNames(eset))
