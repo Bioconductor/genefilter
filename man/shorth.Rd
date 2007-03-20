@@ -25,6 +25,10 @@
   differ by more than the fraction \code{tie.limit} of \code{length(x)}.
   For \code{min} and \code{max}, the left-most or right-most, respectively, of
   the multiple shortest intervals is considered.
+
+  The implementation is fairly naive. See \code{\link{half.range.mode}}
+  for a more sophisticated  version that refines the estimate
+  iteratively and has a builtin bootstrapping option.
 }
 
 \value{The midpoint of the short of \code{x}.}
@@ -33,13 +37,15 @@
 
 \examples{
  
-  x <- c(rnorm(500), runif(500) * 10)
-  res <- c(mean=mean(x), median=median(x), shorth=shorth(x))
+  x = c(rnorm(500), runif(500) * 10)
+  methods = c("mean", "median", "shorth", "half.range.mode")
+  ests = sapply(methods, function(m) get(m)(x))
+
   if(interactive()) {
-    colors = c(1,2,4)
+    colors = 1:4
     hist(x, 40, col="orange")
-    abline(v=res, col=colors, lwd=3)
-    legend(6, 100, names(res), col=colors, lwd=3) 
+    abline(v=ests, col=colors, lwd=3, lty=1:2)
+    legend(5, 100, names(ests), col=colors, lwd=3, lty=1:2) 
   }
 }
 \keyword{arith}
