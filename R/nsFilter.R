@@ -16,8 +16,7 @@ setMethod("nsFilter", "ExpressionSet",
               if (nchar(annChip) == 0)
                 stop("'eset' must have a valid annotation slot")
               getAnnEnv <- function(map) {
-                  getAnnMap(map=map, chip=annChip
-                            type=c("env", "db"), load=TRUE)
+                  getAnnMap(map=map, chip=annChip)
               }
 
               nfeat <- function(eset) length(featureNames(eset))
