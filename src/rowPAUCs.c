@@ -27,7 +27,7 @@ void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc,
 
   /* this code computes roc for a given n * n matrix at given 
      cut points */
-  printf("Computing ROC curves for %d rows at %d cutpoints ...\n", nrd, ncc);
+  //printf("Computing ROC curves for %d rows at %d cutpoints ...\n", nrd, ncc);
   for(k=0; k<nrd; k++){   /* iterate over rows (genes) */
     for(i=k; i<ncc*nrd; i+=nrd){   /* iterate over cut points */
       rsum = csum = rcount = ccount = 0;  
