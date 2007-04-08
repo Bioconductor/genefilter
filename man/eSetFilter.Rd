@@ -49,8 +49,10 @@ isESet(eSet)
 
 \seealso{\code{\link{genefilter}}}
 \examples{
+ if( interactive() ) {
    data(sample.ExpressionSet)      
    res <- eSetFilter(sample.ExpressionSet)
+ }
 }
 \keyword{manip}
 
