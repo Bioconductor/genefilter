@@ -32,17 +32,18 @@ The {\em genefilter} package can be used to filter (select) genes from
 a microarray experiment according to a wide variety of different
 filtering mechanisms.
 To be concrete we will consider the artificial experiment contained
-in the \verb+eset+ example in the {\em Biobase} package.
+in the \verb+sample.ExpressionSet+ example from the {\em Biobase} package.
 This experiment has 26 samples, there are 500 genes and 3
-covariates. The covariates are named \verb+cov1+, \verb+cov2+ and
-\verb+cov3+. The first two have two levels and the last one has three.
+covariates. The covariates are named \verb+sex+, \verb+type+ and
+\verb+score+. The first two have two levels and the last one is
+continuous.
 
 <<>>=
 library("genefilter")
-data(eset)
-table(eset$cov1)
-table(eset$cov2)
-table(eset$cov3)
+data(sample.ExpressionSet)
+varLabels(sample.ExpressionSet)
+table(sample.ExpressionSet$sex)
+table(sample.ExpressionSet$type)
 @
 %$
 
@@ -68,7 +69,7 @@ There are three steps that must be performed.
 <<>>=
 f1 <- kOverA(5, 200)
 ffun <- filterfun(f1)
-which <- genefilter(exprs(eset), ffun)
+which <- genefilter(exprs(sample.ExpressionSet), ffun)
 sum(which)
 @
 
@@ -77,12 +78,12 @@ function and we finally apply it using \verb+genefilter+.
 There were 154 genes that had a level of more than 200 in at least 5 samples.
 
 To perform a specific filter lets select genes that are differentially
-expressed in the groups defined by \verb+cov2+.
+expressed in the groups defined by \verb+type+.
 
 <<>>=
-tf1 <- ttest(eset$cov2, .1)
+tf1 <- ttest(sample.ExpressionSet$type, .1)
 ff2 <- filterfun(tf1)
-wh2 <- genefilter(exprs(eset), ff2)
+wh2 <- genefilter(exprs(sample.ExpressionSet), ff2)
  sum(wh2)
 @
 %$
@@ -92,35 +93,36 @@ have a very small sample and the covariate was made up.
 
 Suppose that we want to combine the two filters. We want those genes
 for which at least 5 are over 200 and which also are differentially
-expressed in the groups defined by \verb+cov2+.
+expressed in the groups defined by \verb+type+.
 
 <<>>=
 ff3 <- filterfun(f1, tf1)
-wh3 <- genefilter(exprs(eset), ff3)
+wh3 <- genefilter(exprs(sample.ExpressionSet), ff3)
 sum(wh3)
 @
 
 Now we see that there are only 10 genes  that satisfy both conditions.
 
-Our last example is to select genes that are
-differentially expressed in at least one of the three groups defined
-by \verb+cov3+.
-To do that we use an Anova filter. This filter uses an analysis of
-variance appraoch (via the \verb+lm+) function to test the hypothesis
-that at least one of the three group means is different from the other
-two. The test is applied, then the $p$--value computed. We select
-those genes that have a low $p$--value.
-
-<<>>=
-Afilter <- Anova(eset$cov3)
-aff <- filterfun(Afilter)
-wh4 <- genefilter(exprs(eset), aff)
-sum(wh4)
-
-@
-%$
-We see that there are 14 genes that pass this filter and that are
-candidates for further exploration.
+%%FIXME: need to replace this with something else
+%Our last example is to select genes that are
+%differentially expressed in at least one of the three groups defined
+%by \verb+cov3+.
+%To do that we use an Anova filter. This filter uses an analysis of
+%variance appraoch (via the \verb+lm+) function to test the hypothesis
+%that at least one of the three group means is different from the other
+%%two. The test is applied, then the $p$--value computed. We select
+%those genes that have a low $p$--value.
+%
+%<<>>=
+%Afilter <- Anova(eset$cov3)
+%aff <- filterfun(Afilter)
+%wh4 <- genefilter(exprs(eset), aff)
+%sum(wh4)
+%
+%@
+%%$
+%We see that there are 14 genes that pass this filter and that are
+%candidates for further exploration.
 
 
 \section{Aggregate Vignette}
@@ -182,11 +184,12 @@ Next we show how to use this function on the system dataset,
   ##scale the genes
   ##genescale is a slightly more flexible "scale"
   ##work on a subset -- for speed only
-  geneData <- genescale(exprs(eset)[1:75,], 1)
+  geneData <- genescale(exprs(sample.ExpressionSet)[1:75,], 1)
 
   Agg <- new("aggregator")
 
-  testcase <- knnCV(geneData, gfun, eset$cov2, Agg, pselect=0.05)
+  testcase <- knnCV(geneData, gfun, sample.ExpressionSet$type, 
+         Agg, pselect=0.05)
 
   genes.used <- as.list(aggenv(Agg))
   genes.counts <- as.numeric(genes.used)
