@@ -40,7 +40,7 @@ A vector of names can be specified and matches for all will be
 computed. The number of matches and the distance measure used can all
 be specified.
 The examples will be carried out using the artificial data set,
-\verb+eset+.
+\verb+sample.ExpressionSet+.
 
 Two other options for \verb+genefinder+ are \verb+scale+ and \verb+method+.
 The \verb+scale+ option controls the scaling of the rows (this is
@@ -50,9 +50,10 @@ listed at the end of this document.
 
 <<>>=
  library("genefilter")
- data(eset)
+ data(sample.ExpressionSet)
  igenes<- c(300,333,355,419) ##the interesting genes
- closeg <- genefinder(eset, igenes, 10, method="euc", scale="none")
+ closeg <- genefinder(sample.ExpressionSet, igenes, 10, 
+       method="euc", scale="none")
  names(closeg)
 @
 
@@ -64,7 +65,7 @@ accessing the relevant component of \verb+closeg+.
 
 <<>>=
 closeg$"31539_r_at"
-Nms1 <- geneNames(eset)[closeg$"31539_r_at"$indices]
+Nms1 <- geneNames(sample.ExpressionSet)[closeg$"31539_r_at"$indices]
 Nms1
 @
 %$
