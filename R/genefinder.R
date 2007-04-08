@@ -113,7 +113,7 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY"),
 
     Genes <- array(NA, dim=c(ninterest, numResults))
     Dists <- array(NA, dim=c(ninterest, numResults))
-    extCall <- .C("mm_distance",
+    extCall <- .C("gf_distance",
                   X = as.double(X),
                   nr= N,
                   nc= ncol(X),

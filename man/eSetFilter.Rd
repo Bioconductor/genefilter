@@ -10,8 +10,8 @@
 \alias{showESet}
 \title{A function to filter an eSet object}
 \description{
-  Given a Bioconductor's eSet object, this function filters genes using
-  a set of selected filters.
+  Given a Bioconductor's ExpressionSet object, this function filters
+  genes using a set of selected filters.
 }
 \usage{
 eSetFilter(eSet)
@@ -25,7 +25,7 @@ setESetArgs(filter)
 isESet(eSet)
 }
 \arguments{
-  \item{eSet}{\code{eSet} an eSet object}
+  \item{eSet}{\code{eSet} an ExpressionSet object}
   \item{lib}{\code{lib} a character string for the name of an R library
     where functions of interests reside}
   \item{funcs}{\code{funcs} a vector of character strings for names of
@@ -46,23 +46,11 @@ isESet(eSet)
   of 'expr' passed the set of filter functions.
 }
 \author{Jianhua Zhang}
-\note{This function is part of the Bioconductor project at Dana-Farber
-  Cancer Institute to provide Bioinformatics functonalities through R}
 
 \seealso{\code{\link{genefilter}}}
 \examples{
-  if(interactive()){
-      library("genefilter", character.only = TRUE)
-      library("Biobase", character.only = TRUE)
-      data(geneData)
-      data(geneCov)
-      covdesc<- list("Covariate 1", "Covariate 2", "Covariate 3")
-      names(covdesc) <- names(geneCov)
-      pdata <- new("phenoData", pData=geneCov, varLabels=covdesc)
-      eset <- new("exprSet", exprs=geneData, phenoData=pdata)
-
-      res <- eSetFilter(eset)
-  }
+   data(sample.ExpressionSet)      
+   res <- eSetFilter(sample.ExpressionSet)
 }
 \keyword{manip}
 
