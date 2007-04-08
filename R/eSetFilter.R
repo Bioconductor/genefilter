@@ -220,7 +220,7 @@ showESet <- function(eSet){
     end <- function(){
         tkdestroy(base)
     }
-    if(!isESet(eSet)){
+    if(!is(eSet, "eSet")){
         stop()
     }
     colNRow <- dim(exprs(eSet))
@@ -316,7 +316,7 @@ setESetArgs <- function(filter){
 
 isESet <- function(eSet){
     if(missing(eSet) ||
-       (!is(eSet, "exprSet") || !is(eSet, "ExpressionSet"))) {
+       (!is(eSet, "exprSet") && !is(eSet, "ExpressionSet"))) {
         tkmessageBox(title = "Input Error",
                      message = paste("filterMaster has to take",
                      "an object of class ExpressionSet"),
