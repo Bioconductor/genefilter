@@ -5,6 +5,29 @@
    distances to a particular value, not necessarily all pairwise
    distances */
 
+/* Modified in April 2007 for use with S-PLUS ArrayAnalyzer
+   by Insightful Corp.
+
+   Replaced all int declarations with RSInt declarations.
+   RSInt is defined in S-PLUS's R.h as:
+
+       typedef long RSInt;
+
+   Other changes are if-def-ed with if defined(_R_) around the
+   original code.
+ */
+
+/* and further modified since S.h in R defines USING_R - not
+  _R_ !!
+*/
+
+#include "S.h"
+
+#if defined(USING_R) /*( R-specific stuff */
+
+#define  S_CDECL
+typedef int RSInt;
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -17,17 +40,23 @@
 #include "R_ext/Error.h"
 #include "R_ext/Applic.h" 
 
+#else /*) Splus-specific stuff */
+
+#define S_COMPATIBILITY 1
+#include "rsplus.h"
+#endif
+
 typedef struct {
-    int geneNum;
+    RSInt geneNum;
     double geneDist;
 } gene_t;
 
 
-static void detectTies(int geneNum, int nResults, int nRows, gene_t *data) {
+static void detectTies(RSInt geneNum, RSInt nResults, RSInt nRows, gene_t *data) {
     /* Will scan through the first nResults+1 distances in the */
     /* data array, and if it detects any ties, will flag a R */
     /* warning */
-    int i; /* Loop indices */
+    RSInt i; /* Loop indices */
     
     /* If nResults == nRows, do not exceed nResults - otherwise exceed it */
     /* by 1 in order to see if there were trailing ties */
@@ -37,13 +66,13 @@ static void detectTies(int geneNum, int nResults, int nRows, gene_t *data) {
     
     for (i = 1; i < nResults; i++) {
 	if (data[i].geneDist == data[i+1].geneDist) {
-	    warning("There are distance ties in the data for gene %d\n",geneNum);
+	    PROBLEM "There are distance ties in the data for gene %d\n",geneNum
+            WARN;
 	    break;
 	}
     }
 }
-
-static int distCompare(const void *p1, const void *p2)
+static int S_CDECL distCompare(const void *p1, const void *p2)
 {
     const gene_t *i = p1;
     const gene_t *j = p2;
@@ -61,10 +90,9 @@ static int distCompare(const void *p1, const void *p2)
     
 }
 
-static double gf_correlation(double *x, double *wval, int nr, int nc, 
-			     int i1, int i2) {
-  int i; /* Loop index */
-  int a,b; /* Used as array indices for i1 and i2 */
+static double gf_correlation(double *x, double *wval, RSInt nr, RSInt nc, RSInt i1, RSInt i2) {
+  RSInt i; /* Loop index */
+  RSInt a,b; /* Used as array indices for i1 and i2 */
   double xAvg, yAvg; /* Averages of the i1 and i2 rows */
   double wA, wB; /* Weighted x[a] and x[b] */
   double upTot = 0; /* Upper summation */
@@ -114,11 +142,10 @@ static double gf_correlation(double *x, double *wval, int nr, int nc,
   return(ans);
 }
 
-static double gf_euclidean(double *x, double *wval, int nr, int nc,
-       int i1, int i2) 
+static double gf_euclidean(double *x, double *wval, RSInt nr, RSInt nc, RSInt i1, RSInt i2) 
 {
     double dev, ans;
-    int ct, j;
+    RSInt ct, j;
     
     ct = 0;
     ans = 0;
@@ -139,11 +166,10 @@ static double gf_euclidean(double *x, double *wval, int nr, int nc,
     return sqrt(ans);
 }
 
-static double gf_maximum(double *x, double *wval, int nr, int nc,
-       int i1, int i2) 
+static double gf_maximum(double *x, double *wval, RSInt nr, RSInt nc, RSInt i1, RSInt i2) 
 {
     double dev, ans;
-    int ct, j;
+    RSInt ct, j;
 
     ct = 0;
     ans = -DBL_MAX;
@@ -163,11 +189,10 @@ static double gf_maximum(double *x, double *wval, int nr, int nc,
     return ans;
 }
 
-static double gf_manhattan(double *x, double *wval, int nr, int nc, 
-			   int i1, int i2)
+static double gf_manhattan(double *x, double *wval, RSInt nr, RSInt nc, RSInt i1, RSInt i2)
 {
     double ans;
-    int ct, j;
+    RSInt ct, j;
 
     ct = 0;
     ans = 0;
@@ -185,11 +210,10 @@ static double gf_manhattan(double *x, double *wval, int nr, int nc,
 }
 
 
-static double gf_canberra(double *x, double *wval, int nr, int nc, 
-			  int i1, int i2)
+static double gf_canberra(double *x, double *wval, RSInt nr, RSInt nc, RSInt i1, RSInt i2)
 {
     double ans, sum, diff;
-    int ct, j;
+    RSInt ct, j;
 
 
     ct = 0;
@@ -211,11 +235,10 @@ static double gf_canberra(double *x, double *wval, int nr, int nc,
     return ans;
 }
 
-static double gf_dist_binary(double *x, double *wval, int nr, int nc, 
-			     int i1, int i2)
+static double gf_dist_binary(double *x, double *wval, RSInt nr, RSInt nc, RSInt i1, RSInt i2)
 {
-    int total, ct, ans;
-    int j;
+    RSInt total, ct, ans;
+    RSInt j;
     double w1, w2; /* Weighted values */
 
     total = 0;
@@ -245,9 +268,9 @@ static double gf_dist_binary(double *x, double *wval, int nr, int nc,
 enum { EUCLIDEAN=1, MAXIMUM, MANHATTAN, CANBERRA, CORRELATION, BINARY};
 /* == 1,2,..., defined by order in the R function dist */
 
-void gf_distance(double *x, int *nr, int *nc, int *g, double *d, 
-		 int *iRow, int *nInterest, int *nResults, 
-		 int *method, double *wval) {
+void gf_distance(double *x, RSInt *nr, RSInt *nc, RSInt *g, double *d, 
+		 RSInt *iRow, RSInt *nInterest, RSInt *nResults, 
+		 RSInt *method, double *wval) {
     /*
       x -> Data Array
       nr -> Number of rows in X
@@ -260,10 +283,10 @@ void gf_distance(double *x, int *nr, int *nc, int *g, double *d,
       method -> which distance method to use
     */
     
-    int  i,j, k;  /* Loop indices */
-    int baseIndex; /* Used to index data arrays */
+    RSInt  i,j, k;  /* Loop indices */
+    RSInt baseIndex; /* Used to index data arrays */
     gene_t *tmp; /* Temporary array to hold the distance data */
-    double (*distfun)(double*, double*, int, int, int, int) = NULL;
+    double (*distfun)(double*, double*, RSInt, RSInt, RSInt, RSInt) = NULL;
 
     /* Sanity check the nResults vs. number of rows in the data */
     if (*nResults > *nr) {
