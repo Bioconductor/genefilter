@@ -1,10 +1,12 @@
 \name{rowSds}
 \alias{rowSds}
-\title{Row standard deviation of a numeric array}
+\alias{rowVars}
+\title{Row variance and standard deviation of a numeric array}
 \description{
-  Row standard deviation of a numeric array
+  Row  variance and standard deviation of a numeric array
 }
 \usage{
+rowVars(x, ...)
 rowSds(x, ...)
 }
 \arguments{
@@ -19,9 +21,9 @@ rowSds(x, ...)
   result is one-dimensional.  The `dimnames' (or `names' for a
   vector result) are taken from the original array.
 }
-\details{This a convenience function, the main work is done in
+\details{These are very simple convenience functions, the main work is done in
   \code{\link{rowMeans}} and \code{\link{rowSums}}. See the function
-  definition, it is very simple.
+  definition of \code{rowVars}, it is very simple.
 }
 \author{Wolfgang Huber \url{http://www.ebi.ac.uk/huber}}
 \seealso{\code{\link{rowMeans}} and \code{\link{rowSums}}}
