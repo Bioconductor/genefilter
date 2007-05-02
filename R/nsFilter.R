@@ -7,7 +7,8 @@ setMethod("nsFilter", "ExpressionSet",
                    require.GOMF=FALSE,
                    remove.dupEntrez=TRUE,
                    var.func=IQR, var.cutoff=0.5,
-                   var.filter=TRUE)
+                   var.filter=TRUE,
+                   feature.exclude="^AFFX")
           {
               if (!is.function(var.func))
                 stop("'var.func' must be a function")
@@ -63,6 +64,22 @@ setMethod("nsFilter", "ExpressionSet",
 
               if (require.GOMF) {
                   eset <- filterGO(eset, "MF")
+              }
+
+              if (length(feature.exclude)) {
+                  fnms <- featureNames(eset)
+                  badIdx <- integer(0)
+                  for (pat in feature.exclude) {
+                      if (nchar(pat) == 0)
+                        next
+                      badIdx <- c(grep(pat, fnms), badIdx)
+                  }
+                  if (length(badIdx)) {
+                      badIdx <- unique(badIdx)
+                      eset <- eset[-badIdx, ]
+                      logvar <- "feature.exclude"
+                      assign(logvar, length(badIdx), filter.log)
+                  }
               }
 
               if (var.filter) {

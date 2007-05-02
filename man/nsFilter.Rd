@@ -13,7 +13,8 @@
 \usage{
 nsFilter(eset, require.entrez = TRUE, require.symbol = TRUE,
 require.GOBP = FALSE, require.GOCC = FALSE, require.GOMF = FALSE,
-remove.dupEntrez = TRUE, var.func = IQR, var.cutoff = 0.5, var.filter = TRUE)
+remove.dupEntrez = TRUE, var.func = IQR, var.cutoff = 0.5, var.filter = TRUE,
+feature.exclude="^AFFX")
 }
 
 \arguments{
@@ -37,17 +38,22 @@ remove.dupEntrez = TRUE, var.func = IQR, var.cutoff = 0.5, var.filter = TRUE)
       sets mapping to the same Entrez Gene ID, then the probe set with
       the largest value of \code{var.func} will be retained and the
       others removed.}
-  \item{var.func}{a \code{function} that will be used to assess the
+  \item{var.func}{A \code{function} that will be used to assess the
       variance of a probe set across all samples.  This function
       should return a numeric vector of length one when given a
       numeric vector as input.  Probe sets with a \code{var.func}
       value less than \code{var.cutoff} will be removed. The default
       is \code{IQR}.}
-  \item{var.cutoff}{a numeric value to use in filtering out probe sets
+  \item{var.cutoff}{A numeric value to use in filtering out probe sets
       with small variance across samples.  See the \code{var.func}
       argument and the details section below.}
-  \item{var.filter}{a logical indicating whether or not to perform
+  \item{var.filter}{A logical indicating whether or not to perform
       variance based filtering.  The default is \code{TRUE}.}
+  \item{feature.exclude}{A character vector of regular expressions.  Any
+    probe sets identifiers (return value of \code{featureNames(eset)})
+    that match one of the specified patterns will be filtered out.  The
+    default value is intended to filter out Affymetrix quality control
+    probe sets.}
 }
 \details{
   A first step in many microarray analysis procedures is to carry out

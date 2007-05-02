@@ -33,6 +33,7 @@ setGeneric("nsFilter", signature="eset",
                     require.GOCC=FALSE,
                     require.GOMF=FALSE,
                     remove.dupEntrez=TRUE,
-                    var.func=IQR, var.cutoff=0.5, var.filter=TRUE)
+                    var.func=IQR, var.cutoff=0.5, var.filter=TRUE,
+                    feature.exclude="^AFFX")
            standardGeneric("nsFilter"))
 
