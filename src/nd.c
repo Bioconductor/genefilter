@@ -26,7 +26,7 @@
 #if defined(USING_R) /*( R-specific stuff */
 
 #define  S_CDECL
-typedef int RSInt;
+typedef long RSInt;
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

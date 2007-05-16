@@ -138,6 +138,4 @@ colFtests(x, fac, var.equal = TRUE)
 
 }
 
-
-}
 \keyword{math}

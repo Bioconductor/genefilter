@@ -100,5 +100,4 @@ data = x, rule = dxrule.sca), t0 = 0.1)
 }
 
 
-}
 \keyword{math}
