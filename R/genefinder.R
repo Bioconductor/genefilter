@@ -58,7 +58,7 @@ setMethod("genefinder", c("exprSet", "vector", "ANY", "ANY", "ANY",
 
 setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY", "ANY"),
          function (X, ilist, numResults, scale, weights,
-                        method)) {
+                        method) {
     X <- as.matrix(X)
     METHOD <- c("euclidean", "maximum", "manhattan",
                         "canberra", "correlation", "binary")
