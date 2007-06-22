@@ -1,14 +1,13 @@
 setMethod("nsFilter", "ExpressionSet",
           function(eset,
                    require.entrez=TRUE,
-                   require.symbol=TRUE,
                    require.GOBP=FALSE,
                    require.GOCC=FALSE,
                    require.GOMF=FALSE,
                    remove.dupEntrez=TRUE,
                    var.func=IQR, var.cutoff=0.5,
                    var.filter=TRUE,
-                   feature.exclude="^AFFX")
+                   feature.exclude="^AFFX", ...)
           {
               if (!is.function(var.func))
                 stop("'var.func' must be a function")
@@ -33,10 +32,6 @@ setMethod("nsFilter", "ExpressionSet",
 
               if (require.entrez) {
                   eset <- requireID(eset, "ENTREZID")
-              }
-
-              if (require.symbol) {
-                  eset <- requireID(eset, "SYMBOL")
               }
 
               filterGO <- function(eset, ontology) {

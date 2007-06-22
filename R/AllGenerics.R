@@ -28,12 +28,11 @@ setGeneric("rowpAUCs", function(x, fac, p=0.1, jitter=FALSE,
 setGeneric("nsFilter", signature="eset",
            function(eset,
                     require.entrez=TRUE,
-                    require.symbol=TRUE,
                     require.GOBP=FALSE,
                     require.GOCC=FALSE,
                     require.GOMF=FALSE,
                     remove.dupEntrez=TRUE,
                     var.func=IQR, var.cutoff=0.5, var.filter=TRUE,
-                    feature.exclude="^AFFX")
+                    feature.exclude="^AFFX", ...)
            standardGeneric("nsFilter"))
 

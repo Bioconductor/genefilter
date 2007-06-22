@@ -11,19 +11,16 @@
   the phenotypes in the data.
 }
 \usage{
-nsFilter(eset, require.entrez = TRUE, require.symbol = TRUE,
+nsFilter(eset, require.entrez = TRUE,
 require.GOBP = FALSE, require.GOCC = FALSE, require.GOMF = FALSE,
 remove.dupEntrez = TRUE, var.func = IQR, var.cutoff = 0.5, var.filter = TRUE,
-feature.exclude="^AFFX")
+feature.exclude="^AFFX", ...)
 }
 
 \arguments{
   \item{eset}{an \code{ExpressionSet} object}
   \item{require.entrez}{If \code{TRUE}, require that all probe sets
       have an Entrez Gene ID annotation.  Probe sets without such an
-      annotation will be filtered out.}
-  \item{require.symbol}{If \code{TRUE}, require that all probe sets
-      have a gene symbol annotation.  Probe sets without such an
       annotation will be filtered out.}
   \item{require.GOBP}{If \code{TRUE}, require that all probe sets have
     an annotation to at least one GO ID in the BP ontology.  Probe
@@ -54,6 +51,7 @@ feature.exclude="^AFFX")
     that match one of the specified patterns will be filtered out.  The
     default value is intended to filter out Affymetrix quality control
     probe sets.}
+  \item{...}{Unused, but available for specializing methods.}
 }
 \details{
   A first step in many microarray analysis procedures is to carry out
@@ -61,8 +59,7 @@ feature.exclude="^AFFX")
   sets without regard to the phenotype data and reduce the number of
   probe sets that will be included in further analysis.
 
-  \emph{Annotation Based Filtering}
-  Arguments \code{require.entrez}, \code{require.symbol},
+  \emph{Annotation Based Filtering} Arguments \code{require.entrez},
   \code{require.GOBP}, \code{require.GOCC}, and \code{require.GOMF}
   turn on a filter based on available annotation data.  The annotation
   package is determined by calling \code{annotation(eset)}.
