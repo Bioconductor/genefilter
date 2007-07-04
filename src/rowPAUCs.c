@@ -50,6 +50,7 @@ void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc,
 
 
     /* this computes pAUC for roc curve in row k*/
+    xsum = ysum = 0;
     for(i=k,d=0; i<ncc*nrd; i+=nrd,d++){
       x[d] = 1 - spec[i];
       y[d] = sens[i];

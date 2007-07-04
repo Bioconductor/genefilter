@@ -48,11 +48,15 @@ setMethod("plot", signature(x="rowROC", y="missing"),
             sy <- sort(x@sens[1,])
             spx <- c(sx[sx<=x@p & sy>0],x@p)
             spy <- sy[sx<=x@p & sy>0]
+            if(!length(spy)){
+              spy <- 0
+              spx <- c(0,spx)
+            }
             spy <- c(spy, max(spy))
             len <- length(sx)
             plot(sx, sy, pch=pch, cex=cex, xlab=xlab,
                  ylab=ylab, main=main, sub=sub, ...)
-            if(mean(x@data)==1 || x@AUC==0.5)
+            if(mean(x@data)==1 || all(sx==sy))
               polygon(c(0,1,1), c(0,0,1), col="#ececec", lty=0)
             else{
               rect(spx[-1], 0, spx[-1] - diff(spx),spy[-1],

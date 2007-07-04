@@ -95,7 +95,7 @@ data = x, rule = dxrule.sca), t0 = 0.1)
   print(system.time(r3 <- esApply(sample.ExpressionSet[1:nGenes, ], 1, myRule)))
   cat("function rowpAUCs: ")
   print(system.time(r2 <- rowpAUCs(sample.ExpressionSet[1:nGenes, ], "sex")))
-  plot(r3, area(r2), xlab="function pAUC", ylab="function rowpAUCs", main="pAUCs")
+  #plot(r3, area(r2), xlab="function pAUC", ylab="function rowpAUCs", main="pAUCs")
  }
 }
 
