@@ -1,6 +1,6 @@
 %
 % NOTE -- ONLY EDIT howtogenefilter.Rnw!!!
-% Biobase.tex file will get overwritten.
+% howtogenefilter.tex file will get overwritten.
 %
 %\VignetteIndexEntry{HowTo: Genefilter}
 %\VignetteDepends{genefilter, class}
