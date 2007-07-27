@@ -110,11 +110,11 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY", "ANY"),
         stop("Requested genes exceed the dimensions of the supplied matrix.")
 
 
-    Genes <- array(NA, dim=c(ninterest, numResults))
-    Dists <- array(NA, dim=c(ninterest, numResults))
+    Genes <- array(as.integer(NA), dim=c(ninterest, numResults))
+    Dists <- array(as.integer(NA), dim=c(ninterest, numResults))
     extCall <- .C("gf_distance",
                   X = as.double(X),
-                  nr= N,
+                  nr= as.integer(N),
                   nc= ncol(X),
                   g = as.integer(Genes),
                   d = as.double(Dists),
