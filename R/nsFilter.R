@@ -83,9 +83,13 @@ setMethod("nsFilter", "ExpressionSet",
                   eset <- eset[selected, ]
                   logvar <- "numLowVar"
                   assign(logvar, sum(!selected), filter.log)
+              } else {
+                  if (!missing(remove.dupEntrez) && remove.dupEntrez)
+                    warning("var.filter FALSE implies remove.dupEntrez FALSE, ",
+                            "ignoring user-specified value")
               }
 
-              if (remove.dupEntrez) {
+              if (remove.dupEntrez && var.filter) {
                   ## Reduce to unique probe <--> gene mapping here by keeping largest IQR
                   ## We will want "unique genes" in the non-specific filtered gene
                   ## set.

@@ -45,7 +45,9 @@ feature.exclude="^AFFX", ...)
       with small variance across samples.  See the \code{var.func}
       argument and the details section below.}
   \item{var.filter}{A logical indicating whether or not to perform
-      variance based filtering.  The default is \code{TRUE}.}
+      variance based filtering.  The default is \code{TRUE}.  A value of
+      \code{FALSE} implies \code{remove.dupEntrez} is also forced to
+      \code{FALSE}.}
   \item{feature.exclude}{A character vector of regular expressions.  Any
     probe sets identifiers (return value of \code{featureNames(eset)})
     that match one of the specified patterns will be filtered out.  The
@@ -90,6 +92,9 @@ data(sample.ExpressionSet)
 ans <- nsFilter(sample.ExpressionSet)
 ans$eset
 ans$filter.log
+
+## skip variance-based filtering
+ans <- nsFilter(sample.ExpressionSet, var.filter=FALSE)
 }
 
 
