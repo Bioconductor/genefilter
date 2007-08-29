@@ -40,7 +40,7 @@ setMethod("nsFilter", "ExpressionSet",
                                        if (length(x) == 1 && is.na(x))
                                          FALSE
                                        else {
-                                           onts <- subListExtract(x, "Ontology")
+                                           onts <- subListExtract(x, "Ontology", simplify=TRUE)
                                            ontology %in% onts
                                        }
                                    })
