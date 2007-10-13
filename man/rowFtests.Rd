@@ -45,7 +45,7 @@ colFtests(x, fac, var.equal = TRUE)
     For the \code{*ttests} function, \code{fac} must have exactly
     two levels.}
   \item{tstatOnly}{a logical variable indicating whether to calculate
-    parametric p-values.  If \code{FALSE}, just the t-statistics are
+    parametric p-values.  If \code{TRUE}, just the t-statistics are
     returned. This can be considerably faster.}
   \item{ig1}{The indices of the columns of \code{x} that correspond
     to group 1.}
