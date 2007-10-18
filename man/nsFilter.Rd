@@ -1,20 +1,27 @@
 \name{nsFilter}
 
 \alias{nsFilter}
+\alias{varFilter}
+\alias{featureFilter}
 \alias{nsFilter,ExpressionSet-method}
 
 \title{Non-Specific-ly Filter an ExpressionSet}
 \description{
-  This function removes unwanted probe sets from an
-  \code{ExpressionSet} without using phenotype variables in the
-  filtering process.  Hence the filter is non-specific with respect to
-  the phenotypes in the data.
+  This function identifies and removes probesets that are unlikely
+  to be of use when modeling the data.  No phenotype variables are used
+  in the filtering process, so the result can be used with any downstream
+  analysis.
 }
 \usage{
-nsFilter(eset, require.entrez = TRUE,
-require.GOBP = FALSE, require.GOCC = FALSE, require.GOMF = FALSE,
-remove.dupEntrez = TRUE, var.func = IQR, var.cutoff = 0.5, var.filter = TRUE,
-feature.exclude="^AFFX", ...)
+nsFilter(eset, require.entrez = TRUE, require.GOBP = FALSE, 
+    require.GOCC = FALSE, require.GOMF = FALSE,
+    remove.dupEntrez = TRUE, var.func = IQR, var.cutoff = 0.5, 
+    var.filter = TRUE, feature.exclude="^AFFX", ...)
+varFilter(eset, var.func = IQR, var.cutoff = 0.5)
+featureFilter(eset, require.entrez=TRUE,
+    require.GOBP=FALSE, require.GOCC=FALSE,
+    require.GOMF=FALSE, remove.dupEntrez=TRUE,
+    feature.exclude="^AFFX")
 }
 
 \arguments{
@@ -76,12 +83,19 @@ feature.exclude="^AFFX", ...)
   the rule of thumb that in any given tissue only 40\% of genes are
   expressed.
 
+  \code{varFilter} does only variance filtering, and returns an
+  \code{ExpressionSet}. \code{featureFilter} does only feature based
+  filtering and returns an expression set.
+
 }
 \value{
-  A list consisting of:
+ For \code{nsFilter} a list consisting of:
   \item{eset}{the filtered \code{ExpressionSet}}
   \item{filter.log}{a list giving details of how many probe sets where
     removed for each filtering step performed.}
+
+  For both \code{varFilter} and \code{featureFilter} the filtered
+  \code{ExpressionSet}.
 }
 
 \author{Seth Falcon}
@@ -95,6 +109,9 @@ ans$filter.log
 
 ## skip variance-based filtering
 ans <- nsFilter(sample.ExpressionSet, var.filter=FALSE)
+
+a1 = varFilter(sample.ExpressionSet)
+a2 = featureFilter(sample.ExpressionSet)
 }
 
 

@@ -8,7 +8,7 @@ importFrom("graphics", "plot")
 useDynLib("genefilter")
 
 export("Anova", "allNA", "anyNA", "coxfilter",
-  "cv", "eSetFilter",
+  "cv", "eSetFilter", "varFilter", "featureFilter",
   "fastT", "ttest", "shorth", "half.range.mode",
   "rowttests", "colttests", "rowFtests", "colFtests",
   "rowSds", "rowVars", "dist2",
