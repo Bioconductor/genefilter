@@ -10,7 +10,7 @@
   pairs of columns of an m-by-n matrix.
 }
 \usage{
-  dist2(x, fun=function(a,b) mad(a-b))
+  dist2(x, fun=function(a,b) median(abs(a-b)))
 }
 
 \arguments{
@@ -20,8 +20,9 @@
     columns of \code{x}.}
 }
 \details{
-  With the default value of \code{fun}, this calculates a matrix of the
-  \code{\link{mad}} of all pairwise differences of columns of \code{x}.
+  With the default value of \code{fun}, this function calculates
+  for each pair of columns of \code{x} the median of the absolute values
+  of their differences.
   This may be considered a measure of distance.
 
   The implementation assumes that \code{fun} is symmetric,
@@ -37,7 +38,7 @@
   zero). In other words, $z$ the probe effects,  $\epsilon$ measurement
   noise and $\beta$ differential expression effects. Under this
   assumption, all entries of the resulting distance matrix should be the
-  same, namely $\sqrt(2)$ times the standard deviation of $\epsilon$.
+  same, namely a multiple of the standard deviation of $\epsilon$.
   Arrays whose  distance matrix entries are way different give cause
   for suspicion.
 }  

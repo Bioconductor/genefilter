@@ -1,4 +1,4 @@
-dist2 = function(x, fun=function(a,b) mad(a-b)) {
+dist2 = function(x, fun=function(a,b) median(abs(a-b))) {
   res = matrix(as.numeric(NA), ncol=ncol(x), nrow=ncol(x))
   colnames(res) = rownames(res) = colnames(x)
   if(ncol(x)>=2) {
