@@ -10,14 +10,16 @@
   pairs of columns of an m-by-n matrix.
 }
 \usage{
-  dist2(x, fun=function(a,b) median(abs(a-b)))
+  dist2(x, fun=function(a,b) median(abs(a-b)), diagonal=0)
 }
 
 \arguments{
-  \item{x}{A matrix, or indeed any object for which \code{ncol(x)}
-    and \code{x[,j]} return useful results.}
+  \item{x}{A matrix, or any object \code{x} for which \code{ncol(x)}
+    and \code{x[,j]} return appropriate results.}
   \item{fun}{A symmetric function of two arguments that may be
     columns of \code{x}.}
+  \item{diagonal}{The value to be used for the diagonal elements of the
+    resulting matrix.}
 }
 \details{
   With the default value of \code{fun}, this function calculates
@@ -26,8 +28,11 @@
   This may be considered a measure of distance.
 
   The implementation assumes that \code{fun} is symmetric,
-  \code{fun(a,b)=fun(b,a)}.
-  
+  \code{fun(a,b)=fun(b,a)}. Hence, the
+  returned matrix is symmetric.
+  \code{fun(a,a)} is not evaluated, instead the value of \code{diagonal} 
+  is used to fill the diagonal elements of the returned matrix.
+     
   A use for this function is the detection of outlier arrays in a
   microarray experiment. Assume that each column of \code{x} can be
   decomposed as
@@ -44,7 +49,6 @@
 }  
 \value{
   A symmetric matrix of size \code{n x n}.
-  Diagonal elements are \code{NA}.
 }
 
 \examples{
