@@ -39,8 +39,8 @@ void pAUC_c(double *spec, double *sens, double *area, double *auc, double *p,
       for(i=k*columns,d=0; i<k*columns+columns; i++,d++){
 	spec[i] = 1 - sens[i];
         sens[i] = x[d];
-	x[d] = 1-x[d];
-	y[d] = 1-y[d];
+	x[d] = 1-spec[i];
+	y[d] = sens[i];
       }/* for i,d */
     }
     d--;

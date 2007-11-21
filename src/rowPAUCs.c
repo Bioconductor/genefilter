@@ -63,14 +63,14 @@ void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc,
       for(i=k,d=0; i<ncc*nrd; i+=nrd,d++){
 	spec[i] = 1 - sens[i];
         sens[i] = x[d];
-	x[d] = 1-x[d];
-	y[d] = 1-y[d];
+	x[d] = 1-spec[i];
+	y[d] = sens[i];
       }/* for i,d */
     }
     d--;
    
     /* reverse order if necessary */
-    if(x[0] > x[d]){    
+    if(x[0] > x[d]){
       for(i=0, j=d; i<=(d+1)/2; i++, j--){
         tmp=x[i]; x[i]=x[j]; x[j]=tmp;
         tmp=y[i]; y[i]=y[j]; y[j]=tmp;
@@ -78,7 +78,7 @@ void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc,
     } 
     x[ncc] = 1;
     y[ncc] = y[ncc-1];
-
+ 
     /* compute area by trapezoidal rule*/
     lim = x[0] < (*p) ? x[0] : *p; /*right border of first segment*/
     a = (lim*y[0])/2; /*area of 1. segement (from x1=0 to x2=lim)*/
@@ -88,8 +88,9 @@ void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc,
       i++;
     }
    
-    if(i > 2) /*last segment (from xn to p)*/
+    if(i > 2){ /*last segment (from xn to p)*/
       a += (((*p)-x[i-1])*(y[i]-y[i-1])/2) + (((*p)-x[i-1])*y[i-1]);
+    }
     ta = a;
     /*compute full AUC and flip curve if necessary*/ 
     if((*p) < 1){
