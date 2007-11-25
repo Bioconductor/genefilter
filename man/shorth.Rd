@@ -39,6 +39,9 @@
 
 \references{
   \itemize{
+    \item G Sawitzki, \dQuote{The Shorth Plot.}
+    Available at http://lshorth.r-forge.r-project.org/TheShorthPlot.pdf 
+
     \item DF Andrews, \dQuote{Robust Estimates of Location.}
     Princeton University Press (1972).
 
@@ -49,10 +52,6 @@
     estimator of the mode: Comparisons to other robust estimators
     with applications.} Computational Statistics & Data Analysis
     50, 3500-3530 (2006).
-
-    \item G Sawitzki, \dQuote{Diagnostic Plots for One-Dimensional Data.}
-    Presented at the 24th meeting of the Arbeitsgruppe "Computational
-    Statistics", Internationale Biometrische Gesellschaft, Reisensburg (1992).
   }
 }
 
