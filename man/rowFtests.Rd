@@ -106,7 +106,7 @@ colFtests(x, fac, var.equal = TRUE)
   \code{dm}, the difference of the group means (only in the
   case of the t-test functions).
   The \code{row.names} of the data.frame are taken from the
-  corresponding dimension names (rownames or colnames) of \code{x}.
+  corresponding dimension names of \code{x}.
   
   The degrees of freedom are provided in the attribute \code{df}.
   For the F-tests, if \code{var.equal} is 'FALSE', \code{nrow(x)+1} degree of freedoms
