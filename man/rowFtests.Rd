@@ -1,5 +1,4 @@
 \name{rowFtests}
-\alias{colFtests}
 \alias{rowFtests}
 \alias{rowFtests,matrix,factor-method}
 \alias{rowFtests,exprSet,factor-method}
@@ -7,17 +6,33 @@
 \alias{rowFtests,ExpressionSet,factor-method}
 \alias{rowFtests,ExpressionSet,character-method}
 
+\alias{colFtests}
+\alias{colFtests,matrix,factor-method}
+\alias{colFtests,exprSet,factor-method}
+\alias{colFtests,exprSet,character-method}
+\alias{colFtests,ExpressionSet,factor-method}
+\alias{colFtests,ExpressionSet,character-method}
+
 \alias{rowttests}
 \alias{rowttests,matrix,factor-method}
 \alias{rowttests,matrix,missing-method}
 \alias{rowttests,exprSet,factor-method}
-\alias{rowttests,exprSet,character-method}
 \alias{rowttests,exprSet,missing-method}
+\alias{rowttests,exprSet,character-method}
 \alias{rowttests,ExpressionSet,factor-method}
 \alias{rowttests,ExpressionSet,character-method}
 \alias{rowttests,ExpressionSet,missing-method}
 
 \alias{colttests}
+\alias{colttests,matrix,factor-method}
+\alias{colttests,matrix,missing-method}
+\alias{colttests,exprSet,factor-method}
+\alias{colttests,exprSet,missing-method}
+\alias{colttests,exprSet,character-method}
+\alias{colttests,ExpressionSet,factor-method}
+\alias{colttests,ExpressionSet,character-method}
+\alias{colttests,ExpressionSet,missing-method}
+
 \alias{fastT}
 
 \title{t-tests and F-tests for rows or columns of a matrix}
@@ -32,26 +47,35 @@ rowFtests(x, fac, var.equal = TRUE)
 colFtests(x, fac, var.equal = TRUE)
 }
 \arguments{
-  \item{x}{\code{exprSet} or numeric matrix. The matrix must not
-    contain \code{NA} values.}
-  \item{fac}{Factor; if \code{x} is an \code{exprSet}, this may also be
-    a character vector of length 1 with the name of a covariate
-    variable in \code{x}.
-
-    For the \code{row*} functions, the length of the factor must be
+  \item{x}{Numeric matrix. The matrix must not contain \code{NA} values.
+    For \code{rowttests} and \code{colttests}, \code{x} can also be an
+    \code{\linkS4class{ExpressionSet}}.}
+  
+  \item{fac}{Factor which codes the grouping to be tested.
+    There must be 1 or 2 groups for the t-tests (corresponding to one-
+    and two-sample t-test), and 2 or more for the F-tests. If \code{fac}
+    is missing, this is taken as a one-group test (i.e. is only allowed
+    for the t-tests). The length
+    of the factor needs to correspond to the sample size:
+    for the \code{row*} functions, the length of the factor must be
     the same as the number of columns of \code{x}.
-    For the \code{col*} functions, it must be the same as the number
+    for the \code{col*} functions, it must be the same as the number
     of rows of \code{x}.
-    For the \code{*ttests} function, \code{fac} must have exactly
-    two levels.}
-  \item{tstatOnly}{a logical variable indicating whether to calculate
+    
+    If \code{x} is an \code{\linkS4class{ExpressionSet}}, then
+    \code{fac} may also be a character vector of length 1 with the name of a covariate
+    variable in \code{x}.}
+  
+  \item{tstatOnly}{A logical variable indicating whether to calculate
     parametric p-values.  If \code{TRUE}, just the t-statistics are
     returned. This can be considerably faster.}
+  
   \item{ig1}{The indices of the columns of \code{x} that correspond
     to group 1.}
   \item{ig2}{The indices of the columns of \code{x} that correspond
     to group 2. }
-  \item{var.equal}{a logical variable indicating whether to treat the
+  
+  \item{var.equal}{A logical variable indicating whether to treat the
     variances in the samples as equal.  If 'TRUE', a simple F test for
     the equality of means in a one-way analysis of variance is
     preformed.  If 'FALSE', an approximate method of Welch (1951) is
@@ -59,36 +83,38 @@ colFtests(x, fac, var.equal = TRUE)
     the case of arbitrarily many samples.}
 }
 \details{
-  \code{rowttests} and \code{colttests} are implemented in C and
-  are reasonably fast and memory-efficient.
-  \code{fastT} is a wrapper for \code{rowttests}, useful
-  for some legacy code.
-
   If \code{fac} is specified, \code{rowttests} performs for each
   row of \code{x} a two-sided, two-class t-test with equal variances.
   \code{fac} must be a factor of length \code{ncol(x)} with two levels,
   corresponding to the two groups. The sign of the resulting t-statistic
   corresponds to "group 1 minus group 2".
-  
   If \code{fac} is missing, \code{rowttests} performs for each row of
   \code{x} a two-sided one-class t-test against the null hypothesis 'mean=0'.
 
+  \code{rowttests} and \code{colttests} are implemented in C and
+  are reasonably fast and memory-efficient.
+  \code{fastT} is an alternative implementation, in Fortran, possibly useful
+  for certain legacy code.
   \code{rowFtests} and \code{colFtests} are currently implemented using
   matrix algebra in R. Compared to the \code{*ttests} functions,
   they are slower and use more memory.
+}
 
-  If \code{var.equal} is 'FALSE', \code{nrow(x)+1} degree of freedoms
+\value{
+  A \code{data.frame} with columns \code{statistic},
+  \code{p.value} (optional in the case of the t-test functions) and
+  \code{dm}, the difference of the group means (only in the
+  case of the t-test functions).
+  The \code{row.names} of the data.frame are taken from the
+  corresponding dimension names (rownames or colnames) of \code{x}.
+  
+  The degrees of freedom are provided in the attribute \code{df}.
+  For the F-tests, if \code{var.equal} is 'FALSE', \code{nrow(x)+1} degree of freedoms
   are given, the first one is the first degree of freedom (it is the
   same for each row) and the other ones are the second degree of freedom
   (one for each row). 
 }
-\value{
-  For the \code{row*} and \code{col*} functions, 
-  a list with the test statistics, 
-  p-values, and degrees of freedom.
-  Additonally, the t-test functions return the differences
-  of group means.
-}
+
 \references{B. L. Welch (1951), On the comparison of several mean values: an
      alternative approach. Biometrika, *38*, 330-336}
 \author{Wolfgang Huber <huber@ebi.ac.uk>}

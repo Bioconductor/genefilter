@@ -1,15 +1,19 @@
 ## Generic functions for package genefilter
 
-
 setGeneric("rowFtests", function(x, fac, var.equal=TRUE)
            standardGeneric("rowFtests"))
+setGeneric("colFtests", function(x, fac, var.equal=TRUE)
+           standardGeneric("colFtests"))
+setGeneric("rowttests", function(x, fac, tstatOnly=FALSE)
+           standardGeneric("rowttests"))
+setGeneric("colttests", function(x, fac, tstatOnly=FALSE)
+           standardGeneric("colttests"))
+
 
 setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
     weights, method="euclidean" )
     standardGeneric("genefinder"))
 
-setGeneric("rowttests", function(x, fac, tstatOnly=FALSE)
-           standardGeneric("rowttests"))
 
 setGeneric("pAUC", function(object, p) standardGeneric("pAUC"))
 
