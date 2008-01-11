@@ -73,15 +73,24 @@ featureFilter(eset, require.entrez=TRUE,
   turn on a filter based on available annotation data.  The annotation
   package is determined by calling \code{annotation(eset)}.
 
-  \emph{Variance Based Filtering}
-  The \code{var.func} and \code{var.cutoff} arguments control the
-  variance based filtering.  The intention is to remove probe sets
-  with little variation across samples.  The default \code{var.func}
-  is \code{IQR} and was selected because it is robust to outliers.
-  The deafult \code{var.cutoff} is \code{0.5} and is motivated by the
-  common case where the platform is a genome-wide expression array and
-  the rule of thumb that in any given tissue only 40\% of genes are
-  expressed.
+  \emph{Variance Based Filtering} The \code{var.func} and
+  \code{var.cutoff} arguments control the variance based filtering.  The
+  intention is to remove probe sets with little variation across
+  samples.  The default \code{var.func} is \code{IQR} and was selected
+  because it is robust to outliers.  The deafult \code{var.cutoff} is
+  \code{0.5} and is motivated by the common case where the platform is a
+  genome-wide expression array and the rule of thumb that in any given
+  tissue only 40\% of genes are expressed.
+
+  Note that \code{IQR} is a reasonable choice only for the case of
+  similar sample sizes. If one sample group is much bigger than the
+  other(s), the values of the smaller group(s) will be discarded as
+  outliers, and the \code{IQR} will be dominated by the large
+  group. Hence the probe set is filtered out for low variance. One could
+  consider using non-robust measures of variance (like \code{sd}) for
+  these cases, or to look at the range of more extreme quantiles, where
+  the quantile should be much smaller/larger than the ratios between
+  sample sizes.
 
   \code{varFilter} does only variance filtering, and returns an
   \code{ExpressionSet}. \code{featureFilter} does only feature based
