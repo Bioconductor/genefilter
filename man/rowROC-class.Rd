@@ -57,7 +57,7 @@ calculated. (Note: the data is ranked prior to computation
        curve of the first row of the object along with the \code{pAUC}.
      To plot the curve for a specific row/gene subsetting should be done
      first (i.e. \code{plot(rowROC[1])}.}
-    \item{pAUC \code{signature(object="rowROC", p="numeric")}}{Integrate
+    \item{pAUC \code{signature(object="rowROC", p="numeric", flip="logical")}}{Integrate
       area under the curve from \code{0} to \code{p}. This method
       returns a new \code{rowROC} object.}
     \item{AUC \code{signature(object="rowROC")}}{Integrate

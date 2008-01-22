@@ -16,7 +16,7 @@ internal c function for calculation of ROC curves and pAUCs
 
 void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc, 
             int *truth, double *spec, double *sens, double *area, 
-	    double *auc, double *p) {
+	       double *auc, double *p, int *flip) {
 
   int i, j, k, pred, d, rsum, csum, rcount, ccount;
   double *x, *y;
@@ -59,7 +59,7 @@ void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc,
     }/* for i,d */
 
     /*rotate 180° if necessary*/
-    if(xsum > ysum){
+    if(flip && xsum > ysum){
       for(i=k,d=0; i<ncc*nrd; i+=nrd,d++){
 	spec[i] = 1 - sens[i];
         sens[i] = x[d];
@@ -102,7 +102,7 @@ void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc,
       }
       ta =  ta += ((1-x[i-1])*(1-y[i-1])/2) + ((1-x[i-1])*y[i-1]);
     }
-    if((*p)==1 && ta < 0.5){ /*rotate 180° if area < 0.5*/
+    if(flip && (*p)==1 && ta < 0.5){ /*rotate 180° if area < 0.5*/
       a = (*p) - a;
       ta = 1-ta;
     }
@@ -122,7 +122,7 @@ void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc,
      p:        numeric in 0<p<1, limit to integrate pAUC to 
 ------------------------------------------------------------------*/
 
-SEXP ROCpAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p)
+SEXP ROCpAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p, SEXP _flip)
 { 
   SEXP dimData;  /* dimensions of data */
   SEXP dimCutpts;  /* dimensions of cutpts */
@@ -135,6 +135,7 @@ SEXP ROCpAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p)
   double *cutp;
   int *truth;
   double *p;
+  int *flip;
   int nrd, ncd;  /* dimensions of data    */
   int nrc, ncc;  /* dimensions of cutpts  */
   int i;
@@ -179,8 +180,13 @@ SEXP ROCpAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p)
   p = REAL(_p);
   if(((*p)<0)||((*p)>1))
     error("'p' must be between 0 and 1.");
- /* done with p */
+  /* done with p */
 
+  /* check input argument flip */
+  if(!isInteger(_flip)) 
+    error("'flip' must be an integer.");
+  flip = INTEGER(_flip)[0];
+ /* done with flip */
 
   /* allocate memory for return values */
   PROTECT(spec = allocVector(REALSXP, nrd*ncc));
@@ -197,7 +203,7 @@ SEXP ROCpAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p)
   /* Do it! */
   /* note nrc is the same as nrd */
   ROCpAUC_c(data, nrd, ncd, cutp, ncc, truth, REAL(spec), REAL(sens), 
-	 REAL(area), REAL(auc), p);
+	    REAL(area), REAL(auc), p, flip);
 
   /* return value: a list with  elements spec sens and pAUC */
   PROTECT(res = allocVector(VECSXP, 4));

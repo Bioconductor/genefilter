@@ -15,7 +15,7 @@ setGeneric("genefinder", function(X, ilist, numResults=25, scale="none",
     standardGeneric("genefinder"))
 
 
-setGeneric("pAUC", function(object, p) standardGeneric("pAUC"))
+setGeneric("pAUC", function(object, p, flip=TRUE) standardGeneric("pAUC"))
 
 setGeneric("AUC", function(object) standardGeneric("AUC"))
 
@@ -25,8 +25,7 @@ setGeneric("spec", function(object) standardGeneric("spec"))
 
 setGeneric("area", function(object, total=FALSE) standardGeneric("area"))
 
-setGeneric("rowpAUCs", function(x, fac, p=0.1, jitter=FALSE,
-                                caseNames=c("1", "2"))
+setGeneric("rowpAUCs", function(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
            standardGeneric("rowpAUCs"))
 
 setGeneric("nsFilter", signature="eset",

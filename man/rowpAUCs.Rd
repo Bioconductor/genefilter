@@ -14,7 +14,7 @@
   (partial) area under the curve (pAUC).}
 
 \usage{
-rowpAUCs(x, fac, p=0.1, jitter=FALSE, caseNames=c("1", "2"))
+rowpAUCs(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
 }
 \arguments{
   \item{x}{\code{ExpressionSet}, \code{exprSet} or numeric matrix. The
@@ -27,22 +27,31 @@ levels.}
  
   \item{p}{Numeric vector of length 1. Limit in (0,1) to integrate pAUC
     to.}
-  \item{jitter}{Add small amount of jitter to the data. This can improve
-    the look of the ROC curve when most of the values in \code{x} are
-    actually the same since cutpoints are calculated between data
-    values.}
-  \item{caseNames}{caseNames}{ The
-      names of the two classification cases.}
+  \item{flip}{Automatically mirror the ROC curve along the 45 degree
+    diagonal when the total area under the curve is smaller than
+    0.5. Note that this is only valid for a symmetric set up. For the
+    unsymetric case set \code{flip=FALSE}.}
+  \item{caseNames}{caseNames}{ The class names that are used when
+    plotting the data. If \code{fac} is the name of the covariate
+    variable in the \code{ExpressionSet} the function will use its
+    levels as \code{caseNames}}
 }
+
 \details{
-  Rowwise calculation of Receiver Operating
-  Characteristic (ROC) curves and the corresponding partial area under
-  the curve (pAUC) for a given data matrix or \code{ExpressionSet}. The
-  function is implemented in C and thus reasonably fast and memory
-  efficient. Cutpoints are calculated before the first, in between and
-  after the last data value. Note: If the total area under the curve is
-  smaller 0.5 it is flipped for plotting and computation of \code{pAUC}.
+
+  Rowwise calculation of Receiver Operating Characteristic (ROC) curves
+  and the corresponding partial area under the curve (pAUC) for a given
+  data matrix or \code{ExpressionSet}. The function is implemented in C
+  and thus reasonably fast and memory efficient. Cutpoints are
+  calculated before the first, in between and after the last data
+  value. By default, if the total area under the curve is smaller 0.5 it
+  is flipped for plotting and computation of \code{pAUC}. Note: This is
+  only valid for the symmetric case. In the unsymmetric case
+  (e.g. presence or absence of a single biomarker) set \code{flip=FALSE}
+  or use the functionality provided in the \code{ROC} package.
+
 }
+  
 \section{Methods}{
   \describe{
     Methods exist for \code{rowPAUCs}:
@@ -100,9 +109,17 @@ if(require(ROC)){
    pAUC(rocdemo.sca(truth = as.integer(sample.ExpressionSet$sex)-1 ,
                     data = x, rule = dxrule.sca), t0 = 1)
   r4 <-  esApply(sample.ExpressionSet[1:nGenes, ], 1, myRule2)
-  plot(r4,area(r2), xlab="function pAUC", ylab="function rowpAUCs", main="pAUCs")
+  plot(r4,area(r2), xlab="function pAUC", ylab="function rowpAUCs",
+  main="pAUCs")
+
+  plot(r4, area(rowpAUCs(sample.ExpressionSet[1:nGenes, ],
+  "sex", p=1, flip=FALSE)), xlab="function pAUC", ylab="function rowpAUCs",
+  main="pAUCs")
+
+
   r4[r4<0.5] <- 1-r4[r4<0.5]
-  plot(r4, area(r2), xlab="function pAUC", ylab="function rowpAUCs", main="pAUCs")
+  plot(r4, area(r2), xlab="function pAUC", ylab="function rowpAUCs",
+  main="pAUCs")
  }
 }
 

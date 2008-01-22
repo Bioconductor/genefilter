@@ -39,10 +39,10 @@ setMethod("[",
 setMethod("plot", signature(x="rowROC", y="missing"),
           function(x, pch=20, cex=0.7, xlab="1 - specificity",
                    ylab="sensitivity", main="ROC-Curve",
-                   sub=paste("class", x@caseNames[1], "with",
+                   sub=paste("class ", x@caseNames[1], " (",
                      sum(x@factor==levels(x@factor)[1]),
-                     "cases | class", x@caseNames[2], "with",
-                     sum(x@factor==levels(x@factor)[2]), "cases"),
+                     " cases) | class ", x@caseNames[2], " (",
+                     sum(x@factor==levels(x@factor)[2]), " cases)", sep=""),
                    ...){
             sx <- sort(1-x@spec[1,])
             sy <- sort(x@sens[1,])
@@ -81,12 +81,15 @@ setMethod("plot", signature(x="rowROC", y="missing"),
 ## pAUC method for objects of class rowROC
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 setMethod("pAUC", signature(object="rowROC", p="numeric"),
-          function(object, p){
-            res <- .Call("pAUC", object@spec, object@sens, p)
-            object@pAUC <- res$pAUC
-            object@AUC <- res$AUC
-            object@p <- p
-            return(object)
+          function(object, p, flip=TRUE){
+              if(length(flip)!=1 || !(is.logical(flip)))
+                  stop("'flip' must be logical scalar")
+              flip <- as.integer(flip)
+              res <- .Call("pAUC", object@spec, object@sens, p, flip)
+              object@pAUC <- res$pAUC
+              object@AUC <- res$AUC
+              object@p <- p
+              return(object)
           })
 ## ==========================================================================
 

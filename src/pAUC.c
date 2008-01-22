@@ -15,7 +15,7 @@ internal c function for calculation of pAUCs
 -----------------------------------------------------------------*/
 
 void pAUC_c(double *spec, double *sens, double *area, double *auc, double *p,
-	     int columns, int rows) {
+	    int columns, int rows, int *flip) {
 
   int i, j, k, d;
   double *x, *y;
@@ -35,7 +35,7 @@ void pAUC_c(double *spec, double *sens, double *area, double *auc, double *p,
       ysum += y[d];
     }/* for i,d */
     /*rotate 180° if necessary*/
-    if(xsum > ysum){
+    if(flip && xsum > ysum){
       for(i=k*columns,d=0; i<k*columns+columns; i++,d++){
 	spec[i] = 1 - sens[i];
         sens[i] = x[d];
@@ -82,7 +82,7 @@ void pAUC_c(double *spec, double *sens, double *area, double *auc, double *p,
     }else{
       d=1;
     }
-    if((*p)==1 && ta < 0.5){ /*rotate 180° if area < 0.5*/
+    if(flip&& (*p)==1 && ta < 0.5){ /*rotate 180° if area < 0.5*/
       a = (*p) - a;
       ta = 1-ta;
     }
@@ -106,7 +106,7 @@ void pAUC_c(double *spec, double *sens, double *area, double *auc, double *p,
      p:        numeric in 0<p<1, limit to integrate pAUC to 
 ------------------------------------------------------------------*/
 
-SEXP pAUC(SEXP _spec, SEXP _sens, SEXP _p)
+SEXP pAUC(SEXP _spec, SEXP _sens, SEXP _p, SEXP _flip)
 { 
   SEXP res, namesres;      /* return value: a list */
   SEXP area;  /* list element for constructing 
@@ -119,6 +119,7 @@ SEXP pAUC(SEXP _spec, SEXP _sens, SEXP _p)
   double *spec;
   double *sens;
   double *p;
+  int *flip;
   int rows, columns;  /* dimensions of spec and sens  */
   int i;
  
@@ -145,19 +146,24 @@ SEXP pAUC(SEXP _spec, SEXP _sens, SEXP _p)
    
   /* check input argument p */
   if(!isReal(_p) || length(_p)!=1) 
-    error("'p' must be numeric.");
+      error("'p' must be numeric.");
   p = REAL(_p);
   if(((*p)<0)||((*p)>1))
-    error("'p' must be between 0 and 1.");
- /* done with p */
-
+      error("'p' must be between 0 and 1.");
+  /* done with p */
+  
+  /* check input argument flip */
+  if(!isInteger(_flip)) 
+      error("'flip' must be an integer.");
+  flip = INTEGER(_flip)[0];
+  /* done with flip */
 
   /* allocate memory for return values */
   PROTECT(area = allocVector(REALSXP, columns));
   PROTECT(auc = allocVector(REALSXP, columns));
 
   /* Do it! */
-  pAUC_c(spec, sens, REAL(area), REAL(auc), p, rows, columns);
+  pAUC_c(spec, sens, REAL(area), REAL(auc), p, rows, columns, flip);
 
   /* return value: a list with elements spec sens and area */
   PROTECT(res = allocVector(VECSXP, 2));

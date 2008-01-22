@@ -49,7 +49,7 @@ colFtests(x, fac, var.equal = TRUE)
 \arguments{
   \item{x}{Numeric matrix. The matrix must not contain \code{NA} values.
     For \code{rowttests} and \code{colttests}, \code{x} can also be an
-    \code{\linkS4class{ExpressionSet}}.}
+    \code{\link[Biobase]{ExpressionSet}}.}
   
   \item{fac}{Factor which codes the grouping to be tested.
     There must be 1 or 2 groups for the t-tests (corresponding to one-
@@ -62,7 +62,7 @@ colFtests(x, fac, var.equal = TRUE)
     for the \code{col*} functions, it must be the same as the number
     of rows of \code{x}.
     
-    If \code{x} is an \code{\linkS4class{ExpressionSet}}, then
+    If \code{x} is an \code{\link[Biobase]{ExpressionSet}}, then
     \code{fac} may also be a character vector of length 1 with the name of a covariate
     variable in \code{x}.}
   
