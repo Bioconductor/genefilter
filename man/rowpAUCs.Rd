@@ -10,31 +10,48 @@
 \alias{rowpAUCs,ExpressionSet,character-method}
 
 \title{Rowwise ROC and pAUC computation}
+
 \description{Methods for fast rowwise computation of ROC curves and
-  (partial) area under the curve (pAUC).}
+  (partial) area under the curve (pAUC) using the simple classifiaction
+  rule \code{x>\theta}, where \code{theta} is a value in the range of
+  \code{x}}
 
 \usage{
+
 rowpAUCs(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
+
 }
+
 \arguments{
+  
   \item{x}{\code{ExpressionSet}, \code{exprSet} or numeric matrix. The
-matrix must not contain \code{NA} values. Note that the use of
-\code{exprSet} is deprecated.}
+    matrix must not contain \code{NA} values. Note that the use of
+    \code{exprSet} is deprecated.}
+
   \item{fac}{Factor; if \code{x} is an \code{ExpressionSet} or
-\code{exprSet}, this may also be a character vector of length 1 with the
-name of a covariate variable in \code{x}. \code{fac} must have exactly 2
-levels.}
+    \code{exprSet}, this may also be a character vector of length 1 with
+    the name of a covariate variable in \code{x}. \code{fac} must have
+    exactly 2 levels.}
  
   \item{p}{Numeric vector of length 1. Limit in (0,1) to integrate pAUC
     to.}
-  \item{flip}{Automatically mirror the ROC curve along the 45 degree
-    diagonal when the total area under the curve is smaller than
-    0.5. Note that this is only valid for a symmetric set up. For the
-    unsymetric case set \code{flip=FALSE}.}
-  \item{caseNames}{ The class names that are used when
-    plotting the data. If \code{fac} is the name of the covariate
-    variable in the \code{ExpressionSet} the function will use its
-    levels as \code{caseNames}}
+  
+  \item{flip}{Logical. If \code{TRUE}, both classification rules
+    \code{x>\theta} and \code{x<\theta} are tested and the (partial)
+    area under the curve of the better one of the two is returned, i.e,
+    the ROC curve is mirrored along the 45 degree diagonal. This is
+    appropriate for the cases in which the classification is not
+    necessarily linked to higher expression values but rather symmetric
+    and one would assume both over- and underexpressed genes for both
+    classes. You can set \code{flip} to \code{FALSE} if you only want
+    screen for genes which discriminate Disease from Control with the
+    \code{x>\theta} rule.}
+
+  \item{caseNames}{ The class names that are used when plotting the
+    data. If \code{fac} is the name of the covariate variable in the
+    \code{ExpressionSet} the function will use its levels as
+    \code{caseNames}}
+  
 }
 
 \details{
@@ -42,11 +59,15 @@ levels.}
   Rowwise calculation of Receiver Operating Characteristic (ROC) curves
   and the corresponding partial area under the curve (pAUC) for a given
   data matrix or \code{ExpressionSet}. The function is implemented in C
-  and thus reasonably fast and memory efficient. Cutpoints are
-  calculated before the first, in between and after the last data
-  value. By default, if the total area under the curve is smaller 0.5 it
-  is flipped for plotting and computation of \code{pAUC}. Note: This is
-  only valid for the symmetric case. In the unsymmetric case
+  and thus reasonably fast and memory efficient. Cutpoints
+  (\code{\theata} are calculated before the first, in between and after
+  the last data value. By default, both classification rules
+  \code{x>\theta} and \code{x<\theta} are tested and the (partial) area
+  under the curve of the better one of the two is returned. This is only
+  valid for symmetric cases, where the classification is independent of
+  the magnitude of \code{x} (e.g., both over- and underexpression of
+  different genes in the same class).  For unsymmetric cases in which
+  you expect x to be consitently higher/lower in of of the two classes
   (e.g. presence or absence of a single biomarker) set \code{flip=FALSE}
   or use the functionality provided in the \code{ROC} package.
 

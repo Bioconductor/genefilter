@@ -15,7 +15,7 @@ internal c function for calculation of pAUCs
 -----------------------------------------------------------------*/
 
 void pAUC_c(double *spec, double *sens, double *area, double *auc, double *p,
-	    int columns, int rows, int *flip) {
+	    int columns, int rows, int flip) {
 
   int i, j, k, d;
   double *x, *y;
@@ -119,7 +119,7 @@ SEXP pAUC(SEXP _spec, SEXP _sens, SEXP _p, SEXP _flip)
   double *spec;
   double *sens;
   double *p;
-  int *flip;
+  int flip;
   int rows, columns;  /* dimensions of spec and sens  */
   int i;
  
@@ -155,7 +155,7 @@ SEXP pAUC(SEXP _spec, SEXP _sens, SEXP _p, SEXP _flip)
   /* check input argument flip */
   if(!isInteger(_flip)) 
       error("'flip' must be an integer.");
-  flip = INTEGER(_flip)[0];
+  flip = (int)INTEGER(_flip)[0];
   /* done with flip */
 
   /* allocate memory for return values */

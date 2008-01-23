@@ -16,7 +16,7 @@ internal c function for calculation of ROC curves and pAUCs
 
 void ROCpAUC_c(double *data, int nrd, int ncd, double *cutp, int ncc, 
             int *truth, double *spec, double *sens, double *area, 
-	       double *auc, double *p, int *flip) {
+	       double *auc, double *p, int flip) {
 
   int i, j, k, pred, d, rsum, csum, rcount, ccount;
   double *x, *y;
@@ -135,7 +135,7 @@ SEXP ROCpAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p, SEXP _flip)
   double *cutp;
   int *truth;
   double *p;
-  int *flip;
+  int flip;
   int nrd, ncd;  /* dimensions of data    */
   int nrc, ncc;  /* dimensions of cutpts  */
   int i;
@@ -185,7 +185,7 @@ SEXP ROCpAUC(SEXP _data, SEXP _cutpts, SEXP _truth, SEXP _p, SEXP _flip)
   /* check input argument flip */
   if(!isInteger(_flip)) 
     error("'flip' must be an integer.");
-  flip = INTEGER(_flip)[0];
+  flip = (int)INTEGER(_flip)[0];
  /* done with flip */
 
   /* allocate memory for return values */
