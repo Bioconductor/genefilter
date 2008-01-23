@@ -13,7 +13,7 @@
 
 \description{Methods for fast rowwise computation of ROC curves and
   (partial) area under the curve (pAUC) using the simple classifiaction
-  rule \code{x>\theta}, where \code{theta} is a value in the range of
+  rule \code{x > theta}, where \code{theta} is a value in the range of
   \code{x}}
 
 \usage{
@@ -36,16 +36,15 @@ rowpAUCs(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
   \item{p}{Numeric vector of length 1. Limit in (0,1) to integrate pAUC
     to.}
   
-  \item{flip}{Logical. If \code{TRUE}, both classification rules
-    \code{x>\theta} and \code{x<\theta} are tested and the (partial)
-    area under the curve of the better one of the two is returned, i.e,
-    the ROC curve is mirrored along the 45 degree diagonal. This is
-    appropriate for the cases in which the classification is not
-    necessarily linked to higher expression values but rather symmetric
-    and one would assume both over- and underexpressed genes for both
-    classes. You can set \code{flip} to \code{FALSE} if you only want
-    screen for genes which discriminate Disease from Control with the
-    \code{x>\theta} rule.}
+  \item{flip}{Logical. If \code{TRUE}, both classification rules \code{x
+  > theta} and \code{x < theta} are tested and the (partial) area under
+  the curve of the better one of the two is returned, i.e, the ROC curve
+  is mirrored along the 45 degree diagonal. This is appropriate for the
+  cases in which the classification is not necessarily linked to higher
+  expression values, but instead it is symmetric and one would assume
+  both over- and underexpressed genes for both classes. You can set
+  \code{flip} to \code{FALSE} if you only want to screen for genes which
+  discriminate Disease from Control with the \code{x > theta} rule.}
 
   \item{caseNames}{ The class names that are used when plotting the
     data. If \code{fac} is the name of the covariate variable in the
@@ -59,13 +58,13 @@ rowpAUCs(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
   Rowwise calculation of Receiver Operating Characteristic (ROC) curves
   and the corresponding partial area under the curve (pAUC) for a given
   data matrix or \code{ExpressionSet}. The function is implemented in C
-  and thus reasonably fast and memory efficient. Cutpoints
-  (\code{\theata} are calculated before the first, in between and after
-  the last data value. By default, both classification rules
-  \code{x>\theta} and \code{x<\theta} are tested and the (partial) area
-  under the curve of the better one of the two is returned. This is only
-  valid for symmetric cases, where the classification is independent of
-  the magnitude of \code{x} (e.g., both over- and underexpression of
+  and thus reasonably fast and memory efficient. Cutpoints (\code{theta}
+  are calculated before the first, in between and after the last data
+  value. By default, both classification rules \code{x > theta} and
+  \code{x < theta} are tested and the (partial) area under the curve of
+  the better one of the two is returned. This is only valid for
+  symmetric cases, where the classification is independent of the
+  magnitude of \code{x} (e.g., both over- and underexpression of
   different genes in the same class).  For unsymmetric cases in which
   you expect x to be consitently higher/lower in of of the two classes
   (e.g. presence or absence of a single biomarker) set \code{flip=FALSE}
@@ -95,7 +94,7 @@ rowpAUCs(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
 \references{Pepe MS, Longton G, Anderson GL,
 Schummer M.: Selecting
     differentially expressed genes from microarray experiments. \emph{Biometrics. 2003 Mar;59(1):133-42.}}
-\author{Florian Hahne <f.hahne@dkfz.de>}
+\author{Florian Hahne <fhahne@fhcrc.org>}
 \seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca},
     \link[ROC:AUC]{pAUC}, \link[genefilter:rowROC]{rowROC}}}
 \examples{
