@@ -31,7 +31,7 @@ levels.}
     diagonal when the total area under the curve is smaller than
     0.5. Note that this is only valid for a symmetric set up. For the
     unsymetric case set \code{flip=FALSE}.}
-  \item{caseNames}{caseNames}{ The class names that are used when
+  \item{caseNames}{ The class names that are used when
     plotting the data. If \code{fac} is the name of the covariate
     variable in the \code{ExpressionSet} the function will use its
     levels as \code{caseNames}}
