@@ -11,10 +11,10 @@ findLargest(gN, testStat, data = "hgu133plus2")
 }
 
 \arguments{
-  \item{gN}{A vector of probe identifiers for the chip. }
+  \item{gN}{A vector of probe identifiers for the chip.}
   \item{testStat}{A vector of test statistics, of the same length as
-    \code{gN} with the per probe test statistics. }
-  \item{data}{The character string identifying the chip. }
+    \code{gN} with the per probe test statistics.}
+  \item{data}{The character string identifying the chip.}
 }
 \details{
   All the probe identifiers, \code{gN}, are mapped to Entrez Gene IDs
@@ -31,16 +31,15 @@ findLargest(gN, testStat, data = "hgu133plus2")
  A named vector of probe IDs. The names are Entrez Gene IDs.
 }
 
-\author{R. Gentleman }
+\author{R. Gentleman}
 
-\seealso{\code{\link{sapply}} }
+\seealso{\code{\link{sapply}}}
 \examples{
-  library("hgu95av2")
+  library("hgu95av2.db")
   set.seed(124)
-  gN = sample(ls(hgu95av2ENTREZID), 200)
-  stats = rnorm(200)
+  gN <- sample(ls(hgu95av2ENTREZID), 200)
+  stats <- rnorm(200)
   findLargest(gN, stats, "hgu95av2")
 
 }
 \keyword{manip}
-
