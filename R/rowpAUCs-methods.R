@@ -92,10 +92,16 @@ setMethod("rowpAUCs", signature(x="ExpressionSet"),
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 setMethod("rowpAUCs", signature(x="ExpressionSet", fac="character"),        
           function(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2")){
-            if (length(fac) != 1)
-               stop("fac must be length 1 character or a factor")
-            cn <- as.character(levels(pData(x)[[fac]]))
-            fac = factor(as.integer(factor(pData(x)[[fac]]))-1)
-            rowpAUCs(x=exprs(x), fac=fac, p=p, flip=flip, caseNames=cn) 
+            if (length(fac) == 1){
+                if(!fac %in% colnames(pData(x)))
+                    stop("fac must be length 1 character indicating a ",
+                         "covariate in the phenoData slot of the expressionSet")
+                cn <- as.character(levels(pData(x)[[fac]]))
+                fac = factor(as.integer(factor(pData(x)[[fac]]))-1)
+                rowpAUCs(x=exprs(x), fac=fac, p=p, flip=flip, caseNames=cn)
+            }else{
+                rowpAUCs(x=x, fac=as.factor(fac), p=p, flip=flip,
+                         caseNames=caseNames)
+            }
           })
 ## ==========================================================================

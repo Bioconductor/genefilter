@@ -28,23 +28,26 @@ rowpAUCs(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
     matrix must not contain \code{NA} values. Note that the use of
     \code{exprSet} is deprecated.}
 
-  \item{fac}{Factor; if \code{x} is an \code{ExpressionSet} or
+  \item{fac}{Factor or numeric or character that can be coerced to
+    a factor; if \code{x} is an \code{ExpressionSet} or
     \code{exprSet}, this may also be a character vector of length 1 with
     the name of a covariate variable in \code{x}. \code{fac} must have
-    exactly 2 levels.}
+    exactly 2 levels. For better control over the classification, use
+    integer values in 0 and 1, where 1 indicates the "Disease" class in
+    the sense of the Pepe et al paper (see below).}
  
   \item{p}{Numeric vector of length 1. Limit in (0,1) to integrate pAUC
     to.}
   
   \item{flip}{Logical. If \code{TRUE}, both classification rules \code{x
   > theta} and \code{x < theta} are tested and the (partial) area under
-  the curve of the better one of the two is returned, i.e, the ROC curve
-  is mirrored along the 45 degree diagonal. This is appropriate for the
-  cases in which the classification is not necessarily linked to higher
-  expression values, but instead it is symmetric and one would assume
-  both over- and underexpressed genes for both classes. You can set
-  \code{flip} to \code{FALSE} if you only want to screen for genes which
-  discriminate Disease from Control with the \code{x > theta} rule.}
+  the curve of the better one of the two is returned. This is
+  appropriate for the cases in which the classification is not
+  necessarily linked to higher expression values, but instead it is
+  symmetric and one would assume both over- and underexpressed genes for
+  both classes. You can set \code{flip} to \code{FALSE} if you only want
+  to screen for genes which discriminate Disease from Control with the
+  \code{x > theta} rule.}
 
   \item{caseNames}{ The class names that are used when plotting the
     data. If \code{fac} is the name of the covariate variable in the
@@ -68,7 +71,11 @@ rowpAUCs(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
   different genes in the same class).  For unsymmetric cases in which
   you expect x to be consitently higher/lower in of of the two classes
   (e.g. presence or absence of a single biomarker) set \code{flip=FALSE}
-  or use the functionality provided in the \code{ROC} package.
+  or use the functionality provided in the \code{ROC} package. For
+  better control over the classification (i.e., the choice of "Disease"
+  and "Control" class in the sense of the Pepe et al paper), argument
+  \code{fac} can be an integer in \code{[0,1]} where 1 indicates
+  "Disease" and 0 indicates "Control". 
 
 }
   
