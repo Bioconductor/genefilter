@@ -8,7 +8,7 @@ Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
 Depends: R (>= 2.1.0), methods, Biobase (>= 1.15.29), survival
 Suggests: class, hgu95av2.db, tkWidgets
 Imports: AnnotationDbi, annotate (>= 1.13.7)
-License: The Artistic License, Version 2.0
+License: Artistic-2.0
 LazyLoad: yes
 LazyData: yes
 Collate: AllClasses.R
