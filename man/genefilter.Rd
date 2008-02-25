@@ -1,7 +1,6 @@
 \name{genefilter}
 \alias{genefilter}
-
-\title{A function to filter genes. }
+\title{A function to filter genes.}
 \description{
    \code{genefilter} filters genes in the array \code{expr} using the
    filter functions in \code{flist}. It returns an array of logical
@@ -14,9 +13,9 @@
 genefilter(expr, flist)
 }
 \arguments{
-  \item{expr}{A matrix, \code{ExpressionSet}, or \code{exprSet} that the
-    filter functions will be applied to. }
-  \item{flist}{A list of filter functions to apply to the array. }
+  \item{expr}{A \code{matrix} or \code{ExpressionSet} that the
+    filter functions will be applied to.}
+  \item{flist}{A \code{list} of filter functions to apply to the array.}
 }
 \details{
    This package uses a very simple but powerful protocol for
@@ -31,23 +30,19 @@ genefilter(expr, flist)
    applied sequentially to each gene. The function returns a logical
    vector indicating whether the gene passed all tests functions or
    failed at least one of them.
-   
-  }
-\value{
-  A logical vector of length equal to the number of rows of \code{expr}.
-  The values in that vector indicate whether the corresponding row of
-  \code{expr} passed the set of filter functions.
 }
-
-\author{R. Gentleman }
-\seealso{\code{\link{genefilter}}, \code{\link{kOverA}} }
-
+\value{
+  A logical \code{vector} of length equal to the number of rows of
+  \code{expr}. The values in that \code{vector} indicate whether the
+  corresponding row of \code{expr} passed the set of filter functions.
+}
+\author{R. Gentleman}
+\seealso{\code{\link{genefilter}}, \code{\link{kOverA}}}
 \examples{
    set.seed(-1)
    f1 <- kOverA(5, 10)
    flist <- filterfun(f1, allNA)
-   exprA <- matrix(rnorm(1000, 10), nc=10)
+   exprA <- matrix(rnorm(1000, 10), ncol = 10)
    ans <- genefilter(exprA, flist)
 }
 \keyword{manip}
-

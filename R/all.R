@@ -129,8 +129,7 @@ gapFilter <- function(Gap, IQR, Prop, na.rm=TRUE, neg.rm=TRUE) {
 
 genefilter <- function(expr, flist)
     {
-     if(is(expr, "exprSet") ||
-        is(expr, "ExpressionSet"))
+     if(is(expr, "ExpressionSet"))
        expr <- exprs(expr)
      apply(expr, 1, flist)
 }

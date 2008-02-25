@@ -1,24 +1,17 @@
 \name{rowFtests}
 \alias{rowFtests}
 \alias{rowFtests,matrix,factor-method}
-\alias{rowFtests,exprSet,factor-method}
-\alias{rowFtests,exprSet,character-method}
 \alias{rowFtests,ExpressionSet,factor-method}
 \alias{rowFtests,ExpressionSet,character-method}
 
 \alias{colFtests}
 \alias{colFtests,matrix,factor-method}
-\alias{colFtests,exprSet,factor-method}
-\alias{colFtests,exprSet,character-method}
 \alias{colFtests,ExpressionSet,factor-method}
 \alias{colFtests,ExpressionSet,character-method}
 
 \alias{rowttests}
 \alias{rowttests,matrix,factor-method}
 \alias{rowttests,matrix,missing-method}
-\alias{rowttests,exprSet,factor-method}
-\alias{rowttests,exprSet,missing-method}
-\alias{rowttests,exprSet,character-method}
 \alias{rowttests,ExpressionSet,factor-method}
 \alias{rowttests,ExpressionSet,character-method}
 \alias{rowttests,ExpressionSet,missing-method}
@@ -26,9 +19,6 @@
 \alias{colttests}
 \alias{colttests,matrix,factor-method}
 \alias{colttests,matrix,missing-method}
-\alias{colttests,exprSet,factor-method}
-\alias{colttests,exprSet,missing-method}
-\alias{colttests,exprSet,character-method}
 \alias{colttests,ExpressionSet,factor-method}
 \alias{colttests,ExpressionSet,character-method}
 \alias{colttests,ExpressionSet,missing-method}
@@ -37,7 +27,6 @@
 
 \title{t-tests and F-tests for rows or columns of a matrix}
 \description{t-tests and F-tests for rows or columns of a matrix}
-
 \usage{
 rowttests(x, fac, tstatOnly = FALSE) 
 colttests(x, fac, tstatOnly = FALSE)
@@ -50,7 +39,7 @@ colFtests(x, fac, var.equal = TRUE)
   \item{x}{Numeric matrix. The matrix must not contain \code{NA} values.
     For \code{rowttests} and \code{colttests}, \code{x} can also be an
     \code{\link[Biobase]{ExpressionSet}}.}
-  
+
   \item{fac}{Factor which codes the grouping to be tested.
     There must be 1 or 2 groups for the t-tests (corresponding to one-
     and two-sample t-test), and 2 or more for the F-tests. If \code{fac}
@@ -61,24 +50,24 @@ colFtests(x, fac, var.equal = TRUE)
     the same as the number of columns of \code{x}.
     for the \code{col*} functions, it must be the same as the number
     of rows of \code{x}.
-    
+
     If \code{x} is an \code{\link[Biobase]{ExpressionSet}}, then
     \code{fac} may also be a character vector of length 1 with the name of a covariate
     variable in \code{x}.}
-  
+
   \item{tstatOnly}{A logical variable indicating whether to calculate
     parametric p-values.  If \code{TRUE}, just the t-statistics are
     returned. This can be considerably faster.}
-  
+
   \item{ig1}{The indices of the columns of \code{x} that correspond
     to group 1.}
   \item{ig2}{The indices of the columns of \code{x} that correspond
-    to group 2. }
-  
+    to group 2.}
+
   \item{var.equal}{A logical variable indicating whether to treat the
     variances in the samples as equal.  If 'TRUE', a simple F test for
     the equality of means in a one-way analysis of variance is
-    preformed.  If 'FALSE', an approximate method of Welch (1951) is
+    performed.  If 'FALSE', an approximate method of Welch (1951) is
     used, which generalizes the commonly known 2-sample Welch test to
     the case of arbitrarily many samples.}
 }
@@ -99,7 +88,6 @@ colFtests(x, fac, var.equal = TRUE)
   matrix algebra in R. Compared to the \code{*ttests} functions,
   they are slower and use more memory.
 }
-
 \value{
   A \code{data.frame} with columns \code{statistic},
   \code{p.value} (optional in the case of the t-test functions) and
@@ -114,7 +102,6 @@ colFtests(x, fac, var.equal = TRUE)
   same for each row) and the other ones are the second degree of freedom
   (one for each row). 
 }
-
 \references{B. L. Welch (1951), On the comparison of several mean values: an
      alternative approach. Biometrika, *38*, 330-336}
 \author{Wolfgang Huber <huber@ebi.ac.uk>}
@@ -163,5 +150,4 @@ colFtests(x, fac, var.equal = TRUE)
   }
 
 }
-
 \keyword{math}

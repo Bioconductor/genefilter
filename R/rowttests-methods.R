@@ -138,42 +138,36 @@ setMethod("colFtests", signature(x="matrix", fac="factor"),
 
 
 ## ===========================================================================
-## Methods for 'exprSet' and 'ExpressionSet': only for rowttests and rowFtests
+## Methods for 'ExpressionSet': only for rowttests and rowFtests
 ## -==========================================================================
-for(xtyp in c("exprSet", "ExpressionSet")) {
-              
-  setMethod("rowttests", signature(x=xtyp, fac="factor"),
-    function(x, fac, tstatOnly=FALSE)
-      rowcoltt(exprs(x), fac, tstatOnly=tstatOnly, 1L))
+setMethod("rowttests", signature(x="ExpressionSet", fac="factor"),
+  function(x, fac, tstatOnly=FALSE)
+    rowcoltt(exprs(x), fac, tstatOnly=tstatOnly, 1L))
 
-  setMethod("rowttests", signature(x=xtyp, fac="missing"),
-    function(x, fac, tstatOnly=FALSE) {
-      x = exprs(x)
-      fac = integer(ncol(x))
-      rowcoltt(x, fac, tstatOnly, 1L)
-    })
+setMethod("rowttests", signature(x="ExpressionSet", fac="missing"),
+  function(x, fac, tstatOnly=FALSE) {
+    x = exprs(x)
+    fac = integer(ncol(x))
+    rowcoltt(x, fac, tstatOnly, 1L)
+  })
 
-  setMethod("rowttests", signature(x=xtyp, fac="character"),
-    function(x, fac, tstatOnly=FALSE) {
-      if (length(fac) != 1)
-        stop("fac must be length 1 character or a factor")
-      fac = factor(pData(x)[[fac]])
-      rowcoltt(exprs(x), fac, tstatOnly, 1L)
-    })
+setMethod("rowttests", signature(x="ExpressionSet", fac="character"),
+  function(x, fac, tstatOnly=FALSE) {
+    if (length(fac) != 1)
+      stop("fac must be length 1 character or a factor")
+    fac = factor(pData(x)[[fac]])
+    rowcoltt(exprs(x), fac, tstatOnly, 1L)
+  })
 
-  
+setMethod("rowFtests", signature(x="ExpressionSet", fac="factor"),
+  function(x, fac, var.equal=TRUE)
+    rowcolFt(exprs(x), fac, var.equal, 1L))
 
-  setMethod("rowFtests", signature(x=xtyp, fac="factor"),
-    function(x, fac, var.equal=TRUE)
-      rowcolFt(exprs(x), fac, var.equal, 1L))
-  
-  setMethod("rowFtests", signature(x=xtyp, fac="character"),
-   function(x, fac, var.equal=TRUE) {
-     fac = factor(as.integer(factor(pData(x)[[fac]]))-1L)
-     rowcolFt(exprs(x), fac, var.equal, 1L)
-   })
-
-} ## for xtyp
+setMethod("rowFtests", signature(x="ExpressionSet", fac="character"),
+ function(x, fac, var.equal=TRUE) {
+   fac = factor(as.integer(factor(pData(x)[[fac]]))-1L)
+   rowcolFt(exprs(x), fac, var.equal, 1L)
+ })
 
 
 

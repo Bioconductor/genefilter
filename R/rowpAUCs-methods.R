@@ -49,34 +49,6 @@ setMethod("rowpAUCs", signature(x="matrix", fac="numeric"),
 
 
 ## ==========================================================================
-## rowpAUCs method with signature x=exprSet
-## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-setMethod("rowpAUCs", signature(x="exprSet"),        
-          function(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2")){
-            .Deprecated(msg=Biobase:::EXPRSET_DEPR_MSG)
-            rowpAUCs(x=exprs(x), fac=fac, p=p, flip=flip,
-                     caseNames=caseNames) 
-          })
-
-## ==========================================================================
-
-
-## ==========================================================================
-## rowpAUCs method with signature x=exprSet fac=character
-## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
-setMethod("rowpAUCs", signature(x="exprSet", fac="character"),        
-          function(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2")){
-            .Deprecated(msg=Biobase:::EXPRSET_DEPR_MSG)
-            if (length(fac) != 1)
-               stop("fac must be length 1 character or a factor")
-            cn <- as.character(levels(pData(x)[[fac]]))
-            fac = factor(as.integer(factor(pData(x)[[fac]]))-1)
-            rowpAUCs(x=exprs(x), fac=fac, p=p, flip=flip, caseNames=cn)   
-          })
-## ==========================================================================
-
-
-## ==========================================================================
 ## rowpAUCs method with signature x=ExpressionSet
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 setMethod("rowpAUCs", signature(x="ExpressionSet"),        

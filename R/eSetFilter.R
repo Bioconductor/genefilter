@@ -141,14 +141,6 @@ eSetFilter <- function(eSet){
         }
     }
 
-#    if(class(eSet) != "exprSet"){
-#        tkmessageBox(title = "Wrong Data type",
-#                     message = paste("The object passed is not an object",
-#                               "of exprSet"),
-#                     icon = "warning",
-#                     type = "ok")
-#        stop()
-#    }else{
     filters <- buildGUI()
     if(!is.null(filters)){
         filters <- filterfun(unlist(filters))
@@ -156,7 +148,6 @@ eSetFilter <- function(eSet){
     }else{
         return(NULL)
     }
-#    }
 }
 
 getFilterNames <- function(){
@@ -316,7 +307,7 @@ setESetArgs <- function(filter){
 
 isESet <- function(eSet){
     if(missing(eSet) ||
-       (!is(eSet, "exprSet") && !is(eSet, "ExpressionSet"))) {
+       (!is(eSet, "ExpressionSet"))) {
         tkmessageBox(title = "Input Error",
                      message = paste("filterMaster has to take",
                      "an object of class ExpressionSet"),
