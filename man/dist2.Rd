@@ -10,7 +10,7 @@
   pairs of columns of an m-by-n matrix.
 }
 \usage{
-  dist2(x, fun=function(a,b) median(abs(a-b)), diagonal=0)
+  dist2(x, fun=function(a,b) median(abs(a-b), na.rm=TRUE), diagonal=0)
 }
 
 \arguments{
