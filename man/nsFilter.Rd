@@ -77,6 +77,11 @@ featureFilter(eset, require.entrez=TRUE,
   turn on a filter based on available annotation data.  The annotation
   package is determined by calling \code{annotation(eset)}.
 
+ \emph{Duplicate Probe Removal} If \item{remove.dupEntrez=TRUE},
+ probes determined by your annotation to be pointing to the same gene
+ will be compared, and only the probe with the highest \code{var.func} value
+ will be retained.
+  
   \emph{Variance Based Filtering} The \code{var.filter},
   \code{var.func}, \code{var.cutoff} and \code{varByQuantile} arguments
   control numerical cutoff-based filtering.  The intention is to remove
@@ -88,24 +93,27 @@ featureFilter(eset, require.entrez=TRUE,
   \code{var.cutoff} is \code{0.5} and is motivated by the rule of thumb
   that in many tissues only 40\% of genes are expressed. Of course, if
   you believe in a different approach to numerical filtering you can choose
-  another function as\code{var.func}, or turn off
+  another function as \code{var.func}, or turn off
   numerical filtering by setting \code{var.filter=FALSE}.
 
-  Note also that by default the numerical-filter cutoff is interpreted
+  Note that by default the numerical-filter cutoff is interpreted
   as a quantile, so leaving the default values intact would filter out
   50\% of the genes remaining at this stage. If you prefer to set the
   cutoff at some absolute threshold, change the value of
   \code{varByQuantile} to \code{FALSE}, and modify \code{var.cutoff}
   accordingly.
 
-  Note that now the variance filtering is performed last, so that (if
-  \code{varByQuantile=TRUE}) the final number of genes is indeed the
-  cutoff-specified fraction of the genes remaining after all other filters
-  were passed. 
+  Note also that now variance filtering is performed last, so that
+  (if \code{varByQuantile=TRUE} and \item{remove.dupEntrez=TRUE}) the
+  final number of genes does indeed exclude precisely the \code{var.cutoff} 
+  fraction of unique genes remaining after all other filters were
+  passed.
   
   The stand-alone function \code{varFilter} does only numerical filtering, and returns an
   \code{ExpressionSet}. \code{featureFilter} does only feature based
-  filtering and returns an expression set.
+  filtering and duplicate removal, and returns an expression set as
+  well. Duplicate removal is hard-coded to retain the highest-IQR probe
+  for each gene.
 
 }
 \value{
