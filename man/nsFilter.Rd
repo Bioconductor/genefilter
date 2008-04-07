@@ -16,8 +16,9 @@
 nsFilter(eset, require.entrez = TRUE, require.GOBP = FALSE, 
     require.GOCC = FALSE, require.GOMF = FALSE,
     remove.dupEntrez = TRUE, var.func = IQR, var.cutoff = 0.5, 
-    var.filter = TRUE, feature.exclude="^AFFX", ...)
-varFilter(eset, var.func = IQR, var.cutoff = 0.5)
+    var.filter = TRUE, filterByQuantile=TRUE,
+    feature.exclude="^AFFX", ...)
+varFilter(eset, var.func = IQR, var.cutoff = 0.5, filterByQuantile=TRUE)
 featureFilter(eset, require.entrez=TRUE,
     require.GOBP=FALSE, require.GOCC=FALSE,
     require.GOMF=FALSE, remove.dupEntrez=TRUE,
@@ -55,7 +56,10 @@ featureFilter(eset, require.entrez=TRUE,
       variance based filtering.  The default is \code{TRUE}.  A value of
       \code{FALSE} implies \code{remove.dupEntrez} is also forced to
       \code{FALSE}.}
-  \item{feature.exclude}{A character vector of regular expressions.  Any
+\item{filterByQuantile}{Logical: whether the variance-filter cutoff threshold
+  should be interpreted as a quantile. Defaults to \code{TRUE}; if set
+  to  \code{FALSE} the cutoff value is used directly ``as is''.}
+\item{feature.exclude}{A character vector of regular expressions.  Any
     probe sets identifiers (return value of \code{featureNames(eset)})
     that match one of the specified patterns will be filtered out.  The
     default value is intended to filter out Affymetrix quality control
@@ -73,26 +77,33 @@ featureFilter(eset, require.entrez=TRUE,
   turn on a filter based on available annotation data.  The annotation
   package is determined by calling \code{annotation(eset)}.
 
-  \emph{Variance Based Filtering} The \code{var.func} and
-  \code{var.cutoff} arguments control the variance based filtering.  The
-  intention is to remove probe sets with little variation across
-  samples.  The default \code{var.func} is \code{IQR} and was selected
-  because it is robust to outliers.  The deafult \code{var.cutoff} is
-  \code{0.5} and is motivated by the common case where the platform is a
-  genome-wide expression array and the rule of thumb that in any given
-  tissue only 40\% of genes are expressed.
+  \emph{Variance Based Filtering} The \code{var.filter},
+  \code{var.func}, \code{var.cutoff} and \code{varByQuantile} arguments
+  control numerical cutoff-based filtering.  The intention is to remove
+  uninformative probe sets, representing genes that were not expressed
+  at all. The default \code{var.func} is \code{IQR}; this choice is
+  motivated by the observation that unexpressed genes are detected most
+  reliably through their low variability across samples. Additionally,
+  \code{IQR} is robust to outliers (see note below). The default
+  \code{var.cutoff} is \code{0.5} and is motivated by the rule of thumb
+  that in many tissues only 40\% of genes are expressed. Of course, if
+  you believe in a different approach to numerical filtering you can choose
+  another function as\code{var.func}, or turn off
+  numerical filtering by setting \code{var.filter=FALSE}.
 
-  Note that \code{IQR} is a reasonable choice only for the case of
-  similar sample sizes. If one sample group is much bigger than the
-  other(s), the values of the smaller group(s) will be discarded as
-  outliers, and the \code{IQR} will be dominated by the large
-  group. Hence the probe set is filtered out for low variance. One could
-  consider using non-robust measures of variance (like \code{sd}) for
-  these cases, or to look at the range of more extreme quantiles, where
-  the quantile should be much smaller/larger than the ratios between
-  sample sizes.
+  Note also that by default the numerical-filter cutoff is interpreted
+  as a quantile, so leaving the default values intact would filter out
+  50\% of the genes remaining at this stage. If you prefer to set the
+  cutoff at some absolute threshold, change the value of
+  \code{varByQuantile} to \code{FALSE}, and modify \code{var.cutoff}
+  accordingly.
 
-  \code{varFilter} does only variance filtering, and returns an
+  Note that now the variance filtering is performed last, so that (if
+  \code{varByQuantile=TRUE}) the final number of genes is indeed the
+  cutoff-specified fraction of the genes remaining after all other filters
+  were passed. 
+  
+  The stand-alone function \code{varFilter} does only numerical filtering, and returns an
   \code{ExpressionSet}. \code{featureFilter} does only feature based
   filtering and returns an expression set.
 
@@ -108,6 +119,15 @@ featureFilter(eset, require.entrez=TRUE,
 }
 
 \author{Seth Falcon}
+
+\note{\code{IQR} is a reasonable variance-filter choice when the dataset
+  is split into two roughly equal and relatively homogeneous phenotype
+  groups. If your dataset has important groups smaller than 25\% of the
+  overall sample size, or if you are interested in unusual
+  individual-level patterns, then \code{IQR} may not be sensitive enough
+  for your needs. In such cases, you should consider using less robust
+  and more sensitive measures of variance (the simplest of which would
+  be \code{sd}).}
 
 \examples{
   library("hgu95av2.db")

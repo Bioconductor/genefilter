@@ -8,20 +8,22 @@ rowIQRs = function(eSet) {
   upQ - lowQ
 }
 
-varFilter <- function(eset, var.func=IQR, var.cutoff=0.5)
+varFilter <- function(eset, var.func=IQR, var.cutoff=0.5,filterByQuantile=TRUE
+)
 {
     if( deparse(substitute(var.func)) == "IQR") {
         vars = rowIQRs(eset)
     } else {
         vars <- apply(exprs(eset), 1, var.func)
     }
-    if( var.cutoff > 1 || var.cutoff < 0 )
-        selected <- vars > var.cutoff
-    else {
+    if(filterByQuantile) {
+        if( 0 < var.cutoff && var.cutoff < 1 ) {
         quant = quantile(vars, probs = var.cutoff)
         selected = vars > quant
-    }
-    eset <- eset[selected, ]
+                      } else stop("Cutoff Quantile has to be between 0 and 1.")
+    } else {    selected <- vars > var.cutoff
+                }
+                    eset <- eset[selected, ]
 }
 
 featureFilter <- function(eset, require.entrez=TRUE,
@@ -96,6 +98,7 @@ setMethod("nsFilter", "ExpressionSet",
                    remove.dupEntrez=TRUE,
                    var.func=IQR, var.cutoff=0.5,
                    var.filter=TRUE,
+                   filterByQuantile=TRUE,
                    feature.exclude="^AFFX", ...)
           {
               if (!is.function(var.func))
@@ -166,34 +169,36 @@ setMethod("nsFilter", "ExpressionSet",
                   }
               }
 
-              if (var.filter) {
-                  esetIqr <- apply(exprs(eset), 1, var.func)
-                  ##note this was not happening in the first
-                  ##version - despite the documentation
-                  if( 0 < var.cutoff && var.cutoff < 1 )
-                      var.cutoff = quantile(esetIqr, var.cutoff)
-                  selected <- esetIqr > var.cutoff
-                  eset <- eset[selected, ]
-                  logvar <- "numLowVar"
-                  assign(logvar, sum(!selected), filter.log)
-              } else {
-                  if (!missing(remove.dupEntrez) && remove.dupEntrez)
-                    warning("var.filter FALSE implies remove.dupEntrez FALSE, ",
-                            "ignoring user-specified value")
-              }
 
-              if (remove.dupEntrez && var.filter) {
+              if (remove.dupEntrez) {
                   ## Reduce to unique probe <--> gene mapping here by keeping largest IQR
                   ## We will want "unique genes" in the non-specific filtered gene
                   ## set.
+                  esetIqr <- apply(exprs(eset), 1, var.func)
                   numNsWithDups <- nfeat(eset)
-                  nsFilteredIqr <- esetIqr[selected]
-                  uniqGenes <- findLargest(featureNames(eset), nsFilteredIqr,
+                  uniqGenes <- findLargest(featureNames(eset), esetIqr,
                                            annotation(eset))
                   eset <- eset[uniqGenes, ]
                   logvar <- "numDupsRemoved"
                   assign(logvar, numNsWithDups - nfeat(eset), envir=filter.log)
               }
+
+
+              if (var.filter) {
+                  esetIqr <- apply(exprs(eset), 1, var.func)
+                  ##note this was not happening in the first
+                  ##version - despite the documentation
+                  if (filterByQuantile) {
+                      if( 0 < var.cutoff && var.cutoff < 1 ) {
+                          var.cutoff = quantile(esetIqr, var.cutoff)
+                      } else stop("Cutoff Quantile has to be between 0 and 1.")
+                  }
+                  selected <- esetIqr > var.cutoff
+                  eset <- eset[selected, ]
+                  logvar <- "numLowVar"
+                  assign(logvar, sum(!selected), filter.log)
+              } 
+
               numSelected <- length(featureNames(eset))
               list(eset=eset, filter.log=as.list(filter.log))
           })
