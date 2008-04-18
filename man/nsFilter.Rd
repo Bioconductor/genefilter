@@ -53,9 +53,7 @@ featureFilter(eset, require.entrez=TRUE,
       with small variance across samples.  See the \code{var.func}
       argument and the details section below.}
   \item{var.filter}{A logical indicating whether or not to perform
-      variance based filtering.  The default is \code{TRUE}.  A value of
-      \code{FALSE} implies \code{remove.dupEntrez} is also forced to
-      \code{FALSE}.}
+      variance based filtering.  The default is \code{TRUE}.}  
 \item{filterByQuantile}{Logical: whether the variance-filter cutoff threshold
   should be interpreted as a quantile. Defaults to \code{TRUE}; if set
   to  \code{FALSE} the cutoff value is used directly ``as is''.}
@@ -77,7 +75,7 @@ featureFilter(eset, require.entrez=TRUE,
   turn on a filter based on available annotation data.  The annotation
   package is determined by calling \code{annotation(eset)}.
 
- \emph{Duplicate Probe Removal} If \item{remove.dupEntrez=TRUE},
+ \emph{Duplicate Probe Removal} If \code{remove.dupEntrez=TRUE},
  probes determined by your annotation to be pointing to the same gene
  will be compared, and only the probe with the highest \code{var.func} value
  will be retained.
@@ -104,7 +102,7 @@ featureFilter(eset, require.entrez=TRUE,
   accordingly.
 
   Note also that now variance filtering is performed last, so that
-  (if \code{varByQuantile=TRUE} and \item{remove.dupEntrez=TRUE}) the
+  (if \code{varByQuantile=TRUE} and \code{remove.dupEntrez=TRUE}) the
   final number of genes does indeed exclude precisely the \code{var.cutoff} 
   fraction of unique genes remaining after all other filters were
   passed.
@@ -126,7 +124,7 @@ featureFilter(eset, require.entrez=TRUE,
   \code{ExpressionSet}.
 }
 
-\author{Seth Falcon}
+\author{Seth Falcon (somewhat revised by Assaf Oron)}
 
 \note{\code{IQR} is a reasonable variance-filter choice when the dataset
   is split into two roughly equal and relatively homogeneous phenotype
