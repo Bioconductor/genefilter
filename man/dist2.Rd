@@ -10,7 +10,7 @@
   pairs of columns of an m-by-n matrix.
 }
 \usage{
-  dist2(x, fun=function(a,b) median(abs(a-b), na.rm=TRUE), diagonal=0)
+  dist2(x, fun=function(a,b) mean(abs(a-b), na.rm=TRUE), diagonal=0)
 }
 
 \arguments{
@@ -23,9 +23,9 @@
 }
 \details{
   With the default value of \code{fun}, this function calculates
-  for each pair of columns of \code{x} the median of the absolute values
-  of their differences.
-  This may be considered a measure of distance.
+  for each pair of columns of \code{x} the mean of the absolute values
+  of their differences (which is proportional to the L1-norm of their
+  difference). This is a distance metric.
 
   The implementation assumes that \code{fun} is symmetric,
   \code{fun(a,b)=fun(b,a)}. Hence, the
