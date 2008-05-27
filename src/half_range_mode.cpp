@@ -1,6 +1,5 @@
-extern "C" {
 #include <R.h>
-}
+
 #include <vector>
 #include <algorithm>
 
