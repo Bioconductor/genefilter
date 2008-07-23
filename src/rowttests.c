@@ -1,5 +1,5 @@
 /*
- * Copyright W. Huber 2005, all rights reserved
+ * Copyright W. Huber 2005
  */
  
 #include <R.h>
@@ -48,7 +48,7 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
 
     /* To determine first and second moments, we work through the 
        large matrix x in the order in which it is in memory -
-       this may speed up things considerably */
+       in the hope that this may speed up things */
     switch(which) {
 	case 0:  /* by row */
 	    for(i=0; i<nr; i++) {
@@ -182,24 +182,17 @@ SEXP rowcolttests(SEXP _x, SEXP _fac, SEXP _nrgrp, SEXP _which)
 	  error("'which' must be 0 or 1.");
   }
   
-  /* this does not seem to work since R_IsNA is declared as:
-               int R_IsNA(double);
-     in Arith.h */
-  /* if(! (R_IsNA(fac[i]) || ((fac[i]>=0)&&(fac[i]<nrgrp))) ) */
-  
   fac = INTEGER(_fac);
   for(i=0; i<no; i++)
       if(! ((fac[i]==R_NaInt) || ((fac[i]>=0)&&(fac[i]<nrgrp))) )
 	  error("Elements of 'fac' must be >=0 and < 'nrgrp'.");
-  /* done with fac */
+
 
   PROTECT(statistic = allocVector(REALSXP, nt));
   PROTECT(dm        = allocVector(REALSXP, nt));
   PROTECT(df        = allocVector(REALSXP, 1));
-  /* currently df is trivial, since we only do the normal t-test with
-     equal variances; at some point, var.equal=FALSE might be implemented */
 
-  /* Do it! */
+  /* Do it */
   rowcolttests_c(x, fac, nr, nc, no, nt, which, nrgrp, REAL(statistic), REAL(dm), REAL(df));
 
   /* return value: a list with two elements, statistic and df */
