@@ -7,7 +7,7 @@ setMethod("rowpAUCs", signature(x="matrix", fac="factor"),
             if(!is.numeric(p) || length(p)>1)
               stop("'p' must be numeric of length 1")
             ## check argument 'fac'
-            f = genefilter:::checkfac(fac)
+            f <- genefilter:::checkfac(fac)
             if(f$nrgrp != 2 || length(f$fac) != ncol(x) ||
                length(unique(f$fac)) !=2 )
                 stop("'fac' must be factor with 2 levels and length 'ncol(x)'")
@@ -17,7 +17,8 @@ setMethod("rowpAUCs", signature(x="matrix", fac="factor"),
             flip <- as.integer(flip)
             ## compute cutpoints
             cutpts <- matrix((0:ncol(x))+0.5, ncol=ncol(x)+1, 
-                             nrow=nrow(x), byrow=TRUE)
+                             nrow=nrow(x), byrow=TRUE,
+                             dimnames=list(rownames(x), NULL))
             
             ## rank data
             xr <- t(apply(x, 1, rank))
@@ -25,8 +26,14 @@ setMethod("rowpAUCs", signature(x="matrix", fac="factor"),
             ## call C function and return object of class 'rowROC'
             res <- .Call("ROCpAUC", xr, cutpts, as.integer(f$fac), p,
                          PACKAGE="genefilter", flip)
-            object <- new("rowROC", data=x, sens=res$sens,
-                          spec=res$spec, pAUC=res$pAUC, AUC=res$AUC,
+            sens <- res$sens
+            spec <- res$spec
+            rownames(sens) <- rownames(spec) <- rownames(x)
+            pAUC <- res$pAUC
+            AUC <- res$AUC
+            names(AUC) <- names(pAUC) <- rownames(x)
+            object <- new("rowROC", data=x, sens=sens,
+                          spec=spec, pAUC=pAUC, AUC=AUC,
                           factor=factor(f$fac), p=p, ranks=xr,
                           caseNames=as.character(caseNames),
                           cutpoints=cutpts)

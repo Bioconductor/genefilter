@@ -55,8 +55,8 @@ calculated. (Note: the data is ranked prior to computation
        object according to rows/genes.}
      \item{plot \code{signature(x="rowROC", y="missing")}}{Plot the ROC
        curve of the first row of the object along with the \code{pAUC}.
-     To plot the curve for a specific row/gene subsetting should be done
-     first (i.e. \code{plot(rowROC[1])}.}
+       To plot the curve for a specific row/gene subsetting should be done
+       first (i.e. \code{plot(rowROC[1])}.}
     \item{pAUC \code{signature(object="rowROC", p="numeric", flip="logical")}}{Integrate
       area under the curve from \code{0} to \code{p}. This method
       returns a new \code{rowROC} object.}
@@ -75,7 +75,7 @@ calculated. (Note: the data is ranked prior to computation
 Schummer M.: Selecting
 differentially expressed genes from microarray
 experiments. \emph{Biometrics. 2003 Mar;59(1):133-42.}}
-\author{Florian Hahne <f.hahne@dkfz.de>}
+\author{Florian Hahne <fhahne@fhcrc.org>}
 
 
 \seealso{
