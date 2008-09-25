@@ -1,5 +1,7 @@
 half.range.mode <- function( data, B, B.sample, beta = .5, diag = FALSE ) {
 
+  if ( length( data ) == 0 ) return( NA_real_ )
+
   if (missing( B ) ) {
 
     # Just one run on the full set...
