@@ -7,7 +7,7 @@ setMethod("rowpAUCs", signature(x="matrix", fac="factor"),
             if(!is.numeric(p) || length(p)>1)
               stop("'p' must be numeric of length 1")
             ## check argument 'fac'
-            f <- genefilter:::checkfac(fac)
+            f <- checkfac(fac)
             if(f$nrgrp != 2 || length(f$fac) != ncol(x) ||
                length(unique(f$fac)) !=2 )
                 stop("'fac' must be factor with 2 levels and length 'ncol(x)'")
