@@ -80,25 +80,14 @@ rowpAUCs(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
   corresponding pAUCs and AUCs values. See
   \code{\link[genefilter:rowROC]{rowROC}} for details.
 }
-\references{
-
-Pepe MS, Longton G, Anderson GL, Schummer M.: Selecting differentially
-expressed genes from microarray experiments. \emph{Biometrics. 2003
-Mar;59(1):133-42.}
-
-For an introduction into the theory behind and the interpretation of ROC
-curves, see
- 	
-Obuchowski, N. A.: Fundamentals of clinical research for radiologists:
-ROC analysis \emph{American Journal of Roentgenology. 2005, Vol 184;
-Numb 2, pages 364-372}
-
-}
-  
+\references{Pepe MS, Longton G, Anderson GL,
+Schummer M.: Selecting
+    differentially expressed genes from microarray experiments. \emph{Biometrics. 2003 Mar;59(1):133-42.}}
 \author{Florian Hahne <fhahne@fhcrc.org>}
 \seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca},
     \link[ROC:AUC]{pAUC}, \link[genefilter:rowROC]{rowROC}}}
 \examples{
+library(Biobase)
 data(sample.ExpressionSet)
 
 r1 = rowttests(sample.ExpressionSet, "sex")

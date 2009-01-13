@@ -1,23 +1,122 @@
-import("methods")
-import("AnnotationDbi")
-importFrom("annotate", "getAnnMap")
-import("Biobase")
-import("survival")
-importFrom("graphics", "plot")
+useDynLib(genefilter)
 
-useDynLib("genefilter")
+importClassesFrom(Biobase,
+                  ExpressionSet)
 
-export("Anova", "allNA", "anyNA", "coxfilter",
-  "cv", "eSetFilter", "varFilter", "featureFilter",
-  "fastT", "ttest", "shorth", "half.range.mode",
-  "rowttests", "colttests", "rowFtests", "colFtests",
-  "rowSds", "rowVars", "dist2",
-  "filterfun", "findLargest", "gapFilter", 
-  "genefilter", "genescale", "getFilterNames",
-  "getFuncDesc", "getRdAsText", "isESet", "kOverA", "maxA", "pOverA",
-  "parseArgs", "parseDesc", "setESetArgs", "showESet") 
+importClassesFrom(methods,
+                  ANY,
+                  character,
+                  factor,
+                  matrix,
+                  missing,
+                  numeric,
+                  vector)
 
-exportClasses("rowROC")
-exportMethods("genefinder", "show", "plot", "[", "sens", "spec",
-              "area", "pAUC", "AUC", "rowpAUCs", "nsFilter")
+importMethodsFrom(AnnotationDbi,
+                  as.list,
+                  colnames,
+                  get,
+                  mget,
+                  ncol,
+                  nrow,
+                  sample)
+
+importMethodsFrom(Biobase,
+                  annotation,
+                  exprs,
+                  featureNames,
+                  pData,
+                  rowQ,
+                  varLabels)
+
+importMethodsFrom(methods,
+                  show)
+
+importFrom(Biobase,
+           addVigs2WinMenu,
+           subListExtract)
+
+importFrom(annotate,
+           getAnnMap)
+
+importFrom(graphics,
+           abline,
+           lines,
+           par,
+           plot,
+           points,
+           polygon,
+           rect,
+           strheight,
+           strwidth,
+           text)
+
+importFrom(methods,
+           "@<-",
+           is,
+           new)
+
+importFrom(stats,
+           IQR,
+           anova,
+           lm,
+           pchisq,
+           pf,
+           pt,
+           quantile,
+           sd,
+           t.test)
+
+importFrom(survival,
+           coxph)
+
+export(Anova, 
+       allNA, 
+       anyNA, 
+       coxfilter,
+       cv, 
+       eSetFilter, 
+       varFilter, 
+       featureFilter,
+       fastT, 
+       ttest, 
+       shorth, 
+       half.range.mode,
+       rowttests, 
+       colttests, 
+       rowFtests, 
+       colFtests,
+       rowSds, 
+       rowVars, 
+       dist2,
+       filterfun, 
+       findLargest, 
+       gapFilter, 
+       genefilter, 
+       genescale, 
+       getFilterNames,
+       getFuncDesc, 
+       getRdAsText, 
+       isESet, 
+       kOverA, 
+       maxA, 
+       pOverA,
+       parseArgs, 
+       parseDesc, 
+       setESetArgs, 
+       showESet) 
+
+exportClasses(rowROC)
+
+exportMethods(genefinder, 
+	      show, 
+	      plot, 
+	      "[", 
+	      sens, 
+	      spec,
+              area, 
+	      pAUC, 
+	      AUC, 
+	      rowpAUCs, 
+	      nsFilter)
 

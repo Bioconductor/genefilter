@@ -3,7 +3,7 @@
 % howtogenefilter.tex file will get overwritten.
 %
 %\VignetteIndexEntry{HowTo: Genefilter}
-%\VignetteDepends{genefilter, class}
+%\VignetteDepends{Biobase, genefilter, class}
 %\VignetteKeywords{Expression Analysis}
 %\VignettePackage{genefilter}
 \documentclass{article}
@@ -39,6 +39,7 @@ covariates. The covariates are named \verb+sex+, \verb+type+ and
 continuous.
 
 <<>>=
+library("Biobase")
 library("genefilter")
 data(sample.ExpressionSet)
 varLabels(sample.ExpressionSet)

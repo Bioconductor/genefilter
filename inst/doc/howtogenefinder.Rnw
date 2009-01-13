@@ -3,7 +3,7 @@
 % Biobase.tex file will get overwritten.
 %
 %\VignetteIndexEntry{HowTo: Genefinder}
-%\VignetteDepends{genefilter}
+%\VignetteDepends{Biobase, genefilter}
 %\VignetteKeywords{Expression Analysis}
 %\VignettePackage{genefilter}
 \documentclass{article}
@@ -49,6 +49,7 @@ measure used between genes. The possible values and their meanings are
 listed at the end of this document.
 
 <<>>=
+ library("Biobase")
  library("genefilter")
  data(sample.ExpressionSet)
  igenes<- c(300,333,355,419) ##the interesting genes

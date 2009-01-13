@@ -137,6 +137,7 @@ featureFilter(eset, require.entrez=TRUE,
 
 \examples{
   library("hgu95av2.db")
+  library("Biobase")
   data(sample.ExpressionSet)
   ans <- nsFilter(sample.ExpressionSet)
   ans$eset
