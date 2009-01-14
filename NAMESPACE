@@ -30,6 +30,7 @@ importMethodsFrom(Biobase,
                   varLabels)
 
 importMethodsFrom(methods,
+                  "body<-",
                   show)
 
 importFrom(Biobase,
