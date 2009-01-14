@@ -5,7 +5,7 @@ Author: R. Gentleman, V. Carey, W. Huber, F. Hahne
 Description: Some basic functions for filtering genes
 biocViews: Statistics, Microarray
 Maintainer: Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>
-Suggests: Biobase (>= 1.99.10), class, hgu95av2.db, methods, tkWidgets, 
+Suggests: Biobase (>= 1.99.10), class, hgu95av2.db, methods, tkWidgets
 Imports: AnnotationDbi, annotate (>= 1.13.7), Biobase (>= 1.99.10), graphics,
          methods, stats, survival 
 License: Artistic-2.0
