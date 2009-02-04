@@ -28,7 +28,7 @@
 
   Rate of convergence: as an estimator of location of a unimodal
   distribution, under regularity conditions,
-  the quantity computed here has an asymptotic rate of only $n^{-1/3}$ and a
+  the quantity computed here has an asymptotic rate of only \eqn{n^{-1/3}} and a
   complicated limiting distribution. 
 
   See \code{\link{half.range.mode}} for an iterative version

@@ -4,7 +4,7 @@
 \description{
   \code{genescale} returns a scaled version of the input matrix m by applying
   the following formula to each column of the matrix:
-     {    y[i] = ( x[i] - min(x) ) / ( max(x) - min(x) ) }
+     \deqn{y[i] = ( x[i] - min(x) ) / ( max(x) - min(x) )}
 }
 \usage{
 genescale(m, axis=2, method=c("Z", "R"), na.rm=TRUE)

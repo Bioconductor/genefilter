@@ -36,14 +36,15 @@
   A use for this function is the detection of outlier arrays in a
   microarray experiment. Assume that each column of \code{x} can be
   decomposed as
-  $z+\beta+\epsilon$, where $z$ is a fixed vector
-  (the same for all columns), $\epsilon$ is vector of
-  \code{nrow{x}} i.i.d. random numbers, and $\beta$ is an arbitrary
+  \eqn{z+\beta+\epsilon}, where \eqn{z} is a fixed vector
+  (the same for all columns), \eqn{\epsilon} is vector of
+  \code{nrow{x}} i.i.d. random numbers, and \eqn{\beta} is an arbitrary
   vector whose majority of entries are negligibly small (i.e. close to
-  zero). In other words, $z$ the probe effects,  $\epsilon$ measurement
-  noise and $\beta$ differential expression effects. Under this
+  zero). In other words, D\eqn{z} the probe effects,  \eqn{\epsilon}
+  measurement 
+  noise and \eqn{\beta} differential expression effects. Under this
   assumption, all entries of the resulting distance matrix should be the
-  same, namely a multiple of the standard deviation of $\epsilon$.
+  same, namely a multiple of the standard deviation of \eqn{\epsilon}.
   Arrays whose  distance matrix entries are way different give cause
   for suspicion.
 }  
