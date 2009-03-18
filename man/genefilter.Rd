@@ -30,6 +30,12 @@ genefilter(expr, flist)
    applied sequentially to each gene. The function returns a logical
    vector indicating whether the gene passed all tests functions or
    failed at least one of them.
+
+   Users can construct their own filters. These filters should accept
+   a vector of values, corresponding to a row of the \code{expr} object.
+   The user defined function should return a length 1 logical vector,
+   with value \code{TRUE} or \code{FALSE}. User-defined functions can be 
+   combined with \code{\link{filterfun}}, just as built-in filters.
 }
 \value{
   A logical \code{vector} of length equal to the number of rows of
