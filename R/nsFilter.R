@@ -18,12 +18,13 @@ varFilter <- function(eset, var.func=IQR, var.cutoff=0.5,filterByQuantile=TRUE
     }
     if(filterByQuantile) {
         if( 0 < var.cutoff && var.cutoff < 1 ) {
-        quant = quantile(vars, probs = var.cutoff)
-        selected = vars > quant
-                      } else stop("Cutoff Quantile has to be between 0 and 1.")
-    } else {    selected <- vars > var.cutoff
-                }
-                    eset <- eset[selected, ]
+            quant = quantile(vars, probs = var.cutoff)
+            selected = !is.na(vars) & vars > quant
+        } else stop("Cutoff Quantile has to be between 0 and 1.")
+    } else {
+        selected <- !is.na(vars) & vars > var.cutoff
+    }
+    eset <- eset[selected, ]
 }
 
 featureFilter <- function(eset, require.entrez=TRUE,

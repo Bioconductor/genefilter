@@ -84,7 +84,8 @@ featureFilter(eset, require.entrez=TRUE,
   \code{var.func}, \code{var.cutoff} and \code{varByQuantile} arguments
   control numerical cutoff-based filtering.  The intention is to remove
   uninformative probe sets, representing genes that were not expressed
-  at all. The default \code{var.func} is \code{IQR}; this choice is
+  at all. Probes for which \code{var.func} returns \code{NA} are
+  removed. The default \code{var.func} is \code{IQR}; this choice is
   motivated by the observation that unexpressed genes are detected most
   reliably through their low variability across samples. Additionally,
   \code{IQR} is robust to outliers (see note below). The default
