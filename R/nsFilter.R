@@ -1,23 +1,23 @@
 ##RG introduces two new functions, varFilter that does what nsFilter
 ##was supposed to, but never did, and featureFilter that does the only
 ##useful stuff that nsFilter does
-rowIQRs = function(eSet) {
-  numSamp = ncol(eSet)
-  lowQ = rowQ(eSet, floor(0.25 * numSamp))
-  upQ = rowQ(eSet, ceiling(0.75 * numSamp))
+rowIQRs <- function(eSet) {
+  numSamp <- ncol(eSet)
+  lowQ <- rowQ(eSet, floor(0.25 * numSamp))
+  upQ <- rowQ(eSet, ceiling(0.75 * numSamp))
   upQ - lowQ
 }
 
 varFilter <- function(eset, var.func=IQR, var.cutoff=0.5,filterByQuantile=TRUE
 )
 {
-    if( deparse(substitute(var.func)) == "IQR") {
-        vars = rowIQRs(eset)
+    if (deparse(substitute(var.func)) == "IQR") {
+        vars <- rowIQRs(eset)
     } else {
         vars <- apply(exprs(eset), 1, var.func)
     }
-    if(filterByQuantile) {
-        if( 0 < var.cutoff && var.cutoff < 1 ) {
+    if (filterByQuantile) {
+        if ( 0 < var.cutoff && var.cutoff < 1 ) {
             quant = quantile(vars, probs = var.cutoff)
             selected = !is.na(vars) & vars > quant
         } else stop("Cutoff Quantile has to be between 0 and 1.")
@@ -175,7 +175,11 @@ setMethod("nsFilter", "ExpressionSet",
                   ## Reduce to unique probe <--> gene mapping here by keeping largest IQR
                   ## We will want "unique genes" in the non-specific filtered gene
                   ## set.
-                  esetIqr <- apply(exprs(eset), 1, var.func)
+                  if (deparse(substitute(var.func)) == "IQR") {
+                      esetIqr <- rowIQRs(exprs(eset))
+                  } else {
+                      esetIqr <- apply(exprs(eset), 1, var.func)
+                  }
                   numNsWithDups <- nfeat(eset)
                   uniqGenes <- findLargest(featureNames(eset), esetIqr,
                                            annotation(eset))
@@ -186,11 +190,15 @@ setMethod("nsFilter", "ExpressionSet",
 
 
               if (var.filter) {
-                  esetIqr <- apply(exprs(eset), 1, var.func)
+                  if (deparse(substitute(var.func)) == "IQR") {
+                      esetIqr <- rowIQRs(exprs(eset))
+                  } else {
+                      esetIqr <- apply(exprs(eset), 1, var.func)
+                  }
                   ##note this was not happening in the first
                   ##version - despite the documentation
                   if (filterByQuantile) {
-                      if( 0 < var.cutoff && var.cutoff < 1 ) {
+                      if ( 0 < var.cutoff && var.cutoff < 1 ) {
                           var.cutoff = quantile(esetIqr, var.cutoff)
                       } else stop("Cutoff Quantile has to be between 0 and 1.")
                   }

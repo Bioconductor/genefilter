@@ -85,15 +85,16 @@ featureFilter(eset, require.entrez=TRUE,
   control numerical cutoff-based filtering.  The intention is to remove
   uninformative probe sets, representing genes that were not expressed
   at all. Probes for which \code{var.func} returns \code{NA} are
-  removed. The default \code{var.func} is \code{IQR}; this choice is
-  motivated by the observation that unexpressed genes are detected most
-  reliably through their low variability across samples. Additionally,
-  \code{IQR} is robust to outliers (see note below). The default
-  \code{var.cutoff} is \code{0.5} and is motivated by the rule of thumb
-  that in many tissues only 40\% of genes are expressed. Of course, if
-  you believe in a different approach to numerical filtering you can choose
-  another function as \code{var.func}, or turn off
-  numerical filtering by setting \code{var.filter=FALSE}.
+  removed. The default \code{var.func} is \code{IQR}, which is defined as
+  \code{rowQ(eset, ceiling(0.75 * ncol(eset))) - rowQ(eset, floor(0.25 * ncol(eset)))};
+  this choice is motivated by the observation that unexpressed genes are
+  detected most reliably through their low variability across samples.
+  Additionally, \code{IQR} is robust to outliers (see note below). The
+  default \code{var.cutoff} is \code{0.5} and is motivated by the rule of
+  thumb that in many tissues only 40\% of genes are expressed. Of course,
+  if you believe in a different approach to numerical filtering you can
+  choose another function as \code{var.func}, or turn off numerical
+  filtering by setting \code{var.filter=FALSE}.
 
   Note that by default the numerical-filter cutoff is interpreted
   as a quantile, so leaving the default values intact would filter out
@@ -108,11 +109,11 @@ featureFilter(eset, require.entrez=TRUE,
   fraction of unique genes remaining after all other filters were
   passed.
   
-  The stand-alone function \code{varFilter} does only numerical filtering, and returns an
-  \code{ExpressionSet}. \code{featureFilter} does only feature based
-  filtering and duplicate removal, and returns an expression set as
-  well. Duplicate removal is hard-coded to retain the highest-IQR probe
-  for each gene.
+  The stand-alone function \code{varFilter} does only numerical filtering,
+  and returns an \code{ExpressionSet}. \code{featureFilter} does only
+  feature based filtering and duplicate removal, and returns an expression
+  set as well. Duplicate removal is hard-coded to retain the highest-IQR
+  probe for each gene.
 
 }
 \value{
