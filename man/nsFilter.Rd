@@ -5,12 +5,15 @@
 \alias{featureFilter}
 \alias{nsFilter,ExpressionSet-method}
 
-\title{Non-Specific-ly Filter an ExpressionSet}
+\title{Non-Specific Filtering of Features in an ExpressionSet}
 \description{
-  This function identifies and removes probesets that are unlikely
-  to be of use when modeling the data.  No phenotype variables are used
-  in the filtering process, so the result can be used with any downstream
-  analysis.
+  This function identifies and removes features that appear
+  to be less informative. Use cases for this function are:
+  variable selection for subsequent sample clustering or classification
+  tasks;
+  independent filtering of features used in subsequent hypothesis
+  testing, with the aim of increasing the detection rate
+  (please see Details).
 }
 \usage{
 nsFilter(eset, require.entrez = TRUE, require.GOBP = FALSE, 
@@ -65,20 +68,52 @@ featureFilter(eset, require.entrez=TRUE,
   \item{...}{Unused, but available for specializing methods.}
 }
 \details{
-  A first step in many microarray analysis procedures is to carry out
-  non-specific filtering.  The goal is to remove uninteresting probe
-  sets without regard to the phenotype data and reduce the number of
-  probe sets that will be included in further analysis.
+  \emph{Marginal type I errors}:
+  Independent filtering of features used in subsequent hypothesis
+  testing can increase the detection rate at the same
+  \emph{marginal} type I error, as detailed in the following.
+  Call \eqn{U^I}{U^1} the stage 1 filter statistic,
+  \eqn{U^{II}}{U^2} the stage 2 test statistic for differential expression.
+  Sufficient conditions for marginal type-I error control are:
+  \itemize{
+    \item \eqn{U^I}{U^1} the overall (across all samples) variance or
+    mean, and
+    \eqn{U^{II}}{U^2} the t-statistic (or any other scale and location
+    invariant statistic);
 
+    \item \eqn{U^I}{U^1} the overall mean, and
+    \eqn{U^{II}}{U^2} the moderated t-statistic (as in limma's \code{\link[limma:ebayes]{eBayes}}
+    function);
+    
+    \item \eqn{U^I}{U^1} a sample-class label independent function
+    (e.g. overall mean, median, variance, IQR), and
+    \eqn{U^{II}}{U^2} the Wilcoxon rank sum statistic.
+  }
+  In each of these cases, the value of \eqn{U^I}{U^1} for the k-th
+  feature must depend on the data for the k-th feature only, not on any
+  other features.
+  
+  \emph{Experiment-wide type I error}:
+  Marginal type-I error control provided by the conditions above
+  is sufficient for control of the family wise error rate (FWER).
+  Note, however, that common false discovery rate (FDR) methods depend 
+  not only on the marginal behaviour of the test statistics under the
+  null hypothesis, but also on their joint distribution.
+  The joint distribution can be affected by filtering. The
+  effect of this is negligible in many cases in practice, but this
+  depends on the dataset and the filter used, and the assessment 
+  is in the responsibility of the data analyst.
+  For a more comprehensive discussion, please see the reference (Bourgon et al.).
+  
   \emph{Annotation Based Filtering} Arguments \code{require.entrez},
   \code{require.GOBP}, \code{require.GOCC}, and \code{require.GOMF}
   turn on a filter based on available annotation data.  The annotation
   package is determined by calling \code{annotation(eset)}.
 
- \emph{Duplicate Probe Removal} If \code{remove.dupEntrez=TRUE},
- probes determined by your annotation to be pointing to the same gene
- will be compared, and only the probe with the highest \code{var.func} value
- will be retained.
+  \emph{Duplicate Probe Removal} If \code{remove.dupEntrez=TRUE},
+  probes determined by your annotation to be pointing to the same gene
+  will be compared, and only the probe with the highest \code{var.func} value
+  will be retained.
   
   \emph{Variance Based Filtering} The \code{var.filter},
   \code{var.func}, \code{var.cutoff} and \code{varByQuantile} arguments
@@ -103,7 +138,7 @@ featureFilter(eset, require.entrez=TRUE,
   \code{varByQuantile} to \code{FALSE}, and modify \code{var.cutoff}
   accordingly.
 
-  Note also that now variance filtering is performed last, so that
+  Note also that variance filtering is performed last, so that
   (if \code{varByQuantile=TRUE} and \code{remove.dupEntrez=TRUE}) the
   final number of genes does indeed exclude precisely the \code{var.cutoff} 
   fraction of unique genes remaining after all other filters were
@@ -117,7 +152,7 @@ featureFilter(eset, require.entrez=TRUE,
 
 }
 \value{
- For \code{nsFilter} a list consisting of:
+  For \code{nsFilter} a list consisting of:
   \item{eset}{the filtered \code{ExpressionSet}}
   \item{filter.log}{a list giving details of how many probe sets where
     removed for each filtering step performed.}
@@ -136,6 +171,12 @@ featureFilter(eset, require.entrez=TRUE,
   for your needs. In such cases, you should consider using less robust
   and more sensitive measures of variance (the simplest of which would
   be \code{sd}).}
+
+\references{
+  R. Bourgon, R. Gentleman, W. Huber,
+  Independent filtering increases power for detecting differentially
+  expressed genes, Technical Report.
+}
 
 \examples{
   library("hgu95av2.db")
