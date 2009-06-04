@@ -6,13 +6,18 @@
 \alias{nsFilter,ExpressionSet-method}
 
 \title{Non-Specific Filtering of Features in an ExpressionSet}
-\description{
-  This function identifies and removes features that appear
-  to be less informative. Use cases for this function are:
-  variable selection for subsequent sample clustering or classification
-  tasks;
-  independent filtering of features used in subsequent hypothesis
-  testing, with the aim of increasing the detection rate
+\description{Experience with microarray data suggests that features
+  exhibiting little variation, or a consistently low signal, across
+  samples typically target transcripts that are simply not expressed at
+  detectable levels in any of the samples.
+  Furthermore, one may decide that there is little value in considering
+  features with insufficient annotation. One can leverage this
+  prior knowledge for the purpose of variable selection 
+  for subsequent sample clustering or classification
+  tasks, and for the purpose of
+  reducing the number of hypothesis
+  tests in differential expression analysis
+  with the aim of increasing the detection rate
   (please see Details).
 }
 \usage{
@@ -69,30 +74,40 @@ featureFilter(eset, require.entrez=TRUE,
 }
 \details{
   \emph{Marginal type I errors}:
-  Independent filtering of features used in subsequent hypothesis
-  testing can increase the detection rate at the same
-  \emph{marginal} type I error, as detailed in the following.
-  Call \eqn{U^I}{U^1} the stage 1 filter statistic,
+  Filtering on the basis of a statistic which is independent of the test
+  statistic used for detecting differential gene expression can increase
+  the detection rate at the same marginal type I error. This is
+  clearly the case for filter criteria that do not depend on the data,
+  such as the annotation based criteria provided by the \code{nsFilter}
+  and \code{featureFilter} functions. However, marginal type I error can
+  also be controlled for certain types of data-dependent criteria, 
+  as detailed in the following.
+  Call \eqn{U^I}{U^1} the stage 1 filter statistic, which is a function
+  that is applied feature by feature,
+  based on whose value the feature is or is not accepted to
+  pass to stage 2, and which depends only on the data for that feature
+  and not any other feature, and call
   \eqn{U^{II}}{U^2} the stage 2 test statistic for differential expression.
   Sufficient conditions for marginal type-I error control are:
   \itemize{
+    
     \item \eqn{U^I}{U^1} the overall (across all samples) variance or
-    mean, and
+    mean, 
     \eqn{U^{II}}{U^2} the t-statistic (or any other scale and location
-    invariant statistic);
+    invariant statistic),
+    data Normally distributed and exchangeable across samples.
 
-    \item \eqn{U^I}{U^1} the overall mean, and
-    \eqn{U^{II}}{U^2} the moderated t-statistic (as in limma's \code{\link[limma:ebayes]{eBayes}}
-    function);
+    \item \eqn{U^I}{U^1} the overall mean, 
+    \eqn{U^{II}}{U^2} the moderated t-statistic
+    (as in limma's \code{\link[limma:ebayes]{eBayes}} function),
+    data Normally distributed and exchangeable.
     
     \item \eqn{U^I}{U^1} a sample-class label independent function
-    (e.g. overall mean, median, variance, IQR), and
-    \eqn{U^{II}}{U^2} the Wilcoxon rank sum statistic.
+    (e.g. overall mean, median, variance, IQR),
+    \eqn{U^{II}}{U^2} the Wilcoxon rank sum statistic,
+    data exchangeable.
   }
-  In each of these cases, the value of \eqn{U^I}{U^1} for the k-th
-  feature must depend on the data for the k-th feature only, not on any
-  other features.
-  
+
   \emph{Experiment-wide type I error}:
   Marginal type-I error control provided by the conditions above
   is sufficient for control of the family wise error rate (FWER).
@@ -103,7 +118,8 @@ featureFilter(eset, require.entrez=TRUE,
   effect of this is negligible in many cases in practice, but this
   depends on the dataset and the filter used, and the assessment 
   is in the responsibility of the data analyst.
-  For a more comprehensive discussion, please see the reference (Bourgon et al.).
+  For a more comprehensive discussion, please see the reference
+  (Bourgon et al.).
   
   \emph{Annotation Based Filtering} Arguments \code{require.entrez},
   \code{require.GOBP}, \code{require.GOCC}, and \code{require.GOMF}
@@ -117,13 +133,14 @@ featureFilter(eset, require.entrez=TRUE,
   
   \emph{Variance Based Filtering} The \code{var.filter},
   \code{var.func}, \code{var.cutoff} and \code{varByQuantile} arguments
-  control numerical cutoff-based filtering.  The intention is to remove
-  uninformative probe sets, representing genes that were not expressed
-  at all. Probes for which \code{var.func} returns \code{NA} are
-  removed. The default \code{var.func} is \code{IQR}, which is defined as
+  control numerical cutoff-based filtering.
+  Probes for which \code{var.func} returns \code{NA} are
+  removed.
+  The default \code{var.func} is \code{IQR}, which is defined as
   \code{rowQ(eset, ceiling(0.75 * ncol(eset))) - rowQ(eset, floor(0.25 * ncol(eset)))};
   this choice is motivated by the observation that unexpressed genes are
-  detected most reliably through their low variability across samples.
+  detected most reliably through low variability of their features
+  across samples.
   Additionally, \code{IQR} is robust to outliers (see note below). The
   default \code{var.cutoff} is \code{0.5} and is motivated by the rule of
   thumb that in many tissues only 40\% of genes are expressed. Of course,
@@ -149,8 +166,8 @@ featureFilter(eset, require.entrez=TRUE,
   feature based filtering and duplicate removal, and returns an expression
   set as well. Duplicate removal is hard-coded to retain the highest-IQR
   probe for each gene.
-
 }
+
 \value{
   For \code{nsFilter} a list consisting of:
   \item{eset}{the filtered \code{ExpressionSet}}
