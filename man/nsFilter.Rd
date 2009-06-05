@@ -95,12 +95,12 @@ featureFilter(eset, require.entrez=TRUE,
     mean, 
     \eqn{U^{II}}{U^2} the t-statistic (or any other scale and location
     invariant statistic),
-    data Normally distributed and exchangeable across samples.
+    data normal distributed and exchangeable across samples.
 
     \item \eqn{U^I}{U^1} the overall mean, 
     \eqn{U^{II}}{U^2} the moderated t-statistic
     (as in limma's \code{\link[limma:ebayes]{eBayes}} function),
-    data Normally distributed and exchangeable.
+    data normal distributed and exchangeable.
     
     \item \eqn{U^I}{U^1} a sample-class label independent function
     (e.g. overall mean, median, variance, IQR),
@@ -114,7 +114,10 @@ featureFilter(eset, require.entrez=TRUE,
   Note, however, that common false discovery rate (FDR) methods depend 
   not only on the marginal behaviour of the test statistics under the
   null hypothesis, but also on their joint distribution.
-  The joint distribution can be affected by filtering. The
+  The joint distribution can be affected by filtering,
+  even when this filtering leaves the marginal distributions of 
+  true-null test statistics unchanged. Filtering might, for example, 
+  change correlation structure. The
   effect of this is negligible in many cases in practice, but this
   depends on the dataset and the filter used, and the assessment 
   is in the responsibility of the data analyst.
