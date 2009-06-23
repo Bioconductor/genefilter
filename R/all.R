@@ -151,9 +151,38 @@ filterfun <- function(...) {
      return(f)
  }
 
+.findCentralID <- function(chip){
+    strMatch <- function(pat, s) length(grep(pat, s)) > 0
+    conn <- do.call(paste(chip, "_dbconn", sep=""), list())
+    schema <- dbmeta(conn, "DBSCHEMA")
+
+    ##This is NOT set up for ORG packages.
+    if(schema == "YEASTCHIP_DB")
+      centID <- "ORF"
+    else if( schema == "ARABIDOPSISCHIP_DB" )
+      centID <- "ACCNUM"
+    else if( strMatch("CHIP_DB$", schema))
+      centID <- "ENTREZID"
+
+    return(centID)
+}
 
 findLargest = function(gN, testStat, data="hgu133plus2") {
-    LLe = get(paste(data, "ENTREZID", sep=""))
+##     strMatch <- function(pat, s) length(grep(pat, s)) > 0
+##     conn <- do.call(paste(data, "_dbconn", sep=""), list())
+##     schema <- dbmeta(conn, "DBSCHEMA")
+
+##     ##This is NOT set up for ORG packages.
+##     if(schema == "YEASTCHIP_DB")
+##       centID <- "ORF"
+##     else if( schema == "ARABIDOPSISCHIP_DB" )
+##       centID <- "ACCNUM"
+##     else if( strMatch("CHIP_DB$", schema))
+##       centID <- "ENTREZID"
+
+    centID <- .findCentralID(data)
+    
+    LLe = get(paste(data, centID, sep=""))
     lls = unlist(mget(gN, LLe))
     if(length(testStat) != length(gN) )
         stop("testStat and gN must be the same length")
@@ -162,6 +191,5 @@ findLargest = function(gN, testStat, data="hgu133plus2") {
     tSsp = split.default(testStat, lls)
     sapply(tSsp, function(x) names(which.max(x)))
 }
-
 
 

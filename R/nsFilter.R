@@ -8,6 +8,21 @@ rowIQRs <- function(eSet) {
   upQ - lowQ
 }
 
+
+##For NOW, we will need to check the schema from within nsFilter and
+##featureFilter to decide what the internal ID is that needs to be used.
+##LATER, when we haev annotation packages that will make this sort of access
+##easier, it will make more sense to just access the central ID for those
+##packages.
+
+## It looks like I can take care of both nsFilter and featureFilter in this
+## way by just altering what the helper function findLargest() does
+
+
+
+
+
+
 varFilter <- function(eset, var.func=IQR, var.cutoff=0.5,filterByQuantile=TRUE
 )
 {
@@ -43,7 +58,8 @@ featureFilter <- function(eset, require.entrez=TRUE,
          eset[haveID, ]
     }
     if (require.entrez)
-        eset <- requireID(eset, "ENTREZID")
+        centID <- .findCentralID(annChip)
+        eset <- requireID(eset, centID)
 
     filterGO <- function(eset, ontology) {
         haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO")),
@@ -124,7 +140,8 @@ setMethod("nsFilter", "ExpressionSet",
               }
 
               if (require.entrez) {
-                  eset <- requireID(eset, "ENTREZID")
+                  centID <- .findCentralID(annChip)
+                  eset <- requireID(eset, centID)
               }
 
               filterGO <- function(eset, ontology) {

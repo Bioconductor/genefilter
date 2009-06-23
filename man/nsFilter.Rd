@@ -37,7 +37,9 @@ featureFilter(eset, require.entrez=TRUE,
   \item{eset}{an \code{ExpressionSet} object}
   \item{require.entrez}{If \code{TRUE}, require that all probe sets
       have an Entrez Gene ID annotation.  Probe sets without such an
-      annotation will be filtered out.}
+      annotation will be filtered out.}  If using a package where Entrez
+      Gene IDs are not the central ID, then that ID will be required
+      instead.
   \item{require.GOBP}{If \code{TRUE}, require that all probe sets have
     an annotation to at least one GO ID in the BP ontology.  Probe
     sets without such an annotation will be filtered out.}
@@ -50,7 +52,9 @@ featureFilter(eset, require.entrez=TRUE,
   \item{remove.dupEntrez}{If \code{TRUE} and there are multiple probe
       sets mapping to the same Entrez Gene ID, then the probe set with
       the largest value of \code{var.func} will be retained and the
-      others removed.}
+      others removed.}  If using a package where Entrez Gene IDs are not
+      the central ID, then duplicates will be filtered using this other
+      ID type.
   \item{var.func}{A \code{function} that will be used to assess the
       variance of a probe set across all samples.  This function
       should return a numeric vector of length one when given a
