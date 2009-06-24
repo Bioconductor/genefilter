@@ -168,18 +168,6 @@ filterfun <- function(...) {
 }
 
 findLargest = function(gN, testStat, data="hgu133plus2") {
-##     strMatch <- function(pat, s) length(grep(pat, s)) > 0
-##     conn <- do.call(paste(data, "_dbconn", sep=""), list())
-##     schema <- dbmeta(conn, "DBSCHEMA")
-
-##     ##This is NOT set up for ORG packages.
-##     if(schema == "YEASTCHIP_DB")
-##       centID <- "ORF"
-##     else if( schema == "ARABIDOPSISCHIP_DB" )
-##       centID <- "ACCNUM"
-##     else if( strMatch("CHIP_DB$", schema))
-##       centID <- "ENTREZID"
-
     centID <- .findCentralID(data)
     
     LLe = get(paste(data, centID, sep=""))
