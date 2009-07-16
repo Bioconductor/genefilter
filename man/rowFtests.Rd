@@ -26,7 +26,9 @@
 \alias{fastT}
 
 \title{t-tests and F-tests for rows or columns of a matrix}
-\description{t-tests and F-tests for rows or columns of a matrix}
+\description{t-tests and F-tests for rows or columns of a
+  matrix; intended for moderate group sizes, of dozens to
+  hundreds (see Details).}
 \usage{
 rowttests(x, fac, tstatOnly = FALSE) 
 colttests(x, fac, tstatOnly = FALSE)
@@ -79,14 +81,23 @@ colFtests(x, fac, var.equal = TRUE)
   corresponds to "group 1 minus group 2".
   If \code{fac} is missing, \code{rowttests} performs for each row of
   \code{x} a two-sided one-class t-test against the null hypothesis 'mean=0'.
-
+  
   \code{rowttests} and \code{colttests} are implemented in C and
   are reasonably fast and memory-efficient.
   \code{fastT} is an alternative implementation, in Fortran, possibly useful
   for certain legacy code.
   \code{rowFtests} and \code{colFtests} are currently implemented using
-  matrix algebra in R. Compared to the \code{*ttests} functions,
+  matrix algebra in R. Compared to the \code{rowttests} and
+  \code{colttests} functions,
   they are slower and use more memory.
+
+  \emph{Warning}: the implementation is naive, and works well for group
+  sizes (i.e., in \code{rowttests}, the number of columns)
+  of dozens or a few hundred. For much larger group sizes
+  (thousands and more), rounding errors can become significant.
+  For the number of tests (i.e., in \code{rowttests}, the number of
+  rows), there is no such restriction.
+
 }
 \value{
   A \code{data.frame} with columns \code{statistic},
