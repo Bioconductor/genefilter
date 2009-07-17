@@ -21,15 +21,14 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
                     int which, int nrgrp, double *statistic, double *dm, 
                     double *df) {
 
-    int i, j, grp, dof;
-    double z;
+    int i, j, grp;
+    double z, delta, newmean, factor;
 
-    /* Currently we only provide for one- and two-sample t-tests (nrgrp=1 or
-       2), but it should be possible to generalize this code to more samples
+    /* Currently the following provides for one- and two-sample t-tests (nrgrp=1 or 2), 
+       but it should be possible to generalize this code to more samples
        (F-test) without too many changes */
 
     int n[2];   
-    double mean[2];
     double* s[2];
     double* ss[2];
 
@@ -41,35 +40,48 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
     for(grp=0; grp<nrgrp; grp++) {
 	s[grp]  = (double*) R_alloc(nt, sizeof(double));
 	ss[grp] = (double*) R_alloc(nt, sizeof(double));
-	n[grp]  = 0;
 	for(i=0; i<nt; i++)  
 	    s[grp][i] = ss[grp][i] = 0;
     }
 
-    /* To determine first and second moments, we work through the 
-       large matrix x in the order in which it is in memory -
-       in the hope that this may speed up things */
+    /* A numerically stable one-pass algorithm is used, see
+       http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm 
+       here: s ~ mean, ss ~ M2.
+       Work through the large matrix x in the order in which it is in memory (column-wise) -
+       in the hope that this may speed up getting it through the CPU. */
     switch(which) {
 	case 0:  /* by row */
 	    for(i=0; i<nr; i++) {
+  	        for(grp=0; grp<nrgrp; grp++)
+		    n[grp] = 0;
+
 		for(j=0; j<nc; j++) {
 		    grp = fac[j];
 		    if(grp!=R_NaInt) {
+                        n[grp]++;
 			z = x[i+nr*j];
-			s[grp][i]  += z;
-			ss[grp][i] += z*z;
+                        delta   = z - s[grp][i];
+                        newmean = s[grp][i] + delta/n[grp];
+			s[grp][i]  = newmean;
+			ss[grp][i] += delta*(z-newmean);
 		    }
 		} /* for j */
 	    } /* for i */
 	    break;
 	case 1:  /* by column */
+	    for(grp=0; grp<nrgrp; grp++)
+		n[grp] = 0;
+
 	    for(i=0; i<nr; i++) {
 		grp = fac[i];
-		if(grp!=R_NaInt) {
+		if(grp!=R_NaInt) { 
+                    n[grp]++;
 		    for(j=0; j<nc; j++) {
 			z = x[i+nr*j];
-			s[grp][j]  += z;
-			ss[grp][j] += z*z;
+                        delta   = z - s[grp][j];
+                        newmean = s[grp][j] + delta/n[grp];
+			s[grp][j]  = newmean;
+			ss[grp][j] += delta*(z-newmean);
 		    } /* for j */
 		} /* if */ 
 	    } /* for i */
@@ -78,35 +90,28 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
 	    error("Bummer!");
     }
 
-    /* determine group sizes */
-    for(i=0; i<no; i++) {
-	grp = fac[i];
-	if(grp!=R_NaInt)
-	    n[grp]++;
-    }
-
-    /* calculate t statistic */
-    for(i=0; i<nt; i++) {
-        z = 0;
-        for(grp=0; grp<nrgrp; grp++) {
-	    mean[grp] = s[grp][i]/n[grp]; /* mean of group 'grp' */
-	    z        += ss[grp][i] - mean[grp]*mean[grp]*n[grp];
+    switch(nrgrp) {
+    case 1:
+        *df = n[0]-1;
+        factor = sqrt((*df) * n[0]);
+        for(i=0; i<nt; i++) {
+	    z            = ss[0][i];
+	    dm[i]        = s[0][i];
+	    statistic[i] =  factor * dm[i] / sqrt(z);
+        }
+        break;
+    case 2:
+	*df = n[0]+n[1]-2;
+        factor = sqrt((*df) * (double) n[0] * (double) n[1] / (n[0]+n[1]));
+        for(i=0; i<nt; i++) {
+            z            = ss[0][i] + ss[1][i];
+	    dm[i]        = s[0][i] - s[1][i];
+	    statistic[i] =  factor * dm[i] / sqrt(z);
 	}
-        switch(nrgrp) {
-	case 1:
-	    *df = dof = n[0]-1;
-	    statistic[i] = mean[0] / sqrt(z/(dof*n[0]));
-	    dm[i]        = mean[0];
-            break;
-	case 2:
-	    *df = dof = n[0]+n[1]-2;
-	    statistic[i] = (mean[0]-mean[1]) / sqrt(z*(n[0]+n[1])/(dof*n[0]*n[1]));
-	    dm[i]        = mean[0]-mean[1];
-            break;
-	default:
-	    error("Bummer!");
-	} /* switch */
-    }
+        break;
+    default:
+      error("Bummer!");
+    } /* switch */
 
     return;
 } 

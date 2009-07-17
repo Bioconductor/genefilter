@@ -27,8 +27,7 @@
 
 \title{t-tests and F-tests for rows or columns of a matrix}
 \description{t-tests and F-tests for rows or columns of a
-  matrix; intended for moderate group sizes, of dozens to
-  hundreds (see Details).}
+  matrix, intended to be speed efficient.}
 \usage{
 rowttests(x, fac, tstatOnly = FALSE) 
 colttests(x, fac, tstatOnly = FALSE)
@@ -49,16 +48,17 @@ colFtests(x, fac, var.equal = TRUE)
     for the t-tests). The length
     of the factor needs to correspond to the sample size:
     for the \code{row*} functions, the length of the factor must be
-    the same as the number of columns of \code{x}.
+    the same as the number of columns of \code{x},
     for the \code{col*} functions, it must be the same as the number
     of rows of \code{x}.
 
     If \code{x} is an \code{\link[Biobase]{ExpressionSet}}, then
-    \code{fac} may also be a character vector of length 1 with the name of a covariate
-    variable in \code{x}.}
+    \code{fac} may also be a character vector of length 1 with the
+    name of a covariate in \code{x}.}
 
   \item{tstatOnly}{A logical variable indicating whether to calculate
-    parametric p-values.  If \code{TRUE}, just the t-statistics are
+    p-values from the t-distribution with appropriate degrees of
+    freedom. If \code{TRUE}, just the t-statistics are
     returned. This can be considerably faster.}
 
   \item{ig1}{The indices of the columns of \code{x} that correspond
@@ -73,6 +73,7 @@ colFtests(x, fac, var.equal = TRUE)
     used, which generalizes the commonly known 2-sample Welch test to
     the case of arbitrarily many samples.}
 }
+
 \details{
   If \code{fac} is specified, \code{rowttests} performs for each
   row of \code{x} a two-sided, two-class t-test with equal variances.
@@ -83,22 +84,15 @@ colFtests(x, fac, var.equal = TRUE)
   \code{x} a two-sided one-class t-test against the null hypothesis 'mean=0'.
   
   \code{rowttests} and \code{colttests} are implemented in C and
-  are reasonably fast and memory-efficient.
+  should be reasonably fast and memory-efficient.
   \code{fastT} is an alternative implementation, in Fortran, possibly useful
   for certain legacy code.
   \code{rowFtests} and \code{colFtests} are currently implemented using
   matrix algebra in R. Compared to the \code{rowttests} and
   \code{colttests} functions,
   they are slower and use more memory.
-
-  \emph{Warning}: the implementation is naive, and works well for group
-  sizes (i.e., in \code{rowttests}, the number of columns)
-  of dozens or a few hundred. For much larger group sizes
-  (thousands and more), rounding errors can become significant.
-  For the number of tests (i.e., in \code{rowttests}, the number of
-  rows), there is no such restriction.
-
 }
+
 \value{
   A \code{data.frame} with columns \code{statistic},
   \code{p.value} (optional in the case of the t-test functions) and
@@ -115,21 +109,30 @@ colFtests(x, fac, var.equal = TRUE)
 }
 \references{B. L. Welch (1951), On the comparison of several mean values: an
      alternative approach. Biometrika, *38*, 330-336}
-\author{Wolfgang Huber <huber@ebi.ac.uk>}
+\author{Wolfgang Huber <whuber@embl.de>}
 \seealso{\code{\link[multtest:mt.teststat]{mt.teststat}}}
 \examples{
-   x  = matrix(runif(970), ncol=97)
+   ##
+   ## example data
+   ##
+   x  = matrix(runif(40), nrow=4, ncol=10)
    f2 = factor(floor(runif(ncol(x))*2))
-   f7 = factor(floor(runif(ncol(x))*7))
+   f4 = factor(floor(runif(ncol(x))*4))
 
+   ##
+   ## one- and two group row t-test; 4-group F-test
+   ##
    r1 = rowttests(x)
    r2 = rowttests(x, f2)
-   r7 = rowFtests(x, f7)
+   r4 = rowFtests(x, f4)
 
-   ## compare with pedestrian tests
+   ## approximate equality
    about.equal = function(x,y,tol=1e-10)
      stopifnot(all(abs(x-y) < tol))
 
+   ##
+   ## compare with the implementation in t.test
+   ##
    for (j in 1:nrow(x)) {
      s1 = t.test(x[j,])
      about.equal(s1$statistic, r1$statistic[j])
@@ -142,15 +145,19 @@ colFtests(x, fac, var.equal = TRUE)
      dm = -diff(tapply(x[j,], f2, mean))
      about.equal(dm, r2$dm[j])
 
-     s7 = summary(lm(x[j,]~f7))
-     about.equal(s7$statistic$value, r7$statistic[j])
+     s4 = summary(lm(x[j,] ~ f4))
+     about.equal(s4$statistic$value, r4$statistic[j])
    }
 
+   ##
    ## colttests
+   ##
    c2 = colttests(t(x), f2)
    stopifnot(identical(r2, c2))
- 
+
+   ##
    ## missing values
+   ##
    f2n = f2
    f2n[sample(length(f2n), 3)] = NA
    r2n = rowttests(x, f2n)
@@ -158,7 +165,18 @@ colFtests(x, fac, var.equal = TRUE)
      s2n = t.test(x[j,] ~ f2n, var.equal=TRUE)
      about.equal(s2n$statistic, r2n$statistic[j])
      about.equal(s2n$p.value,   r2n$p.value[j])
-  }
+   }
 
+   ##
+   ## larger sample size
+   ##
+   x  = matrix(runif(1000000), nrow=4, ncol=250000)
+   f2 = factor(floor(runif(ncol(x))*2))
+   r2 = rowttests(x, f2) 
+   for (j in 1:nrow(x)) {
+     s2 = t.test(x[j,] ~ f2, var.equal=TRUE)
+     about.equal(s2$statistic, r2$statistic[j])
+     about.equal(s2$p.value,   r2$p.value[j])
+   }
 }
 \keyword{math}
