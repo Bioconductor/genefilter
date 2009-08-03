@@ -53,7 +53,7 @@ featureFilter <- function(eset, require.entrez=TRUE,
     
     nfeat <- function(eset) length(featureNames(eset))
     requireID <- function(eset, map) {
-        IDs <- mget(featureNames(eset), envir=getAnnEnv(map))
+        IDs <- mget(featureNames(eset), envir=getAnnEnv(map), ifnotfound=NA)
         haveID <- names(IDs)[sapply(IDs, function(x) !is.na(x))]
          eset[haveID, ]
     }
@@ -62,7 +62,7 @@ featureFilter <- function(eset, require.entrez=TRUE,
         eset <- requireID(eset, centID)
 
     filterGO <- function(eset, ontology) {
-        haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO")),
+        haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO"), ifnotfound=NA),
                          function(x) {
                              if (length(x) == 1 && is.na(x))
                                  FALSE
@@ -132,7 +132,7 @@ setMethod("nsFilter", "ExpressionSet",
               filter.log <- new.env(parent=emptyenv())
 
               requireID <- function(eset, map) {
-                  IDs <- mget(featureNames(eset), envir=getAnnEnv(map))
+                  IDs <- mget(featureNames(eset), envir=getAnnEnv(map), ifnotfound=NA)
                   haveID <- names(IDs)[sapply(IDs, function(x) !is.na(x))]
                   logvar <- paste("numRemoved", map, sep=".")
                   assign(logvar, nfeat(eset) - length(haveID), envir=filter.log)
@@ -145,7 +145,7 @@ setMethod("nsFilter", "ExpressionSet",
               }
 
               filterGO <- function(eset, ontology) {
-                  haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO")),
+                  haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO"), ifnotfound=NA),
                                    function(x) {
                                        if (length(x) == 1 && is.na(x))
                                          FALSE
