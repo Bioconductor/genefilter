@@ -39,7 +39,7 @@ colFtests(x, fac, var.equal = TRUE)
 \arguments{
   \item{x}{Numeric matrix. The matrix must not contain \code{NA} values.
     For \code{rowttests} and \code{colttests}, \code{x} can also be an
-    \code{\link[Biobase]{ExpressionSet}}.}
+    \code{\link[Biobase:class.ExpressionSet]{ExpressionSet}}.}
 
   \item{fac}{Factor which codes the grouping to be tested.
     There must be 1 or 2 groups for the t-tests (corresponding to one-
@@ -52,7 +52,8 @@ colFtests(x, fac, var.equal = TRUE)
     for the \code{col*} functions, it must be the same as the number
     of rows of \code{x}.
 
-    If \code{x} is an \code{\link[Biobase]{ExpressionSet}}, then
+    If \code{x} is an
+    \code{\link[Biobase:class.ExpressionSet]{ExpressionSet}}, then 
     \code{fac} may also be a character vector of length 1 with the
     name of a covariate in \code{x}.}
 
@@ -102,7 +103,8 @@ colFtests(x, fac, var.equal = TRUE)
   corresponding dimension names of \code{x}.
   
   The degrees of freedom are provided in the attribute \code{df}.
-  For the F-tests, if \code{var.equal} is 'FALSE', \code{nrow(x)+1} degree of freedoms
+  For the F-tests, if \code{var.equal} is 'FALSE', \code{nrow(x)+1}
+  degree of freedoms 
   are given, the first one is the first degree of freedom (it is the
   same for each row) and the other ones are the second degree of freedom
   (one for each row). 

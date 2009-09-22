@@ -75,14 +75,15 @@ rowpAUCs(x, fac, p=0.1, flip=TRUE, caseNames=c("1", "2"))
   }
 }
 \value{
-  An object of class \code{\link[genefilter:rowROC]{rowROC}} with the
+  An object of class \code{\link[genefilter:rowROC-class]{rowROC}} with the
   calculated specificities and sensitivities for each row and the
   corresponding pAUCs and AUCs values. See
-  \code{\link[genefilter:rowROC]{rowROC}} for details.
+  \code{\link[genefilter:rowROC-class]{rowROC}} for details.
 }
 \references{Pepe MS, Longton G, Anderson GL,
 Schummer M.: Selecting
-    differentially expressed genes from microarray experiments. \emph{Biometrics. 2003 Mar;59(1):133-42.}}
+    differentially expressed genes from microarray
+    experiments. \emph{Biometrics. 2003 Mar;59(1):133-42.}} 
 \author{Florian Hahne <fhahne@fhcrc.org>}
 \seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca},
     \link[ROC:AUC]{pAUC}, \link[genefilter:rowROC]{rowROC}}}
