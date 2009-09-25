@@ -1,5 +1,6 @@
 \name{rowROC-class}
 \docType{class}
+\alias{rowROC}
 \alias{rowROC-class}
 \alias{pAUC}
 \alias{AUC}

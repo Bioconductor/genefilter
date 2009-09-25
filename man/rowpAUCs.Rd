@@ -86,7 +86,7 @@ Schummer M.: Selecting
     experiments. \emph{Biometrics. 2003 Mar;59(1):133-42.}} 
 \author{Florian Hahne <fhahne@fhcrc.org>}
 \seealso{\code{\link[ROC:rocdemo.sca]{rocdemo.sca},
-    \link[ROC:AUC]{pAUC}, \link[genefilter:rowROC]{rowROC}}}
+    \link[ROC:AUC]{pAUC}, \link[genefilter:rowROC-class]{rowROC}}}
 \examples{
 library(Biobase)
 data(sample.ExpressionSet)
