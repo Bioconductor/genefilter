@@ -21,17 +21,19 @@
   (please see Details).
 }
 \usage{
-nsFilter(eset, require.entrez = TRUE, require.GOBP = FALSE, 
-    require.GOCC = FALSE, require.GOMF = FALSE,
-    require.CHR = FALSE,  remove.dupEntrez = TRUE, 
-    var.func = IQR, var.cutoff = 0.5,  
-    var.filter = TRUE, filterByQuantile=TRUE,
-    feature.exclude="^AFFX", ...)
-varFilter(eset, var.func = IQR, var.cutoff = 0.5, filterByQuantile = TRUE)
-featureFilter(eset, require.entrez = TRUE,
-    require.GOBP = FALSE, require.GOCC = FALSE,
-    require.GOMF = FALSE, require.CHR = FALSE,
-    remove.dupEntrez = TRUE, feature.exclude = "^AFFX")
+nsFilter(eset, require.entrez=TRUE,
+    require.GOBP=FALSE, require.GOCC=FALSE,
+    require.GOMF=FALSE, require.CHR=FALSE,
+    remove.dupEntrez=TRUE, var.func=IQR,
+    var.cutoff=0.5, var.filter=TRUE,
+    filterByQuantile=TRUE, feature.exclude="^AFFX", ...)
+
+varFilter(eset, var.func=IQR, var.cutoff=0.5, filterByQuantile=TRUE)
+
+featureFilter(eset, require.entrez=TRUE,
+    require.GOBP=FALSE, require.GOCC=FALSE,
+    require.GOMF=FALSE, require.CHR=FALSE,
+    remove.dupEntrez=TRUE, feature.exclude="^AFFX")
 }
 
 \arguments{
