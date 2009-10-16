@@ -44,7 +44,8 @@ varFilter <- function(eset, var.func=IQR, var.cutoff=0.5,filterByQuantile=TRUE
 
 featureFilter <- function(eset, require.entrez=TRUE,
                    require.GOBP=FALSE, require.GOCC=FALSE,
-                   require.GOMF=FALSE, remove.dupEntrez=TRUE,
+                   require.GOMF=FALSE, require.CHR=FALSE,
+                   remove.dupEntrez=TRUE,
                    feature.exclude="^AFFX") {
 
     annChip <- annotation(eset)
@@ -55,12 +56,15 @@ featureFilter <- function(eset, require.entrez=TRUE,
     requireID <- function(eset, map) {
         IDs <- mget(featureNames(eset), envir=getAnnEnv(map), ifnotfound=NA)
         haveID <- names(IDs)[sapply(IDs, function(x) !is.na(x))]
-         eset[haveID, ]
+        eset[haveID, ]
     }
-    if (require.entrez)
+
+    
+    if (require.entrez) {
         centID <- .findCentralID(annChip)
         eset <- requireID(eset, centID)
-
+    }
+    
     filterGO <- function(eset, ontology) {
         haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO"), ifnotfound=NA),
                          function(x) {
@@ -102,6 +106,16 @@ featureFilter <- function(eset, require.entrez=TRUE,
                                  annotation(eset))
         eset <- eset[uniqGenes, ]
     }
+
+    requireCHR <- function(eset) {
+        CHRs <- mget(featureNames(eset), envir=getAnnEnv("CHR"), ifnotfound=NA)
+        haveCHR <- names(CHRs)[sapply(CHRs, function(x) !is.na(x[1]))]
+        eset[haveCHR, ]
+    }
+
+    if (require.CHR)
+        eset <- requireCHR(eset)
+    
     eset
 }
 
@@ -112,6 +126,7 @@ setMethod("nsFilter", "ExpressionSet",
                    require.GOBP=FALSE,
                    require.GOCC=FALSE,
                    require.GOMF=FALSE,
+                   require.CHR=FALSE,
                    remove.dupEntrez=TRUE,
                    var.func=IQR, var.cutoff=0.5,
                    var.filter=TRUE,
@@ -144,6 +159,17 @@ setMethod("nsFilter", "ExpressionSet",
                   eset <- requireID(eset, centID)
               }
 
+              requireCHR <- function(eset) {
+                  CHRs <- mget(featureNames(eset), envir=getAnnEnv("CHR"), ifnotfound=NA)
+                  haveCHR <- names(CHRs)[sapply(CHRs, function(x) !is.na(x[1]))]
+                  logvar <- paste("numRemoved", "CHR", sep=".")
+                  assign(logvar, nfeat(eset) - length(haveCHR), envir=filter.log)
+                  eset[haveCHR, ]
+              }
+
+              if (require.CHR)
+                  eset <- requireCHR(eset)
+              
               filterGO <- function(eset, ontology) {
                   haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO"), ifnotfound=NA),
                                    function(x) {

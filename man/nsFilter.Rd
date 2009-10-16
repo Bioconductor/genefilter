@@ -23,14 +23,15 @@
 \usage{
 nsFilter(eset, require.entrez = TRUE, require.GOBP = FALSE, 
     require.GOCC = FALSE, require.GOMF = FALSE,
-    remove.dupEntrez = TRUE, var.func = IQR, var.cutoff = 0.5, 
+    require.CHR = FALSE,  remove.dupEntrez = TRUE, 
+    var.func = IQR, var.cutoff = 0.5,  
     var.filter = TRUE, filterByQuantile=TRUE,
     feature.exclude="^AFFX", ...)
-varFilter(eset, var.func = IQR, var.cutoff = 0.5, filterByQuantile=TRUE)
-featureFilter(eset, require.entrez=TRUE,
-    require.GOBP=FALSE, require.GOCC=FALSE,
-    require.GOMF=FALSE, remove.dupEntrez=TRUE,
-    feature.exclude="^AFFX")
+varFilter(eset, var.func = IQR, var.cutoff = 0.5, filterByQuantile = TRUE)
+featureFilter(eset, require.entrez = TRUE,
+    require.GOBP = FALSE, require.GOCC = FALSE,
+    require.GOMF = FALSE, require.CHR = FALSE,
+    remove.dupEntrez = TRUE, feature.exclude = "^AFFX")
 }
 
 \arguments{
@@ -49,6 +50,8 @@ featureFilter(eset, require.entrez=TRUE,
   \item{require.GOMF}{If \code{TRUE}, require that all probe sets have
     an annotation to at least one GO ID in the MF ontology.  Probe
     sets without such an annotation will be filtered out.}
+  \item{require.CHR}{If \code{TRUE}, require that all probe sets have
+    at least a mapping to chromosomes.}
   \item{remove.dupEntrez}{If \code{TRUE} and there are multiple probe
       sets mapping to the same Entrez Gene ID, then the probe set with
       the largest value of \code{var.func} will be retained and the
