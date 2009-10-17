@@ -159,17 +159,6 @@ setMethod("nsFilter", "ExpressionSet",
                   eset <- requireID(eset, centID)
               }
 
-              requireCytoBand <- function(eset) {
-                  MAPs <- mget(featureNames(eset), envir=getAnnEnv("MAP"), ifnotfound=NA)
-                  haveMAP <- names(MAPs)[sapply(MAPs, function(x) !is.na(x[1]))]
-                  logvar <- paste("numRemoved", "MAP", sep=".")
-                  assign(logvar, nfeat(eset) - length(haveMAP), envir=filter.log)
-                  eset[haveMAP, ]
-              }
-
-              if (require.CytoBand)
-                  eset <- requireCytoBand(eset)
-              
               filterGO <- function(eset, ontology) {
                   haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO"), ifnotfound=NA),
                                    function(x) {
@@ -249,7 +238,18 @@ setMethod("nsFilter", "ExpressionSet",
                   eset <- eset[selected, ]
                   logvar <- "numLowVar"
                   assign(logvar, sum(!selected), filter.log)
-              } 
+              }
+
+              requireCytoBand <- function(eset) {
+                  MAPs <- mget(featureNames(eset), envir=getAnnEnv("MAP"), ifnotfound=NA)
+                  haveMAP <- names(MAPs)[sapply(MAPs, function(x) !is.na(x[1]))]
+                  logvar <- paste("numRemoved", "MAP", sep=".")
+                  assign(logvar, nfeat(eset) - length(haveMAP), envir=filter.log)
+                  eset[haveMAP, ]
+              }
+
+              if (require.CytoBand)
+                  eset <- requireCytoBand(eset)
 
               numSelected <- length(featureNames(eset))
               list(eset=eset, filter.log=as.list(filter.log))
