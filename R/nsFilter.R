@@ -44,7 +44,7 @@ varFilter <- function(eset, var.func=IQR, var.cutoff=0.5,filterByQuantile=TRUE
 
 featureFilter <- function(eset, require.entrez=TRUE,
                    require.GOBP=FALSE, require.GOCC=FALSE,
-                   require.GOMF=FALSE, require.CHR=FALSE,
+                   require.GOMF=FALSE, require.CytoBand=FALSE,
                    remove.dupEntrez=TRUE,
                    feature.exclude="^AFFX") {
 
@@ -107,14 +107,14 @@ featureFilter <- function(eset, require.entrez=TRUE,
         eset <- eset[uniqGenes, ]
     }
 
-    requireCHR <- function(eset) {
-        CHRs <- mget(featureNames(eset), envir=getAnnEnv("CHR"), ifnotfound=NA)
-        haveCHR <- names(CHRs)[sapply(CHRs, function(x) !is.na(x[1]))]
-        eset[haveCHR, ]
+    requireCytoBand <- function(eset) {
+        MAPs <- mget(featureNames(eset), envir=getAnnEnv("MAP"), ifnotfound=NA)
+        haveMAP <- names(MAPs)[sapply(MAPs, function(x) !is.na(x[1]))]
+        eset[haveMAP, ]
     }
 
-    if (require.CHR)
-        eset <- requireCHR(eset)
+    if (require.CytoBand)
+        eset <- requireCytoBand(eset)
     
     eset
 }
@@ -126,7 +126,7 @@ setMethod("nsFilter", "ExpressionSet",
                    require.GOBP=FALSE,
                    require.GOCC=FALSE,
                    require.GOMF=FALSE,
-                   require.CHR=FALSE,
+                   require.CytoBand=FALSE,
                    remove.dupEntrez=TRUE,
                    var.func=IQR, var.cutoff=0.5,
                    var.filter=TRUE,
@@ -159,16 +159,16 @@ setMethod("nsFilter", "ExpressionSet",
                   eset <- requireID(eset, centID)
               }
 
-              requireCHR <- function(eset) {
-                  CHRs <- mget(featureNames(eset), envir=getAnnEnv("CHR"), ifnotfound=NA)
-                  haveCHR <- names(CHRs)[sapply(CHRs, function(x) !is.na(x[1]))]
-                  logvar <- paste("numRemoved", "CHR", sep=".")
-                  assign(logvar, nfeat(eset) - length(haveCHR), envir=filter.log)
-                  eset[haveCHR, ]
+              requireCytoBand <- function(eset) {
+                  MAPs <- mget(featureNames(eset), envir=getAnnEnv("MAP"), ifnotfound=NA)
+                  haveMAP <- names(MAPs)[sapply(MAPs, function(x) !is.na(x[1]))]
+                  logvar <- paste("numRemoved", "MAP", sep=".")
+                  assign(logvar, nfeat(eset) - length(haveMAP), envir=filter.log)
+                  eset[haveMAP, ]
               }
 
-              if (require.CHR)
-                  eset <- requireCHR(eset)
+              if (require.CytoBand)
+                  eset <- requireCytoBand(eset)
               
               filterGO <- function(eset, ontology) {
                   haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO"), ifnotfound=NA),
