@@ -105,7 +105,11 @@ export(Anova,
        parseArgs, 
        parseDesc, 
        setESetArgs, 
-       showESet) 
+       showESet,
+       kappa_t, kappa_p,
+       filtered_p, filtered_R,
+       rejection_plot,
+       filter_volcano) 
 
 exportClasses(rowROC)
 
@@ -120,4 +124,3 @@ exportMethods(genefinder,
 	      AUC, 
 	      rowpAUCs, 
 	      nsFilter)
-
