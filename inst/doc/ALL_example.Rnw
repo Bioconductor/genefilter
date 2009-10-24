@@ -90,7 +90,6 @@ Load the ALL data set and the \emph{genefilter} package:
 @ 
 <<libraries>>=
 library("genefilter")
-library("genefilterAdditions")
 library("ALL")
 data("ALL")
 @
