@@ -76,3 +76,6 @@ filter_volcano(
 
 \author{Richard Bourgon <bourgon@ebi.ac.uk>}
 
+\examples{
+# See the vignette: Diagnostic plots for independent filtering
+}

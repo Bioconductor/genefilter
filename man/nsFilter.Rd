@@ -6,20 +6,21 @@
 \alias{nsFilter,ExpressionSet-method}
 
 \title{Non-Specific Filtering of Features in an ExpressionSet}
-\description{Experience with microarray data suggests that features
+
+\description{This various provides various options for filtering
+  (removing) features from an ExpressionSet. 
+  
+  Experience with microarray data suggests that features
   exhibiting little variation, or a consistently low signal, across
   samples typically target transcripts that are simply not expressed at
-  detectable levels in any of the samples.
+  detectable levels in any of the samples. It can be advantageous for
+  the subsequent data analysis to remove them beforehand
+  (see Bourgon et al., References).
+  
   Furthermore, one may decide that there is little value in considering
-  features with insufficient annotation. One can leverage this
-  prior knowledge for the purpose of variable selection 
-  for subsequent sample clustering or classification
-  tasks, and for the purpose of
-  reducing the number of hypothesis
-  tests in differential expression analysis
-  with the aim of increasing the detection rate
-  (please see Details).
+  features with insufficient annotation.
 }
+
 \usage{
 nsFilter(eset, require.entrez=TRUE,
     require.GOBP=FALSE, require.GOCC=FALSE,
@@ -85,6 +86,10 @@ featureFilter(eset, require.entrez=TRUE,
   \item{...}{Unused, but available for specializing methods.}
 }
 \details{
+  In this Section, the effect of filtering on the type I error rate
+  estimation / control of subsequent hypothesis testing is explained.
+  A more comprehensive discussion is given by Bourgon et al. (see Reference).
+  
   \emph{Marginal type I errors}:
   Filtering on the basis of a statistic which is independent of the test
   statistic used for detecting differential gene expression can increase
@@ -92,8 +97,7 @@ featureFilter(eset, require.entrez=TRUE,
   clearly the case for filter criteria that do not depend on the data,
   such as the annotation based criteria provided by the \code{nsFilter}
   and \code{featureFilter} functions. However, marginal type I error can
-  also be controlled for certain types of data-dependent criteria, 
-  as detailed in the following.
+  also be controlled for certain types of data-dependent criteria.
   Call \eqn{U^I}{U^1} the stage 1 filter statistic, which is a function
   that is applied feature by feature,
   based on whose value the feature is or is not accepted to
@@ -133,8 +137,6 @@ featureFilter(eset, require.entrez=TRUE,
   effect of this is negligible in many cases in practice, but this
   depends on the dataset and the filter used, and the assessment 
   is in the responsibility of the data analyst.
-  For a more comprehensive discussion, please see the reference
-  (Bourgon et al.).
   
   \emph{Annotation Based Filtering} Arguments \code{require.entrez},
   \code{require.GOBP}, \code{require.GOCC}, and \code{require.GOMF}

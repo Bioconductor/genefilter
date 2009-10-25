@@ -1,18 +1,12 @@
-%
-% NOTE -- ONLY EDIT howtogenefinder.Rnw!!!
-% Biobase.tex file will get overwritten.
-%
-%\VignetteIndexEntry{HowTo: Genefinder}
+%\VignetteIndexEntry{How to find genes whose expression profile is similar to that of specified genes}
 %\VignetteDepends{Biobase, genefilter}
 %\VignetteKeywords{Expression Analysis}
 %\VignettePackage{genefilter}
 \documentclass{article}
-
 \usepackage{hyperref}
 
 \textwidth=6.2in
 \textheight=8.5in
-%\parskip=.3cm
 \oddsidemargin=.1in
 \evensidemargin=.1in
 \headheight=-.3in
@@ -22,7 +16,7 @@
 }
 
 \begin{document}
-\title{How To Find Genes Close to Specified Genes}
+\title{How to find genes whose expression profile is similar to that of specified genes}
 
 \maketitle
 
@@ -105,7 +99,7 @@ The \verb+method+ parameter can take the following values:
           only one is on amongst those in which at least one is on.
 \end{description}
 
-\section{Session Information}
+\section*{Session Information}
 
 The version number of R and packages loaded for generating the vignette were:
 

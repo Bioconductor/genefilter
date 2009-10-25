@@ -77,6 +77,10 @@ filtered_R(alpha, filter, test, theta, data, method = "none")
 
 \author{Richard Bourgon <bourgon@ebi.ac.uk>}
 
+\examples{
+# See the vignette: Diagnostic plots for independent filtering
+}
+
 \seealso{
   See \code{\link{rejection_plot}} for visualization of
   \code{filtered_p} results.

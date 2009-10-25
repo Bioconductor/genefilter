@@ -36,3 +36,7 @@ kappa_t(t, n1, n2 = n1)
 }
 
 \author{Richard Bourgon <bourgon@ebi.ac.uk>}
+
+\examples{
+# See the vignette: Diagnostic plots for independent filtering
+}
