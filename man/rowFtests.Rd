@@ -130,7 +130,7 @@ colFtests(x, fac, var.equal = TRUE)
 
    ## approximate equality
    about.equal = function(x,y,tol=1e-10)
-     stopifnot(all(abs(x-y) < tol))
+     stopifnot(is.numeric(x), is.numeric(y), length(x)==length(y), all(abs(x-y) < tol))
 
    ##
    ## compare with the implementation in t.test
@@ -148,7 +148,7 @@ colFtests(x, fac, var.equal = TRUE)
      about.equal(dm, r2$dm[j])
 
      s4 = summary(lm(x[j,] ~ f4))
-     about.equal(s4$statistic$value, r4$statistic[j])
+     about.equal(s4$fstatistic["value"], r4$statistic[j])
    }
 
    ##
