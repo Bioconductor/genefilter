@@ -42,9 +42,6 @@ varFilter <- function(eset, var.func=IQR, var.cutoff=0.5,filterByQuantile=TRUE
     eset <- eset[selected, ]
 }
 
-## getAnnEnv <- function(map, annChip) {
-##   getAnnMap(map=map, chip=annChip)
-## }
 
 .getRequiredIDs <- function(eset, map){
   annChip <- annotation(eset)
@@ -67,7 +64,7 @@ featureFilter <- function(eset, require.entrez=TRUE,
     if (nchar(annChip) == 0) stop("'eset' must have a valid annotation slot")
     
     nfeat <- function(eset) length(featureNames(eset))
-    requireID <- function(eset, map, schema) {
+    requireID <- function(eset, map) {
         IDs <- .getRequiredIDs(eset, map)
         haveID <- names(IDs)[sapply(IDs, function(x) !is.na(x))]
         eset[haveID, ]
@@ -157,7 +154,7 @@ setMethod("nsFilter", "ExpressionSet",
               nfeat <- function(eset) length(featureNames(eset))
               filter.log <- new.env(parent=emptyenv())
 
-              requireID <- function(eset, map, schema) {
+              requireID <- function(eset, map) {
                 IDs <- .getRequiredIDs(eset, map)
                   haveID <- names(IDs)[sapply(IDs, function(x) !is.na(x))]
                   logvar <- paste("numRemoved", map, sep=".")
