@@ -42,6 +42,21 @@ varFilter <- function(eset, var.func=IQR, var.cutoff=0.5,filterByQuantile=TRUE
     eset <- eset[selected, ]
 }
 
+## getAnnEnv <- function(map, annChip) {
+##   getAnnMap(map=map, chip=annChip)
+## }
+
+.getRequiredIDs <- function(eset, map){
+  annChip <- annotation(eset)
+  if(.isOrgSchema(annChip)){
+    IDs <- featureNames(eset)
+    names(IDs) <- featureNames(eset)
+  }else{
+    IDs <- mget(featureNames(eset), envir=getAnnMap(map, annChip), ifnotfound=NA)
+  }
+  IDs
+}
+
 featureFilter <- function(eset, require.entrez=TRUE,
                    require.GOBP=FALSE, require.GOCC=FALSE,
                    require.GOMF=FALSE, require.CytoBand=FALSE,
@@ -50,23 +65,22 @@ featureFilter <- function(eset, require.entrez=TRUE,
 
     annChip <- annotation(eset)
     if (nchar(annChip) == 0) stop("'eset' must have a valid annotation slot")
-    getAnnEnv <- function(map) { getAnnMap(map=map, chip=annChip) }
     
     nfeat <- function(eset) length(featureNames(eset))
-    requireID <- function(eset, map) {
-        IDs <- mget(featureNames(eset), envir=getAnnEnv(map), ifnotfound=NA)
+    requireID <- function(eset, map, schema) {
+        IDs <- .getRequiredIDs(eset, map)
         haveID <- names(IDs)[sapply(IDs, function(x) !is.na(x))]
         eset[haveID, ]
     }
 
     
     if (require.entrez) {
-        centID <- .findCentralID(annChip)
-        eset <- requireID(eset, centID)
+        map <- .findCentralMap(annChip)
+        eset <- requireID(eset, map)
     }
     
     filterGO <- function(eset, ontology) {
-        haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO"), ifnotfound=NA),
+        haveGo <- sapply(mget(featureNames(eset), getAnnMap("GO", annChip), ifnotfound=NA),
                          function(x) {
                              if (length(x) == 1 && is.na(x))
                                  FALSE
@@ -108,7 +122,7 @@ featureFilter <- function(eset, require.entrez=TRUE,
     }
 
     requireCytoBand <- function(eset) {
-        MAPs <- mget(featureNames(eset), envir=getAnnEnv("MAP"), ifnotfound=NA)
+        MAPs <- mget(featureNames(eset), envir=getAnnMap("MAP", annChip), ifnotfound=NA)
         haveMAP <- names(MAPs)[sapply(MAPs, function(x) !is.na(x[1]))]
         eset[haveMAP, ]
     }
@@ -139,15 +153,12 @@ setMethod("nsFilter", "ExpressionSet",
               annChip <- annotation(eset)
               if (nchar(annChip) == 0)
                 stop("'eset' must have a valid annotation slot")
-              getAnnEnv <- function(map) {
-                  getAnnMap(map=map, chip=annChip)
-              }
 
               nfeat <- function(eset) length(featureNames(eset))
               filter.log <- new.env(parent=emptyenv())
 
-              requireID <- function(eset, map) {
-                  IDs <- mget(featureNames(eset), envir=getAnnEnv(map), ifnotfound=NA)
+              requireID <- function(eset, map, schema) {
+                IDs <- .getRequiredIDs(eset, map)
                   haveID <- names(IDs)[sapply(IDs, function(x) !is.na(x))]
                   logvar <- paste("numRemoved", map, sep=".")
                   assign(logvar, nfeat(eset) - length(haveID), envir=filter.log)
@@ -155,12 +166,12 @@ setMethod("nsFilter", "ExpressionSet",
               }
 
               if (require.entrez) {
-                  centID <- .findCentralID(annChip)
-                  eset <- requireID(eset, centID)
+                  map <- .findCentralMap(annChip)
+                  eset <- requireID(eset, map)
               }
 
               filterGO <- function(eset, ontology) {
-                  haveGo <- sapply(mget(featureNames(eset), getAnnEnv("GO"), ifnotfound=NA),
+                  haveGo <- sapply(mget(featureNames(eset), getAnnMap("GO", annChip), ifnotfound=NA),
                                    function(x) {
                                        if (length(x) == 1 && is.na(x))
                                          FALSE
@@ -241,7 +252,7 @@ setMethod("nsFilter", "ExpressionSet",
               }
 
               requireCytoBand <- function(eset) {
-                  MAPs <- mget(featureNames(eset), envir=getAnnEnv("MAP"), ifnotfound=NA)
+                  MAPs <- mget(featureNames(eset), envir=getAnnMap("MAP", annChip), ifnotfound=NA)
                   haveMAP <- names(MAPs)[sapply(MAPs, function(x) !is.na(x[1]))]
                   logvar <- paste("numRemoved", "MAP", sep=".")
                   assign(logvar, nfeat(eset) - length(haveMAP), envir=filter.log)

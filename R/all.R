@@ -151,27 +151,34 @@ filterfun <- function(...) {
      return(f)
  }
 
-.findCentralID <- function(chip){
-    strMatch <- function(pat, s) length(grep(pat, s)) > 0
-    conn <- do.call(paste(chip, "_dbconn", sep=""), list())
-    schema <- dbmeta(conn, "DBSCHEMA")
-
-    ##This is NOT set up for ORG packages.
-    if(schema == "YEASTCHIP_DB")
-      centID <- "ORF"
-    else if( schema == "ARABIDOPSISCHIP_DB" )
-      centID <- "ACCNUM"
-    else if( strMatch("CHIP_DB$", schema))
-      centID <- "ENTREZID"
-
-    return(centID)
+.findDBMeta <- function(chip, item){
+    connfunc <- get(paste(chip, "_dbconn", sep=""))
+    dbmeta(connfunc(), item)
 }
 
+.isOrgSchema <- function(chip){
+    schema <- .findDBMeta(chip, "DBSCHEMA")
+    length(grep("CHIP", schema)) == 0
+}
+
+.findCentralMap<- function(chip){
+    centID <- .findDBMeta(chip, "CENTRALID")
+    if(!.isOrgSchema(chip) && centID == "TAIR") {
+        "ACCNUM" ## a peculiar exception with historical causes
+    } else {
+        centID   ## should cover EVERYTHING else
+    }
+}
+
+
 findLargest = function(gN, testStat, data="hgu133plus2") {
-    centID <- .findCentralID(data)
-    
-    LLe = get(paste(data, centID, sep=""))
-    lls = unlist(mget(gN, LLe))
+    map = .findCentralMap(data)
+    lls = if(.isOrgSchema(data)){
+        gN ##not a chip package so try the IDs presented.
+    } else {
+        LLe = get(paste(data, map, sep=""))
+        unlist(mget(gN, LLe))
+    }
     if(length(testStat) != length(gN) )
         stop("testStat and gN must be the same length")
     if( is.null(names(testStat)) )
@@ -179,5 +186,3 @@ findLargest = function(gN, testStat, data="hgu133plus2") {
     tSsp = split.default(testStat, lls)
     sapply(tSsp, function(x) names(which.max(x)))
 }
-
-
