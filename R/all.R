@@ -151,8 +151,8 @@ filterfun <- function(...) {
      return(f)
  }
 
-.findDBMeta <- function(chip, item){
-    connfunc <- get(paste(chip, "_dbconn", sep=""))
+.findDBMeta <- function(chip, item) {
+    connfunc <- getAnnMap("_dbconn", chip)
     dbmeta(connfunc(), item)
 }
 
