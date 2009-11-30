@@ -11,8 +11,8 @@ rowcoltt =  function(x, fac, tstatOnly, which) {
     stop(sQuote("tstatOnly"), " must be TRUE or FALSE.")
   
   f = checkfac(fac)
-  if (f$nrgrp > 2)
-    stop("Number of groups must be <= 2 for 'rowttests'.")
+  if ((f$nrgrp > 2) || (f$nrgrp <= 0))
+    stop("Number of groups is ", f$nrgrp, ", but must be >0 and <=2 for 'rowttests'.")
 
   cc = .Call("rowcolttests", x, f$fac, f$nrgrp, which-1L, PACKAGE="genefilter")
     
