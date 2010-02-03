@@ -5,18 +5,13 @@
 \alias{featureFilter}
 \alias{nsFilter,ExpressionSet-method}
 
-\title{Non-Specific Filtering of Features in an ExpressionSet}
+\title{Filtering of Features in an ExpressionSet}
 
-\description{This various provides various options for filtering
-  (removing) features from an ExpressionSet. 
-  
-  Experience with microarray data suggests that features
-  exhibiting little variation, or a consistently low signal, across
-  samples typically target transcripts that are simply not expressed at
-  detectable levels in any of the samples. It can be advantageous for
-  the subsequent data analysis to remove them beforehand
-  (see Bourgon et al., References).
-  
+\description{The function \code{nsFilter} tries to provide a one-stop shop for
+  different options of filtering (removing) features from an ExpressionSet. 
+  Filtering features exhibiting little variation, or a consistently low
+  signal, across samples can be advantageous for
+  the subsequent data analysis (Bourgon et al.).
   Furthermore, one may decide that there is little value in considering
   features with insufficient annotation.
 }
@@ -39,56 +34,44 @@ featureFilter(eset, require.entrez=TRUE,
 
 \arguments{
   \item{eset}{an \code{ExpressionSet} object}
-  \item{require.entrez}{If \code{TRUE}, require that all probe sets
-      have an Entrez Gene ID annotation.  Probe sets without such an
-      annotation will be filtered out.}  If using a package where Entrez
-      Gene IDs are not the central ID, then that ID will be required
-      instead.
-  \item{require.GOBP}{If \code{TRUE}, require that all probe sets have
-    an annotation to at least one GO ID in the BP ontology.  Probe
-    sets without such an annotation will be filtered out.}
-  \item{require.GOCC}{If \code{TRUE}, require that all probe sets have
-    an annotation to at least one GO ID in the CC ontology.  Probe
-    sets without such an annotation will be filtered out.}
-  \item{require.GOMF}{If \code{TRUE}, require that all probe sets have
-    an annotation to at least one GO ID in the MF ontology.  Probe
-    sets without such an annotation will be filtered out.}
-  \item{require.CytoBand}{If \code{TRUE}, require that all probe sets
-    (for higher orginisms) have at least a mapping to cytoband locations
-    labeded p1, p2, p3, q1, q2, q3, and etc. Probe sets without cytoband
-    locations will be filtered out. It would be useful when performing GSEA
-    tests within chromosome band locations.} 
-  \item{remove.dupEntrez}{If \code{TRUE} and there are multiple probe
-      sets mapping to the same Entrez Gene ID, then the probe set with
+  \item{var.func}{The function used as the per-feature filtering
+    statistic. This function should return a numeric vector of length
+    one when given a numeric vector as input.}
+  \item{var.filter}{A logical indicating whether to perform
+      filtering based on \code{var.func}.}  
+  \item{filterByQuantile}{A logical indicating whether \code{var.cutoff}
+    is to be interprested as a quantile of all \code{var.func} values
+    (the default), or as an absolute value.}
+  \item{var.cutoff}{A numeric value. If \code{var.filter} is TRUE,
+    features whose value of \code{var.func} is less than either:
+    the \code{var.cutoff}-quantile of all \code{var.func} values
+    (if \code{filterByQuantile} is TRUE), or
+    \code{var.cutoff} (if \code{filterByQuantile} is FALSE)
+    will be removed.}
+  \item{require.entrez}{If \code{TRUE}, filter out features
+    without an Entrez Gene ID annotation. If using an annotation
+    package where an identifier system other than Entrez Gene IDs is
+    used as the central ID, then that ID will be required instead.}
+  \item{require.GOBP, require.GOCC, require.GOMF}{If \code{TRUE}, filter out features
+    whose target genes are not annotated to at least one GO term in
+    the BP, CC or MF ontology, respectively.}
+  \item{require.CytoBand}{If \code{TRUE}, filter out features
+    whose target genes have no mapping to cytoband locations.} 
+  \item{remove.dupEntrez}{If \code{TRUE} and there are features
+      mapping to the same Entrez Gene ID (or equivalent), then the feature with
       the largest value of \code{var.func} will be retained and the
-      others removed.}  If using a package where Entrez Gene IDs are not
-      the central ID, then duplicates will be filtered using this other
-      ID type.
-  \item{var.func}{A \code{function} that will be used to assess the
-      variance of a probe set across all samples.  This function
-      should return a numeric vector of length one when given a
-      numeric vector as input.  Probe sets with a \code{var.func}
-      value less than \code{var.cutoff} will be removed. The default
-      is \code{IQR}.}
-  \item{var.cutoff}{A numeric value to use in filtering out probe sets
-      with small variance across samples.  See the \code{var.func}
-      argument and the details section below.}
-  \item{var.filter}{A logical indicating whether or not to perform
-      variance based filtering.  The default is \code{TRUE}.}  
-\item{filterByQuantile}{Logical: whether the variance-filter cutoff threshold
-  should be interpreted as a quantile. Defaults to \code{TRUE}; if set
-  to  \code{FALSE} the cutoff value is used directly ``as is''.}
-\item{feature.exclude}{A character vector of regular expressions.  Any
-    probe sets identifiers (return value of \code{featureNames(eset)})
-    that match one of the specified patterns will be filtered out.  The
-    default value is intended to filter out Affymetrix quality control
+      other(s) removed.}
+  \item{feature.exclude}{A character vector of regular expressions.
+    Feature identifiers (i.e. value of \code{featureNames(eset)})
+    that match one of the specified patterns will be filtered out.
+    The default value is intended to filter out Affymetrix quality control
     probe sets.}
   \item{...}{Unused, but available for specializing methods.}
 }
 \details{
   In this Section, the effect of filtering on the type I error rate
   estimation / control of subsequent hypothesis testing is explained.
-  A more comprehensive discussion is given by Bourgon et al. (see Reference).
+  See also the paper by Bourgon et al.
   
   \emph{Marginal type I errors}:
   Filtering on the basis of a statistic which is independent of the test
@@ -139,49 +122,42 @@ featureFilter(eset, require.entrez=TRUE,
   is in the responsibility of the data analyst.
   
   \emph{Annotation Based Filtering} Arguments \code{require.entrez},
-  \code{require.GOBP}, \code{require.GOCC}, and \code{require.GOMF}
-  turn on a filter based on available annotation data.  The annotation
+  \code{require.GOBP}, \code{require.GOCC}, \code{require.GOMF} and
+  \code{require.CytoBand}
+  filter based on available annotation data.  The annotation
   package is determined by calling \code{annotation(eset)}.
 
-  \emph{Duplicate Probe Removal} If \code{remove.dupEntrez=TRUE},
-  probes determined by your annotation to be pointing to the same gene
-  will be compared, and only the probe with the highest \code{var.func} value
-  will be retained.
-  
   \emph{Variance Based Filtering} The \code{var.filter},
   \code{var.func}, \code{var.cutoff} and \code{varByQuantile} arguments
   control numerical cutoff-based filtering.
   Probes for which \code{var.func} returns \code{NA} are
   removed.
-  The default \code{var.func} is \code{IQR}, which is defined as
+  The default \code{var.func} is \code{IQR}, which we here define as
   \code{rowQ(eset, ceiling(0.75 * ncol(eset))) - rowQ(eset, floor(0.25 * ncol(eset)))};
   this choice is motivated by the observation that unexpressed genes are
   detected most reliably through low variability of their features
   across samples.
   Additionally, \code{IQR} is robust to outliers (see note below). The
-  default \code{var.cutoff} is \code{0.5} and is motivated by the rule of
-  thumb that in many tissues only 40\% of genes are expressed. Of course,
-  if you believe in a different approach to numerical filtering you can
-  choose another function as \code{var.func}, or turn off numerical
-  filtering by setting \code{var.filter=FALSE}.
+  default \code{var.cutoff} is \code{0.5} and is motivated by a rule of
+  thumb that in many tissues only 40\% of genes are expressed.
+  Please adapt this value to your data and question.
 
-  Note that by default the numerical-filter cutoff is interpreted
-  as a quantile, so leaving the default values intact would filter out
-  50\% of the genes remaining at this stage. If you prefer to set the
-  cutoff at some absolute threshold, change the value of
-  \code{varByQuantile} to \code{FALSE}, and modify \code{var.cutoff}
-  accordingly.
+  By default the numerical-filter cutoff is interpreted
+  as a quantile, so with the default settings, 
+  50\% of the genes are filtered. 
 
-  Note also that variance filtering is performed last, so that
+  Variance filtering is performed last, so that
   (if \code{varByQuantile=TRUE} and \code{remove.dupEntrez=TRUE}) the
   final number of genes does indeed exclude precisely the \code{var.cutoff} 
   fraction of unique genes remaining after all other filters were
   passed.
   
-  The stand-alone function \code{varFilter} does only numerical filtering,
-  and returns an \code{ExpressionSet}. \code{featureFilter} does only
-  feature based filtering and duplicate removal, and returns an expression
-  set as well. Duplicate removal is hard-coded to retain the highest-IQR
+  The stand-alone function \code{varFilter} does only
+  \code{var.func}-based filtering
+  (and no annotation based filtering).
+  \code{featureFilter} does only
+  annotation based filtering and duplicate removal; it always
+  performs duplicate removal to retain the highest-IQR
   probe for each gene.
 }
 
