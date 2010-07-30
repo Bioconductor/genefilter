@@ -49,9 +49,12 @@ rowcolFt =  function(x, fac, var.equal, which) {
 
   ## xm: a nrow(x) x nlevels(fac) matrix with the means of each factor
   ## level
-  xm <- matrix(sapply(levels(fac), function(fl) rowMeans(x[,which(fac==fl), drop=FALSE])),nrow=nrow(x))
+  xm <- matrix(
+     sapply(levels(fac), function(fl) rowMeans(x[,which(fac==fl), drop=FALSE])),
+     nrow = nrow(x),
+     ncol = nlevels(fac))
 
-  ## x1: a matrix of same size as x with group means
+  ## x1: a matrix of group means, with as many rows as x, columns correspond to groups 
   x1 <- xm[,fac, drop=FALSE]
 
   ## degree of freedom 1
@@ -80,7 +83,10 @@ rowcolFt =  function(x, fac, var.equal, which) {
     ## wi: a nrow(x) x nlevels(fac) matrix with the variance * group size of each factor
     ## level
     sss <- sqr(x-x1)
-    x5 <- sapply(levels(fac), function(fl) rowSums(sss[,which(fac==fl), drop=FALSE]))
+    x5 <- matrix(
+       sapply(levels(fac), function(fl) rowSums(sss[,which(fac==fl), drop=FALSE])),
+       nrow = nrow(sss),
+       ncol = nlevels(fac))          
     wi <- ni*(ni-1) /x5
 
     ## u : Sum of wi
