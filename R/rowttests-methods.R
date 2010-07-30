@@ -49,7 +49,7 @@ rowcolFt =  function(x, fac, var.equal, which) {
 
   ## xm: a nrow(x) x nlevels(fac) matrix with the means of each factor
   ## level
-  xm <- sapply(levels(fac), function(fl) rowMeans(x[,which(fac==fl), drop=FALSE]))
+  xm <- matrix(sapply(levels(fac), function(fl) rowMeans(x[,which(fac==fl), drop=FALSE])),nrow=nrow(x))
 
   ## x1: a matrix of same size as x with group means
   x1 <- xm[,fac, drop=FALSE]

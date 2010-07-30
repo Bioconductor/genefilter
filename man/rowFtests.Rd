@@ -180,5 +180,9 @@ colFtests(x, fac, var.equal = TRUE)
      about.equal(s2$statistic, r2$statistic[j])
      about.equal(s2$p.value,   r2$p.value[j])
    }
+
+   ## single row matrix
+   rowFtests(matrix(runif(10),1,10),as.factor(c(rep(1,5),rep(2,5))))
+   rowttests(matrix(runif(10),1,10),as.factor(c(rep(1,5),rep(2,5))))
 }
 \keyword{math}
