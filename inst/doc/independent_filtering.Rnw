@@ -283,7 +283,8 @@ The plot is shown in the right panel of Figure~\ref{figrej}.
 
 \subsection{Choice of filtering statistic}
 
-\fixme{Compute another \Robject{rejBH} line for a different filter,
+\fixme{Compute another \Robject{rejBH} line for different filters
+  (min, max, var)
   and compare.}
 
 %------------------------------------------------------------
