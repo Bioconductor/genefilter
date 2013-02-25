@@ -16,10 +16,9 @@
 }
 
 \usage{
-rejection_plot(
-               p,
-               col, lty = 1, lwd = 1,
-               xlab = "Cutoff", ylab = "Rejections",
+rejection_plot(p,
+               col, lty = 1, lwd = 1,   
+               xlab = "p cutoff", ylab = "number of rejections",
                xlim = c(0, 1), ylim,
                legend = names(p),
                at = c("all", "sample"),

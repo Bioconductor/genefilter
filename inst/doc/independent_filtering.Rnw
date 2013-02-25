@@ -1,72 +1,25 @@
-%\VignetteIndexEntry{Diagnostic plots for independent filtering}
+%\VignetteIndexEntry{Diagnostics for independent filtering}
 %\VignettePackage{genefilter}
 
 % To compile this document
-% rm(list=ls());library("cacheSweave");Sweave("independent_filtering_plots.Rnw",driver=cacheSweaveDriver());system("pdflatex independent_filtering_plots")
+% rm(list=ls());library("cacheSweave");Sweave("independent_filtering.Rnw",driver=cacheSweaveDriver());system("pdflatex independent_filtering")
 
 \documentclass[10pt,oneside]{article}
-\usepackage[a4paper,left=1.9cm,top=1.9cm,bottom=2.5cm,right=1.9cm,ignoreheadfoot]{geometry}
-\pagestyle{empty}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage{helvet}
-\renewcommand{\familydefault}{\sfdefault}
 
-\newcommand{\Robject}[1]{\texttt{#1}}
-\newcommand{\Rpackage}[1]{\textit{#1}}
-\newcommand{\Rclass}[1]{\textit{#1}}
-\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\thetitle}{Diagnostics for independent filtering}
+%\usepackage[pdftitle={thetitle},pdfauthor={Wolfgang Huber}]{whbiocvignette}
+\usepackage{whbiocvignette}
 
-\newcommand{\comment}[1]{\textsl{\textcolor{Gray}{#1}}}
-\newcommand{\fixme}[1]{\textsl{\textcolor{Bittersweet}{Fixme: #1}}}
-
-\newcommand{\thetitle}{Diagnostic plots for independent filtering}
-
-\usepackage{graphicx}
-\usepackage[pdftitle={Diagnostic plots for independent filtering},%
-  pdfauthor={Richard Bourgon and Wolfgang Huber},%
-  pdfpagelabels,%
-  plainpages=false,%
-  pdfborder={0 0 0},%
-  pdfstartview=FitH,%
-  bookmarks=true,%
-  bookmarksnumbered=true,%
-  bookmarksopen=true,%
-  linktoc=section,%
-  linkcolor=BlueViolet,%
-  citecolor=BlueViolet,%
-  urlcolor=BlueViolet,%
-  linkbordercolor={.7 .7 .7},
-  citebordercolor={.7 .7 .7},
-  urlbordercolor={.7 .7 .7} ,
-  raiselinks,%
-  pdftex]{hyperref}
-
-\usepackage{cite}
-\renewcommand{\floatpagefraction}{0.9}
-
-\usepackage{sectsty}
-\sectionfont{\sffamily\bfseries\color{RoyalBlue}\sectionrule{0pt}{0pt}{-1ex}{1pt}}
-\subsectionfont{\sffamily\bfseries\color{RoyalBlue}}
-\subsubsectionfont{\sffamily\bfseries\color{RoyalBlue}}
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhead{}
-\fancyfoot{}
-\lfoot{}\cfoot{\thetitle}\rfoot{}
-\renewcommand{\headrule}{}
-
-\usepackage{Sweave}
-\SweaveOpts{keep.source=TRUE,eps=FALSE,pdf=FALSE,png=TRUE,include=FALSE,width=5.4,height=3.7,resolution=180}
-
-% The following command makes use of SVN's 'Date' keyword substitution
-% To activate this, I used: svn propset svn:keywords Date independent_filtering_plots.Rnw
 \title{\textsf{\textbf{\thetitle}}}
-\author{Richard Bourgon, Wolfgang Huber\\[1em]European Molecular Biology Laboratory (EMBL),\\ Heidelberg, Germany}
-\date{\Rpackage{genefilter} version \Sexpr{packageDescription("genefilter")$Version}  (Last revision \StrMid{$Date: 2013-02-24 11:39:28 +0100 (Sun, 24 Feb 2013) $}{8}{18})}
+\author{Wolfgang Huber\\[1em]European Molecular Biology Laboratory (EMBL)}
+% The following command makes use of SVN's 'Date' keyword substitution
+% To activate this, I used: svn propset svn:keywords Date independent_filtering.Rnw
+\date{\Rpackage{genefilter} version \Sexpr{packageDescription("genefilter")$Version}  (Last revision \StrMid{$Date$}{8}{18})}
 
 
 \begin{document}
 
+\SweaveOpts{keep.source=TRUE,eps=FALSE,pdf=FALSE,png=TRUE,include=FALSE,width=5.4,height=3.7,resolution=180}
 <<options,results=hide,echo=FALSE>>=
 options(digits=3, width=100)
 library("pasilla") # make sure this is installed, since we need it in the next section
@@ -83,11 +36,55 @@ This vignette illustrates the use of some functions in the
 for independent filtering~\cite{BourgonIndependentFiltering}. In
 particular, it provide diagnostics that are intended to help with
 \begin{packeditemize}
-\item the choice of filter criterion, and
+\item the choice of filter criterion and
 \item the choice of filter cutoff.  
 \end{packeditemize}
 \end{abstract}
  
+\fixme{To Do:
+\begin{packeditemize}
+\item{which filter statistic? Compare avg vs variance.}
+\item{appendix: volcano}
+\item{Schweder Spjotvoll}
+\item{bibtex}
+\end{packeditemize}}
+
+%-----------------------------------------------------------
+\section{Introduction}
+%-----------------------------------------------------------
+Multiple testing approaches, with thousands of tests, are often used
+in analyses of genome-scale data. For instance, in analyses of
+differential gene expression based on RNA-Seq or microarray data, a
+common approach is to apply a statistical test, one by one, to each of
+thousands of genes, with the aim of identifying those genes that have
+evidence for a statistical association of their expression
+measurements with the experimental covariate(s) of interest.  Another
+instance is differential binding detection from ChIP-Seq data.  The
+idea of \emph{independent filtering} is to filter out those tests from
+the procedure that have no, or little chance of showing significant
+evidence, without even looking at their test statistic. Typically,
+this results in increased detection power at the same experiment-wide
+type I error, as measured in terms of the false discovery rate.  A
+good choice for a filtering criterion is one that
+\begin{enumerate}
+  \item\label{it:indp} is statistically independent from the test statistic
+    under the null hypothesis,
+  \item\label{it:corr} is correlated with the test statistic under the
+    alternative, and
+  \item\label{it:joint} does not notably change the dependence
+    structure --if there is any-- of the joint test statistics
+    (including those corresponding to true nulls and to true
+    alternatives).
+\end{enumerate}
+The benefit from filtering relies on property~\ref{it:corr}, and we
+will explore it further in Section~\ref{sec:qual}. Its
+statistical validity relies on properties~\ref{it:indp} --which is
+simple to formally prove for many combinations of filter criteria
+with test statistics-- and \ref{it:joint}, which is less easy to theoretically
+derive from first principles, but rarely a problem in practice.  We refer
+to~\cite{Bourgon:2010:PNAS} for further discussion on the mathematical
+and conceptual background.
+
 %-----------------------------------------------------------
 \section{Data preparation}
 %-----------------------------------------------------------
@@ -106,129 +103,188 @@ data("pasillaGenes")
 %
 We perform a standard analysis with \Rpackage{DESeq} to look for genes
 that are differentially expressed between the normal and
-Pasilla-knockdown conditions (for more details, please see the
-vignette of the \Rpackage{DESeq} package).
+Pasilla-knockdown conditions, indicated by the factor variable
+\Robject{condition}. In the generalized linear model (GLM) analysis,
+we adjust for an additional experimental covariate \Robject{type},
+which is however not of interest for the differential expression. For
+more details, please see the vignette of the \Rpackage{DESeq} package.
 %
 <<DESeq1,results=hide>>=
 library("DESeq")
 <<DESeq2,cache=TRUE,results=hide>>=
-cds  = estimateSizeFactors( pasillaGenes)
+cds  = estimateSizeFactors( pasillaGenes )
 cds  = estimateDispersions( cds )
-fit1 = fitNbinomGLMs( cds, count ~ libType + condition )
-fit0 = fitNbinomGLMs( cds, count ~ libType  )
-pvalues  = nbinomGLMTest( fit1, fit0 )
-avgcount = rowMeans(counts(cds))
+fit1 = fitNbinomGLMs( cds, count ~ type + condition )
+fit0 = fitNbinomGLMs( cds, count ~ type  )
+<<DESeq3,cache=TRUE>>=
+res = data.frame(
+filterstat = rowMeans(counts(cds)),
+pvalues    = nbinomGLMTest( fit1, fit0 ),
+effectsize = fit1$conditionuntreated,
+row.names  = featureNames(cds) )
 @ 
 %
-We now use functions from \emph{genefilter} to compute overall standard devation
-filter statistics as well as standard two-sample $t$ and releated statistics.
-
+The details of the anove analysis are not important for the purpose of
+this vignette, the essential output is contained in the columns of the
+dataframe \Robject{res}:
+\begin{packeditemize}
+  \item \texttt{filterstat}: the filter statistic, here the average
+    number of counts per gene across all samples, irrespective of
+    sample annoation,
+  \item \texttt{pvalues}: the test $p$ values,
+  \item \texttt{effectsize}: a measure of effect size, here the $\log_2$-ratio
+    of average normalized counts between conditions; this quantity is
+    strictly speaking not required for performing independent
+    filtering, but will be useful for an illustrative plot we show in
+    Section~\ref{sec:volcano}.
+\end{packeditemize}
+Each row of the dataframe corresponds to one gene:
+<<headres>>=
+dim(res)
+head(res)
 @ 
-<<stats, cache=TRUE>>=
-S = rowSds( exprs( sampleDataset ) )
-t = rowttests( sampleDataset, sampleDataset$mol.biol )
-t = t$statistic
-d = t$dm
+
+%--------------------------------------------------
+\section{Qualitative assessment of the filter statistic}\label{sec:qual}
+%--------------------------------------------------
+<<pass,echo=FALSE,cache=TRUE>>=
+theta = .4
+pass = with(res, filterstat > quantile(filterstat, theta)) 
 @ 
+%
+First, consider Figure~\ref{figscatterindepfilt}, which shows that
+among the approximately \Sexpr{100*theta}\% of genes with lowest overall counts, \Robject{filterstat},
+there are essentially none that achieved an (unadjusted) $p$ value less than
+\Sexpr{signif(quantile(res$pvalues[!pass], 0.0001, na.rm=TRUE), 1)}
+(this corresponds to about \Sexpr{signif(-log10(quantile(res$pvalues[!pass], 0.0001, na.rm=TRUE)), 2)} on the $-\log_{10}$-scale).
+%
+<<figscatterindepfilt,fig=TRUE>>=
+with(res,
+  plot(rank(filterstat)/length(filterstat), -log10(pvalues), pch=16, cex=0.45))
+@
+<<figecdffilt,fig=TRUE>>=
+trsf = function(n) log10(n+1)
+plot(ecdf(trsf(res$filterstat)), xlab=body(trsf), main="")
+@ 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.49\textwidth]{independent_filtering-figscatterindepfilt}
+\includegraphics[width=.49\textwidth]{independent_filtering-figecdffilt}
+\caption{Left: scatterplot of the rank (scaled to $[0,1]$) of the
+  filter criterion \Robject{filterstat} ($x$-axis) versus the negative
+  logarithm of the test \Robject{pvalues} ($y$-axis). Right: the
+  empirical cumulative distribution function (ECDF) shows the
+  relationships between the values of \Robject{filterstat} and its
+  quantiles.}
+\label{figscatterindepfilt}
+\end{figure}
+%
+This means that by dropping the 40\% genes with lowest \Robject{filterstat},
+we do not loose anything substantial from our subsequent
+results.
 
-
-
-1. rank filter vs p
-2. 
-
-Load the data set and the \emph{genefilter} package:
-
-\section{Qualitative assessment of the filter statistic}
-<<libraries,results=hide>>=
-library("genefilter")
-
-\subsection{Across $p$-value cutoffs}
-
-The \texttt{filtered\_p} function permits easy simulataneous calculation of
-unadjusted or adjusted $p$-values over a range of filtering thresholds
-($\theta$). Here, we return to the full ``BCR/ABL'' versus ``NEG'' data set, and
-compute adjusted $p$-values using the method of Benjamini and Hochberg, for a
-range of different filter stringencies.
-
-\begin{figure}[tb]
-\begin{center}
-\includegraphics[width=0.49\textwidth]{rejection_plot}
-\includegraphics[width=0.49\textwidth]{filtered_R_plot}
-\caption{Left panel: plot produced by the \texttt{rejection\_plot} function.
-Right panel: graph of \texttt{theta}.}
-\label{fig:rej}
-\end{center}
+For comparison, suppose you had chosen a less useful filter statistic,
+say, the gene identifiers interpreted as a decimal number. The
+analogous scatterplot to that of Figure~\ref{figscatterindepfilt} is
+shown in Figure~\ref{figbadfilter}.
+%
+<<badfilter1,cache=TRUE>>=
+badfilter = as.numeric(gsub("[+]*FBgn", "", rownames(res)))
+@ 
+<<badfilter2,echo=FALSE>>=
+stopifnot(!any(is.na(badfilter)))
+@ 
+<<figbadfilter,fig=TRUE>>=
+plot(rank(badfilter)/length(badfilter), -log10(res$pvalues), pch=16, cex=0.45)
+@
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.49\textwidth]{independent_filtering-figbadfilter}
+\caption{Scatterplot analogous to Figure~\ref{figscatterindepfilt}, but with \Robject{badfilter}.}
+\label{figbadfilter}
 \end{figure}
 
-
+%--------------------------------------------------
+\section{How to choose the filter statistic and the cutoff?}\label{sec:indepfilterchoose}
+%--------------------------------------------------
+The \texttt{filtered\_p} function in the \Rpackage{genefilter} package
+calculates adjusted $p$-values over a range of possible filtering
+thresholds. Here, we call this function on our results from above and
+compute adjusted $p$-values using the method of Benjamini and Hochberg (BH)
+for a range of different filter cutoffs.
+%
+\begin{figure}[tb]
+\begin{center}
+\includegraphics[width=0.49\textwidth]{independent_filtering-figrejection}
+\includegraphics[width=0.49\textwidth]{independent_filtering-fignumreject}
+\caption{Left panel: the plot shows the number of rejections (i.\,e.\ genes detected as
+  differentially expressed) as a function of the FDR threshold
+  ($x$-axis) and the filtering cutoff $\theta$ (line colours,
+  specified as quantiles of the distribution of the
+  filter statistic). The plot is produced by the \texttt{rejection\_plot}
+  function. Note that the lines for $\theta=0\%$ and
+  $10\%$ are overplotted by the line for $\theta=20\%$, since for the
+  data shown here, these quantiles correspond all to the same set of
+  filtered genes (cf.~Figure~\ref{figscatterindepfilt}). Right panel:
+  the number of rejections at FDR=10\% as a function of
+  $\theta$.}
+\label{figrej}
+\end{center}
+\end{figure}
+%
+<<genefilter,results=hide>>=
+library("genefilter")
+<<pBH1,cache=TRUE>>=
+theta = seq(from=0, to=0.5, by=0.1)
+pBH = filtered_p(filter=res$filterstat, test=res$pvalue, theta=theta, method="BH")
+<<pBH2>>=
+head(pBH)
 @ 
-<<table>>=
-table(ALL_bcrneg$mol.biol)
-@
-
-@ 
-<<filtered_p>>=
-S2 = rowVars(exprs(ALL_bcrneg))
-p2 = rowttests(ALL_bcrneg, "mol.biol")$p.value
-theta = seq(0, .5, .1)
-p_bh = filtered_p(S2, p2, theta, method="BH")
-@
-
-@ 
-<<p_bh>>=
-head(p_bh)
-@ 
-
-The \texttt{rejection\_plot} function takes sets of $p$-values corresponding to
-different filtering choices --- in the columns of a matrix or in a list --- and
+%
+The rows of this matrix correspond to the genes (i.\,e., the rows of \Robject{res}) and
+the columns to the BH-adjusted $p$-values for the different possible
+choices of cutoff \Robject{theta}. A value of \Robject{NA} indicates
+that the gene was filtered out at the corresponding filter cutoff.
+The \Rfunction{rejection\_plot} function takes such a matrix and
 shows how rejection count ($R$) relates to the choice of cutoff for the
 $p$-values. For these data, over a reasonable range of FDR cutoffs, increased
 filtering corresponds to increased rejections.
-
-@ 
-<<rejection_plot, fig=TRUE>>=
-rejection_plot(p_bh, at="sample",
-               xlim=c(0,.3), ylim=c(0,1000),
-               main="Benjamini & Hochberg adjustment")
+%
+<<figrejection,fig=TRUE,width=5.5,height=5.5>>=
+rejection_plot(pBH, at="sample",
+               xlim=c(0, 0.5), ylim=c(0, 1800),
+               xlab="FDR cutoff (Benjamini & Hochberg adjusted p-value)", main="")
 @
-The plot is shown in the left panel of Fig.~\ref{fig:rej}.
+The plot is shown in the left panel of Figure~\ref{figrej}.
 
 
-
-
-\subsection{Across filtering fractions}
+\subsection{Choice of filtering cutoff}
 
 If we select a fixed cutoff for the adjusted $p$-values, we can also look more
 closely at the relationship between the fraction of null hypotheses filtered and
 the total number of discoveries. The \texttt{filtered\_R} function wraps
 \texttt{filtered\_p} and just returns rejection counts. It requires a $p$-value
 cutoff. 
-
-@ 
-<<filtered_R>>=
-theta = seq(0, .80, .01)
-R_BH = filtered_R(alpha=.10, S2, p2, theta, method="BH")
-@
-
-@ 
-<<R_BH>>=
-head(R_BH)
+%
+<<filtered_R1,cache=TRUE>>=
+theta = seq(from=0, to=0.8, by=0.02)
+rejBH = filtered_R(alpha=0.1, filter=res$filterstat, test=res$pvalue, theta=theta, method="BH")
 @
 
 Because overfiltering (or use of a filter which is inappropriate for the
 application domain) discards both false and true null hypotheses, very large
 values of $\theta$ reduce power in this example:
 
-@ 
-<<filtered_R_plot, fig=TRUE>>=
-plot(theta, R_BH, type="l",
-     xlab=expression(theta), ylab="Rejections",
-     main="BH cutoff = .10"
-     )
+<<fignumreject,fig=TRUE,width=5.5,height=5.5>>=
+plot(theta, rejBH, type="l",
+     xlab=expression(theta), ylab="number of rejections")
 @
-The plot is shown in the right panel of Fig.~\ref{fig:rej}.
+The plot is shown in the right panel of Figure~\ref{figrej}.
 
+\subsection{Choice of filtering statistic}
 
+\fixme{Compute another \Robject{rejBH} line for a different filter,
+  and compare.}
 
 %------------------------------------------------------------
 \section{Filtering volcano plot}
@@ -239,22 +295,19 @@ induces a lower bound of fold change, albeit one which varies somewhat with the
 significance of the $t$-statistic. The \texttt{filter\_volcano} function allows
 you to visualize this effect.
 
+<<filter_volcano,fig=TRUE,eval=FALSE>>=
+S_cutoff = quantile(res$filterstat, 0.5)
+filter_volcano(res$effectsize, res$pvalue, res$filter, n1, n2, alpha=.01, S_cutoff)
 @ 
-<<filter_volcano, fig=TRUE, include=FALSE>>=
-S_cutoff = quantile(S, .50)
-filter_volcano(d, t$p.value, S, n1, n2, alpha=.01, S_cutoff)
-@ 
-The output is shown in the left panel of Fig.~\ref{fig:volcano}.
+The output is shown in the left panel of Fig.~\ref{figvolcano}.
 
-\begin{figure}[tb]
-\begin{center}
-\includegraphics[width=0.49\textwidth]{filter_volcano}
-\includegraphics[width=0.49\textwidth]{kappa}
-\caption{Left panel: plot produced by the \texttt{filter\_volcano} function.
-Right panel: graph of the \texttt{kappa\_t} function.}
-\label{fig:volcano}
-\end{center}
-\end{figure}
+%\begin{figure}[tb]
+%\begin{center}
+%\includegraphics[width=0.49\textwidth]{filter_volcano}
+%\caption{plot produced by the \texttt{filter\_volcano} function.}
+%\label{figvolcano}
+%\end{center}
+%\end{figure}
 
 The \texttt{kappa\_p} and \texttt{kappa\_t} functions, used to make the volcano
 plot, compute the fold change bound multiplier as a function of either a
@@ -265,12 +318,12 @@ are not of practical interest because we will not reject the null hypothesis
 with test statistics in this range.
 
 @ 
-<<kappa, fig=TRUE, include=FALSE>>=
+<<kappa, fig=TRUE, include=FALSE,eval=FALSE>>=
 t = seq(0, 5, length=100)
 plot(t, kappa_t(t, n1, n2) * S_cutoff, 
      xlab="|T|", ylab="Fold change bound", type="l")
 @
-The plot is shown in the right panel of Fig.~\ref{fig:volcano}.
+The plot is shown in the right panel of Fig.~\ref{figvolcano}.
 
 
 

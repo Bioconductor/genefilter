@@ -1,122 +1,95 @@
-%\VignetteIndexEntry{Diagnostic plots for independent filtering}
+%\VignetteIndexEntry{Additional plots for: Independent filtering increases power for detecting differentially expressed genes, Bourgon et al., PNAS (2010)}
 %\VignettePackage{genefilter}
 
 % To compile this document
-% rm(list=ls());library("cacheSweave");Sweave("independent_filtering_plots.Rnw", driver=cacheSweaveDriver());system("pdflatex independent_filtering_plots")
+% rm(list=ls());library("cacheSweave");Sweave("independent_filtering_plots.Rnw",driver=cacheSweaveDriver());system("pdflatex independent_filtering_plots")
 
 \documentclass[10pt,oneside]{article}
-\usepackage[a4paper,left=1.9cm,top=1.9cm,bottom=2.5cm,right=1.9cm,ignoreheadfoot]{geometry}
-\pagestyle{empty}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage{helvet}
-\renewcommand{\familydefault}{\sfdefault}
 
-\newcommand{\Robject}[1]{\texttt{#1}}
-\newcommand{\Rpackage}[1]{\textit{#1}}
-\newcommand{\Rclass}[1]{\textit{#1}}
-\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\thetitle}{Additional plots for: Independent filtering increases power for detecting differentially expressed genes, Bourgon et al., PNAS (2010)}
+%\usepackage[pdftitle={thetitle},pdfauthor={Richard Bourgon}]{whbiocvignette}
+\usepackage{whbiocvignette}
 
-\newcommand{\comment}[1]{\textsl{\textcolor{Gray}{#1}}}
-\newcommand{\fixme}[1]{\textsl{\textcolor{Bittersweet}{Fixme: #1}}}
-
-\newcommand{\thetitle}{Diagnostic plots for independent filtering}
-
-\usepackage{graphicx}
-\usepackage[pdftitle={Diagnostic plots for independent filtering},%
-  pdfauthor={Richard Bourgon and Wolfgang Huber},%
-  pdfpagelabels,%
-  plainpages=false,%
-  pdfborder={0 0 0},%
-  pdfstartview=FitH,%
-  bookmarks=true,%
-  bookmarksnumbered=true,%
-  bookmarksopen=true,%
-  linktoc=section,%
-  linkcolor=BlueViolet,%
-  citecolor=BlueViolet,%
-  urlcolor=BlueViolet,%
-  linkbordercolor={.7 .7 .7},
-  citebordercolor={.7 .7 .7},
-  urlbordercolor={.7 .7 .7} ,
-  raiselinks,%
-  pdftex]{hyperref}
-
-\usepackage{cite}
-\renewcommand{\floatpagefraction}{0.9}
-
-\usepackage{sectsty}
-\sectionfont{\sffamily\bfseries\color{RoyalBlue}\sectionrule{0pt}{0pt}{-1ex}{1pt}}
-\subsectionfont{\sffamily\bfseries\color{RoyalBlue}}
-\subsubsectionfont{\sffamily\bfseries\color{RoyalBlue}}
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhead{}
-\fancyfoot{}
-\lfoot{}\cfoot{\thetitle}\rfoot{}
-\renewcommand{\headrule}{}
-
-\usepackage{Sweave}
-\SweaveOpts{keep.source=TRUE,eps=FALSE,pdf=FALSE,png=TRUE,include=FALSE,width=5.4,height=3.7,resolution=180}
+\title{\thetitle}
+\author{Richard Bourgon}
 
 % The following command makes use of SVN's 'Date' keyword substitution
 % To activate this, I used: svn propset svn:keywords Date independent_filtering_plots.Rnw
-\title{\textsf{\textbf{\thetitle}}}
-\author{Richard Bourgon, Wolfgang Huber\\[1em]European Molecular Biology Laboratory (EMBL),\\ Heidelberg, Germany}
 \date{\Rpackage{genefilter} version \Sexpr{packageDescription("genefilter")$Version}  (Last revision \StrMid{$Date$}{8}{18})}
-
 
 \begin{document}
 
-<<options,results=hide,echo=FALSE>>=
-options(digits=3, width=100)
-library("pasilla") # make sure this is installed, since we need it in the next section
+%%%%%%%% Setup
+
+% Don't reformat code
+\SweaveOpts{keep.source=TRUE, eps=FALSE, include=FALSE, prefix=FALSE}
+
+% Size for figures
+\setkeys{Gin}{width=.7\textwidth}
+
+% Fonts
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{xleftmargin=1cm,fontshape=sl,fontsize=\small}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=1cm,fontsize=\small}
+
+% Setup
+
 @
+<<setup, echo=FALSE>>=
+options( width = 80 )
+@ 
 
 % Make title
 \maketitle
 \tableofcontents
 \vspace{.25in}
 
-\begin{abstract}
-This vignette illustrates the use of some functions in the
+
+%%%%%%%% Main text
+
+\section{Introduction}
+
+This vignette illustrates use of some functions in the
 \emph{genefilter} package that provide useful diagnostics 
-for independent filtering~\cite{BourgonIndependentFiltering}. In
-particular, it provide diagnostics that are intended to help with
-\begin{packeditemize}
-\item the choice of filter criterion, and
-\item the choice of filter cutoff.  
-\end{packeditemize}
-\end{abstract}
- 
+for independent filtering~\cite{BourgonIndependentFiltering}:
+
+\begin{itemize}
+  \item \texttt{kappa\_p} and \texttt{kappa\_t}
+  \item \texttt{filtered\_p} and \texttt{filtered\_R}
+  \item \texttt{filter\_volcano}
+  \item \texttt{rejection\_plot}
+\end{itemize}
+
+%Because the examples use the \emph{ALL} package, which was not previously a
+%\emph{genefilter} dependency, we have included the examples in a vignette rather
+%than in the standard documentation.
+
 
 \section{Data preparation}
 
-Here, we use for illustration the \Robject{pasillaGenes} dataset from the
-Bioconductor package \Rpackage{pasilla}; this is an RNA-Seq dataset
-from which we extract gene-level read counts for two replicate samples
-the were measured for each of two biological conditions (normally growing cells and cells
-treated with \fixme{RNAi} against the \emph{pasilla} gene).
+Load the ALL data set and the \emph{genefilter} package:
 
-%
-<<libraries,results=hide>>=
+@ 
+<<libraries>>=
 library("genefilter")
-library("pasilla")
-data("pasillaGenes")
+library("ALL")
+data("ALL")
 @
-%
+
 Reduce to just two conditions, then take a small subset of arrays from these,
 with 3 arrays per condition:
-%
+
+@ 
 <<sample_data, cache=TRUE>>=
-bcell = grep("^B", as.character(ALL$BT))
-moltyp = which(as.character(ALL$mol.biol) %in% 
+bcell <- grep("^B", as.character(ALL$BT))
+moltyp <- which(as.character(ALL$mol.biol) %in% 
                 c("NEG", "BCR/ABL"))
-ALL_bcrneg = ALL[, intersect(bcell, moltyp)]
-ALL_bcrneg$mol.biol = factor(ALL_bcrneg$mol.biol)
-nArrays = 3
+ALL_bcrneg <- ALL[, intersect(bcell, moltyp)]
+ALL_bcrneg$mol.biol <- factor(ALL_bcrneg$mol.biol)
+n1 <- n2 <- 3
 set.seed(1969)
-use = unlist(tapply(seq(along=ALL_bcrneg$mol.biol), ALL_bcrneg$mol.biol, sample, nArrays))
-sampleDataset = ALL_bcrneg[, use]
+use <- unlist(tapply(1:ncol(ALL_bcrneg), 
+                     ALL_bcrneg$mol.biol, sample, n1))
+subsample <- ALL_bcrneg[,use]
 @
 
 We now use functions from \emph{genefilter} to compute overall standard devation
@@ -124,24 +97,63 @@ filter statistics as well as standard two-sample $t$ and releated statistics.
 
 @ 
 <<stats, cache=TRUE>>=
-S = rowSds( exprs( sampleDataset ) )
-t = rowttests( sampleDataset, sampleDataset$mol.biol )
-t = t$statistic
-d = t$dm
+S <- rowSds( exprs( subsample ) )
+temp <- rowttests( subsample, subsample$mol.biol )
+d <- temp$dm
+p <- temp$p.value
+t <- temp$statistic
 @ 
 
 
 
-1. rank filter vs p
-2. 
 
-Load the data set and the \emph{genefilter} package:
+\section{Filtering volcano plot}
 
-\section{Qualitative assessment of the filter statistic}
+Filtering on overall standard deviation and then using a standard $t$-statistic
+induces a lower bound of fold change, albeit one which varies somewhat with the
+significance of the $t$-statistic. The \texttt{filter\_volcano} function allows
+you to visualize this effect.
+
+@ 
+<<filter_volcano, fig=TRUE, include=FALSE>>=
+S_cutoff <- quantile(S, .50)
+filter_volcano(d, p, S, n1, n2, alpha=.01, S_cutoff)
+@ 
+The output is shown in the left panel of Fig.~\ref{fig:volcano}.
+
+\begin{figure}[tb]
+\begin{center}
+\includegraphics[width=0.49\textwidth]{filter_volcano}
+\includegraphics[width=0.49\textwidth]{kappa}
+\caption{Left panel: plot produced by the \texttt{filter\_volcano} function.
+Right panel: graph of the \texttt{kappa\_t} function.}
+\label{fig:volcano}
+\end{center}
+\end{figure}
+
+The \texttt{kappa\_p} and \texttt{kappa\_t} functions, used to make the volcano
+plot, compute the fold change bound multiplier as a function of either a
+$t$-test $p$-value or the $t$-statistic itself. The actual induced bound on the
+fold change is $\kappa$ times the filter's cutoff on the overall standard
+deviation. Note that fold change bounds for values of $|T|$ which are close to 0
+are not of practical interest because we will not reject the null hypothesis
+with test statistics in this range.
+
+@ 
+<<kappa, fig=TRUE, include=FALSE>>=
+t <- seq(0, 5, length=100)
+plot(t, kappa_t(t, n1, n2) * S_cutoff, 
+     xlab="|T|", ylab="Fold change bound", type="l")
+@
+The plot is shown in the right panel of Fig.~\ref{fig:volcano}.
+
+
+
+\section{Rejection count plots}
 
 \subsection{Across $p$-value cutoffs}
 
-The \texttt{filtered\_p} function permits easy simulataneous calculation of
+The \texttt{filtered\_p} function permits easy simultaneous calculation of
 unadjusted or adjusted $p$-values over a range of filtering thresholds
 ($\theta$). Here, we return to the full ``BCR/ABL'' versus ``NEG'' data set, and
 compute adjusted $p$-values using the method of Benjamini and Hochberg, for a
@@ -165,10 +177,10 @@ table(ALL_bcrneg$mol.biol)
 
 @ 
 <<filtered_p>>=
-S2 = rowVars(exprs(ALL_bcrneg))
-p2 = rowttests(ALL_bcrneg, "mol.biol")$p.value
-theta = seq(0, .5, .1)
-p_bh = filtered_p(S2, p2, theta, method="BH")
+S2 <- rowVars(exprs(ALL_bcrneg))
+p2 <- rowttests(ALL_bcrneg, "mol.biol")$p.value
+theta <- seq(0, .5, .1)
+p_bh <- filtered_p(S2, p2, theta, method="BH")
 @
 
 @ 
@@ -203,8 +215,8 @@ cutoff.
 
 @ 
 <<filtered_R>>=
-theta = seq(0, .80, .01)
-R_BH = filtered_R(alpha=.10, S2, p2, theta, method="BH")
+theta <- seq(0, .80, .01)
+R_BH <- filtered_R(alpha=.10, S2, p2, theta, method="BH")
 @
 
 @ 
@@ -227,57 +239,13 @@ The plot is shown in the right panel of Fig.~\ref{fig:rej}.
 
 
 
-%------------------------------------------------------------
-\section{Filtering volcano plot}
-%------------------------------------------------------------
-
-Filtering on overall standard deviation and then using a standard $t$-statistic
-induces a lower bound of fold change, albeit one which varies somewhat with the
-significance of the $t$-statistic. The \texttt{filter\_volcano} function allows
-you to visualize this effect.
-
-@ 
-<<filter_volcano, fig=TRUE, include=FALSE>>=
-S_cutoff = quantile(S, .50)
-filter_volcano(d, t$p.value, S, n1, n2, alpha=.01, S_cutoff)
-@ 
-The output is shown in the left panel of Fig.~\ref{fig:volcano}.
-
-\begin{figure}[tb]
-\begin{center}
-\includegraphics[width=0.49\textwidth]{filter_volcano}
-\includegraphics[width=0.49\textwidth]{kappa}
-\caption{Left panel: plot produced by the \texttt{filter\_volcano} function.
-Right panel: graph of the \texttt{kappa\_t} function.}
-\label{fig:volcano}
-\end{center}
-\end{figure}
-
-The \texttt{kappa\_p} and \texttt{kappa\_t} functions, used to make the volcano
-plot, compute the fold change bound multiplier as a function of either a
-$t$-test $p$-value or the $t$-statistic itself. The actual induced bound on the
-fold change is $\kappa$ times the filter's cutoff on the overall standard
-deviation. Note that fold change bounds for values of $|T|$ which are close to 0
-are not of practical interest because we will not reject the null hypothesis
-with test statistics in this range.
-
-@ 
-<<kappa, fig=TRUE, include=FALSE>>=
-t = seq(0, 5, length=100)
-plot(t, kappa_t(t, n1, n2) * S_cutoff, 
-     xlab="|T|", ylab="Fold change bound", type="l")
-@
-The plot is shown in the right panel of Fig.~\ref{fig:volcano}.
-
-
-
 %%%%%%%% Session info
 
 \section*{Session information}
 
 @ 
 <<sessionInfo, results=tex, echo=FALSE>>=
-si = as.character( toLatex( sessionInfo() ) )
+si <- as.character( toLatex( sessionInfo() ) )
 cat( si[ -grep( "Locale", si ) ], sep = "\n" )
 @
 
@@ -286,7 +254,9 @@ cat( si[ -grep( "Locale", si ) ], sep = "\n" )
 \bibitem{BourgonIndependentFiltering}
 Richard Bourgon, Robert Gentleman and Wolfgang Huber.
 \newblock Independent filtering increases power for detecting differentially
-expressed genes. \textit{PNAS} (2010).
+expressed genes.
 \end{thebibliography}
+
+
 
 \end{document}

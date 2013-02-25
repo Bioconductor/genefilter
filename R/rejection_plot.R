@@ -1,7 +1,6 @@
-rejection_plot <- function(
-                           p,
+rejection_plot <- function(p,
                            col, lty = 1, lwd = 1,
-                           xlab = "Cutoff", ylab = "Rejections",
+                           xlab = "p cutoff", ylab = "number of rejections",
                            xlim = c( 0, 1 ), ylim,
                            legend = names(p),
                            at = c( "all", "sample" ),
