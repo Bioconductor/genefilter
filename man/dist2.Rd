@@ -29,9 +29,13 @@
   \code{fun(x[,i], x[,j])} can be evaluated for all pairs of \code{i}
   and \code{j} (see examples), and that
   \code{fun} is symmetric, i.e.
-  \code{fun(a, b)=fun(b, a)}.
-  \code{fun(a,a)} is not actually evaluated, instead the value of \code{diagonal}
+  \code{fun(a, b) = fun(b, a)}.
+  \code{fun(a, a)} is not actually evaluated, instead the value of \code{diagonal}
   is used to fill the diagonal elements of the returned matrix.
+
+  Note that \code{\link[stats:dist]{dist}} computes distances between rows of
+  \code{x}, while this function computes relations between columns of
+  \code{x} (see examples).
 }
 \value{
   A symmetric matrix of size \code{n x n}.
