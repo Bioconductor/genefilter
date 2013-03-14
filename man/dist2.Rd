@@ -2,22 +2,20 @@
 \alias{dist2}
 
 \title{
-  Calculate an n-by-n matrix by applying a function to 
-  pairs of columns of an m-by-n matrix.
+  Calculate an n-by-n matrix by applying a function to
+  all pairs of columns of an m-by-n matrix.
 }
 \description{
-  Calculate an n-by-n matrix by applying a function to 
-  pairs of columns of an m-by-n matrix.
+  Calculate an n-by-n matrix by applying a function to
+  all pairs of columns of an m-by-n matrix.
 }
 \usage{
-  dist2(x, fun=function(a,b) mean(abs(a-b), na.rm=TRUE), diagonal=0)
+  dist2(x, fun, diagonal=0)
 }
 
 \arguments{
-  \item{x}{A matrix, or any object \code{x} for which \code{ncol(x)}
-    and \code{x[,j]} return appropriate results.}
-  \item{fun}{A symmetric function of two arguments that may be
-    columns of \code{x}.}
+  \item{x}{A matrix.}
+  \item{fun}{A symmetric function of two arguments that may be columns of \code{x}.}
   \item{diagonal}{The value to be used for the diagonal elements of the
     resulting matrix.}
 }
@@ -27,34 +25,32 @@
   of their differences (which is proportional to the L1-norm of their
   difference). This is a distance metric.
 
-  The implementation assumes that \code{fun} is symmetric,
-  \code{fun(a,b)=fun(b,a)}. Hence, the
-  returned matrix is symmetric.
-  \code{fun(a,a)} is not evaluated, instead the value of \code{diagonal} 
+  The implementation assumes that
+  \code{fun(x[,i], x[,j])} can be evaluated for all pairs of \code{i}
+  and \code{j} (see examples), and that
+  \code{fun} is symmetric, i.e.
+  \code{fun(a, b)=fun(b, a)}.
+  \code{fun(a,a)} is not actually evaluated, instead the value of \code{diagonal}
   is used to fill the diagonal elements of the returned matrix.
-     
-  A use for this function is the detection of outlier arrays in a
-  microarray experiment. Assume that each column of \code{x} can be
-  decomposed as
-  \eqn{z+\beta+\epsilon}, where \eqn{z} is a fixed vector
-  (the same for all columns), \eqn{\epsilon} is vector of
-  \code{nrow{x}} i.i.d. random numbers, and \eqn{\beta} is an arbitrary
-  vector whose majority of entries are negligibly small (i.e. close to
-  zero). In other words, D\eqn{z} the probe effects,  \eqn{\epsilon}
-  measurement 
-  noise and \eqn{\beta} differential expression effects. Under this
-  assumption, all entries of the resulting distance matrix should be the
-  same, namely a multiple of the standard deviation of \eqn{\epsilon}.
-  Arrays whose  distance matrix entries are way different give cause
-  for suspicion.
-}  
+}
 \value{
   A symmetric matrix of size \code{n x n}.
 }
-
+\author{
+  Wolfgang Huber, James Reid
+}
 \examples{
-  z = matrix(rnorm(15693), ncol=3)
-  dist2(z)
+
+  # example matrix
+  z = matrix(1:15693, ncol=3)
+  matL1 = dist2(z)
+  matL2 = dist2(z, fun=function(a,b) sqrt(sum((a-b)^2, na.rm=TRUE)))
+
+  euc = as.matrix(dist(t(z)))
+
+  stopifnot(identical(dim(matL2), dim(euc)),
+            all(euc==matL2))
+
 }
 \keyword{manip}
 
