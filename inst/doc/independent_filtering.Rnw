@@ -111,8 +111,8 @@ fit0 = fitNbinomGLMs( cds, count ~ type  )
 <<DESeq3,cache=TRUE>>=
 res = data.frame(
 filterstat = rowMeans(counts(cds)),
-pvalues    = nbinomGLMTest( fit1, fit0 ),
-row.names  = featureNames(cds) )
+pvalue    = nbinomGLMTest( fit1, fit0 ),
+row.names = featureNames(cds) )
 @
 %
 The details of the anove analysis are not important for the purpose of
@@ -122,7 +122,7 @@ dataframe \Robject{res}:
   \item \texttt{filterstat}: the filter statistic, here the average
     number of counts per gene across all samples, irrespective of
     sample annoation,
-  \item \texttt{pvalues}: the test $p$ values,
+  \item \texttt{pvalue}: the test $p$-values,
 \end{packeditemize}
 Each row of the dataframe corresponds to one gene:
 <<headres>>=
@@ -134,19 +134,19 @@ head(res)
 \section{Qualitative assessment of the filter statistic}\label{sec:qual}
 %--------------------------------------------------
 <<pass,echo=FALSE,cache=TRUE>>=
-theta = .4
+theta = 0.4
 pass = with(res, filterstat > quantile(filterstat, theta))
 @
 %
 First, consider Figure~\ref{figscatterindepfilt}, which shows that
 among the approximately \Sexpr{100*theta}\% of genes with lowest overall counts, \Robject{filterstat},
-there are essentially none that achieved an (unadjusted) $p$ value less than
-\Sexpr{signif(quantile(res$pvalues[!pass], 0.0001, na.rm=TRUE), 1)}
-(this corresponds to about \Sexpr{signif(-log10(quantile(res$pvalues[!pass], 0.0001, na.rm=TRUE)), 2)} on the $-\log_{10}$-scale).
+there are essentially none that achieved an (unadjusted) $p$-value less than
+\Sexpr{signif(quantile(res$pvalue[!pass], 0.0001, na.rm=TRUE), 1)}
+(this corresponds to about \Sexpr{signif(-log10(quantile(res$pvalue[!pass], 0.0001, na.rm=TRUE)), 2)} on the $-\log_{10}$-scale).
 %
 <<figscatterindepfilt,fig=TRUE>>=
 with(res,
-  plot(rank(filterstat)/length(filterstat), -log10(pvalues), pch=16, cex=0.45))
+  plot(rank(filterstat)/length(filterstat), -log10(pvalue), pch=16, cex=0.45))
 @
 <<figecdffilt,fig=TRUE>>=
 trsf = function(n) log10(n+1)
@@ -158,7 +158,7 @@ plot(ecdf(trsf(res$filterstat)), xlab=body(trsf), main="")
 \includegraphics[width=.49\textwidth]{independent_filtering-figecdffilt}
 \caption{Left: scatterplot of the rank (scaled to $[0,1]$) of the
   filter criterion \Robject{filterstat} ($x$-axis) versus the negative
-  logarithm of the test \Robject{pvalues} ($y$-axis). Right: the
+  logarithm of the test \Robject{pvalue} ($y$-axis). Right: the
   empirical cumulative distribution function (ECDF) shows the
   relationships between the values of \Robject{filterstat} and its
   quantiles.}
@@ -181,7 +181,7 @@ badfilter = as.numeric(gsub("[+]*FBgn", "", rownames(res)))
 stopifnot(!any(is.na(badfilter)))
 @
 <<figbadfilter,fig=TRUE>>=
-plot(rank(badfilter)/length(badfilter), -log10(res$pvalues), pch=16, cex=0.45)
+plot(rank(badfilter)/length(badfilter), -log10(res$pvalue), pch=16, cex=0.45)
 @
 \begin{figure}[ht]
 \centering
@@ -306,6 +306,142 @@ the other choices are less effective.
 \end{center}
 \end{figure}
 
+%--------------------------------------------------
+\section{Some more plots pertinent to multiple testing}
+%--------------------------------------------------
+%--------------------------------------------------
+\subsection{Joint distribution of filter statistic and  $p$-values}\label{sec:pvalhist}
+%--------------------------------------------------
+The left panel of Figure~\ref{figscatterindepfilt} shows the joint distribution of filter
+statistic and $p$-values. An alternative, perhaps simpler view is provided by the
+$p$-value histograms in Figure~\ref{fighistindepfilt}.  It shows how the filtering ameliorates the multiple testing
+problem -- and thus the severity of a multiple testing adjustment -- by removing a
+background set of hypotheses whose $p$-values are distributed more or less uniformly in
+$[0,1]$.
+<<histindepfilt, width=7, height=5>>=
+h1 = hist(res$pvalue[!pass], breaks=50, plot=FALSE)
+h2 = hist(res$pvalue[pass], breaks=50, plot=FALSE)
+colori <- c(`do not pass`="khaki", `pass`="powderblue")
+<<fighistindepfilt, fig=TRUE>>=
+barplot(height = rbind(h1$counts, h2$counts), beside = FALSE,
+        col = colori, space = 0, main = "", ylab="frequency")
+text(x = c(0, length(h1$counts)), y = 0, label = paste(c(0,1)),
+     adj = c(0.5,1.7), xpd=NA)
+legend("topright", fill=rev(colori), legend=rev(names(colori)))
+@
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.5\textwidth]{independent_filtering-fighistindepfilt}
+\caption{Histogram of $p$-values for all tests.
+  The area shaded in blue indicates the subset of those that pass the filtering,
+  the area in khaki those that do not pass.}
+\label{fighistindepfilt}
+\end{figure}
+
+%-----------------------------------------------------
+\subsection{Illustration of the Benjamini-Hochberg method}
+%------------------------------------------------------
+The Benjamini-Hochberg multiple testing adjustment
+procedure \cite{BH:1995} has a simple graphical illustration, which we
+produce in the following code chunk. Its result is shown in the left
+panel of Figure \ref{figmulttest}.
+%
+<<sortP, cache=TRUE>>=
+resFilt = res[pass,]
+orderInPlot = order(resFilt$pvalue)
+showInPlot = (resFilt$pvalue[orderInPlot] <= 0.06)
+alpha = 0.1
+<<sortedP, fig=TRUE, width=4.5, height=4.5>>=
+plot(seq(along=which(showInPlot)), resFilt$pvalue[orderInPlot][showInPlot],
+     pch=".", xlab = expression(rank(p[i])), ylab=expression(p[i]))
+abline(a=0, b=alpha/length(resFilt$pvalue), col="red3", lwd=2)
+@
+<<doBH, echo=FALSE, results=hide>>=
+whichBH = which(resFilt$pvalue[orderInPlot] <= alpha*seq(along=resFilt$pvalue)/length(resFilt$pvalue))
+## Test some assertions:
+## - whichBH is a contiguous set of integers from 1 to length(whichBH)
+## - the genes selected by this graphical method coincide with those
+##   from p.adjust (i.e. padjFilt)
+stopifnot(length(whichBH)>0,
+          identical(whichBH, seq(along=whichBH)),
+          resFilt$FDR[orderInPlot][ whichBH] <= alpha,
+          resFilt$FDR[orderInPlot][-whichBH]  > alpha)
+@
+%
+%-----------------------------------------------------
+\subsection{Schweder and Spj\o{}tvoll plot}
+%------------------------------------------------------
+Schweder and Spj\o{}tvoll \cite{SchwederSpjotvoll1982} suggested a diagnostic plot
+of the observed $p$-values which permits estimation of the fraction of true null
+hypotheses. For a series of hypothesis tests $H_1, \ldots, H_m$ with $p$-values
+$p_i$, they suggested plotting
+%
+\begin{equation}
+  \left( 1-p_i, N(p_i) \right) \mbox{ for } i \in 1, \ldots, m,
+\end{equation}
+%
+where $N(p)$ is the number of $p$-values greater than $p$. An application of
+this diagnostic plot to \Robject{resFilt\$pvalue} is shown in the right panel of
+Figure \ref{figmulttest}.
+When all null hypotheses are true, the $p$-values are each uniformly distributed
+in $[0,1]$, Consequently, the cumulative distribution function of $(p_1, \ldots,
+p_m)$ is expected to be close to the line $F(t)=t$. By symmetry, the same
+applies to $(1 - p_1, \ldots, 1 - p_m)$.
+When (without loss of generality) the first $m_0$ null hypotheses are true and
+the other $m-m_0$ are false, the cumulative distribution function of $(1-p_1,
+\ldots, 1-p_{m_0})$ is again expected to be close to the line $F_0(t)=t$. The
+cumulative distribution function of $(1-p_{m_0+1}, \ldots, 1-p_{m})$, on the
+other hand, is expected to be close to a function $F_1(t)$ which stays below
+$F_0$ but shows a steep increase towards 1 as $t$ approaches $1$.
+In practice, we do not know which of the null hypotheses are true, so we can
+only observe a mixture whose cumulative distribution function is expected to be
+close to
+%
+\begin{equation}
+  F(t) = \frac{m_0}{m} F_0(t) + \frac{m-m_0}{m} F_1(t).
+\end{equation}
+%
+Such a situation is shown in the right panel of
+Figure \ref{figmulttest}. If
+$F_1(t)/F_0(t)$ is small for small $t$, then the mixture fraction
+$\frac{m_0}{m}$ can be estimated by fitting a line to the left-hand portion of
+the plot, and then noting its height on the right. Such a fit is shown by the
+red line in the right panel of Figure \ref{figmulttest}.
+%
+<<SchwSpjot, echo=FALSE, results=hide>>=
+j  = round(length(resFilt$pvalue)*c(1, .66))
+px = (1-resFilt$pvalue[orderInPlot[j]])
+py = ((length(resFilt$pvalue)-1):0)[j]
+slope = diff(py)/diff(px)
+@
+<<SchwederSpjotvoll, fig=TRUE, width=4.5, height=4.5>>=
+plot(1-resFilt$pvalue[orderInPlot],
+     (length(resFilt$pvalue)-1):0, pch=".", xaxs="i", yaxs="i",
+     xlab=expression(1-p[i]), ylab=expression(N(p[i])))
+abline(a=0, slope, col="red3", lwd=2)
+abline(h=slope)
+text(x=0, y=slope, labels=paste(round(slope)), adj=c(-0.1, 1.3))
+@
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.49\textwidth]{independent_filtering-sortedP}
+\includegraphics[width=.49\textwidth]{independent_filtering-SchwederSpjotvoll}
+\caption{\emph{Left:} illustration of the Benjamini-Hochberg multiple testing
+  adjustment procedure \cite{BH:1995}.  The black line shows the
+  $p$-values ($y$-axis) versus their rank ($x$-axis), starting with
+  the smallest $p$-value from the left, then the second smallest, and
+  so on. Only the first \Sexpr{sum(showInPlot)} $p$-values are shown.
+  The red line is a straight line with slope $\alpha/n$, where
+  $n=\Sexpr{length(resFilt[["pvalue"]])}$ is the number of tests, and
+  $\alpha=\Sexpr{alpha}$ is a target false discovery rate (FDR).  FDR
+  is controlled at the value $\alpha$ if the genes are selected
+  that lie to the left of the rightmost intersection between the red and black
+  lines: here, this results in \Sexpr{length(whichBH)} genes.
+  \emph{Right:} Schweder and Spj\o{}tvoll plot, as described in the text.}
+\label{figmulttest}
+\end{figure}
+
 
 %--------------------------------------------------
 \section*{Session information}
@@ -316,11 +452,7 @@ cat( si[ -grep( "Locale", si ) ], sep = "\n" )
 @
 
 
-\begin{thebibliography}{10}
-\bibitem{Bourgon:2010:PNAS}
-Richard Bourgon, Robert Gentleman and Wolfgang Huber.
-\newblock Independent filtering increases power for detecting differentially
-expressed genes. \textit{PNAS} (2010).
-\end{thebibliography}
+\bibliographystyle{unsrt}
+\bibliography{library}
 
 \end{document}
