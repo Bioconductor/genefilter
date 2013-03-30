@@ -32,22 +32,14 @@ library("pasilla") # make sure this is installed, since we need it in the next s
 
 \begin{abstract}
 This vignette illustrates the use of some functions in the
-\emph{genefilter} package that provide useful diagnostics 
-for independent filtering~\cite{BourgonIndependentFiltering}. In
-particular, it provide diagnostics that are intended to help with
+\emph{genefilter} package that provide useful diagnostics
+for independent filtering~\cite{Bourgon:2010:PNAS}. In
+particular, it provides diagnostics that are intended to help with
 \begin{packeditemize}
 \item the choice of filter criterion and
-\item the choice of filter cutoff.  
+\item the choice of filter cutoff.
 \end{packeditemize}
 \end{abstract}
- 
-\fixme{To Do:
-\begin{packeditemize}
-\item{which filter statistic? Compare avg vs variance.}
-\item{appendix: volcano}
-\item{Schweder Spjotvoll}
-\item{bibtex}
-\end{packeditemize}}
 
 %-----------------------------------------------------------
 \section{Introduction}
@@ -86,7 +78,7 @@ to~\cite{Bourgon:2010:PNAS} for further discussion on the mathematical
 and conceptual background.
 
 %-----------------------------------------------------------
-\section{Data preparation}
+\section{Example data set}
 %-----------------------------------------------------------
 For illustration, we use the \Robject{pasillaGenes} dataset from the
 Bioconductor package \Rpackage{pasilla}; this is an RNA-Seq dataset
@@ -120,9 +112,8 @@ fit0 = fitNbinomGLMs( cds, count ~ type  )
 res = data.frame(
 filterstat = rowMeans(counts(cds)),
 pvalues    = nbinomGLMTest( fit1, fit0 ),
-effectsize = fit1$conditionuntreated,
 row.names  = featureNames(cds) )
-@ 
+@
 %
 The details of the anove analysis are not important for the purpose of
 this vignette, the essential output is contained in the columns of the
@@ -132,25 +123,20 @@ dataframe \Robject{res}:
     number of counts per gene across all samples, irrespective of
     sample annoation,
   \item \texttt{pvalues}: the test $p$ values,
-  \item \texttt{effectsize}: a measure of effect size, here the $\log_2$-ratio
-    of average normalized counts between conditions; this quantity is
-    strictly speaking not required for performing independent
-    filtering, but will be useful for an illustrative plot we show in
-    Section~\ref{sec:volcano}.
 \end{packeditemize}
 Each row of the dataframe corresponds to one gene:
 <<headres>>=
 dim(res)
 head(res)
-@ 
+@
 
 %--------------------------------------------------
 \section{Qualitative assessment of the filter statistic}\label{sec:qual}
 %--------------------------------------------------
 <<pass,echo=FALSE,cache=TRUE>>=
 theta = .4
-pass = with(res, filterstat > quantile(filterstat, theta)) 
-@ 
+pass = with(res, filterstat > quantile(filterstat, theta))
+@
 %
 First, consider Figure~\ref{figscatterindepfilt}, which shows that
 among the approximately \Sexpr{100*theta}\% of genes with lowest overall counts, \Robject{filterstat},
@@ -165,7 +151,7 @@ with(res,
 <<figecdffilt,fig=TRUE>>=
 trsf = function(n) log10(n+1)
 plot(ecdf(trsf(res$filterstat)), xlab=body(trsf), main="")
-@ 
+@
 \begin{figure}[ht]
 \centering
 \includegraphics[width=.49\textwidth]{independent_filtering-figscatterindepfilt}
@@ -190,10 +176,10 @@ shown in Figure~\ref{figbadfilter}.
 %
 <<badfilter1,cache=TRUE>>=
 badfilter = as.numeric(gsub("[+]*FBgn", "", rownames(res)))
-@ 
+@
 <<badfilter2,echo=FALSE>>=
 stopifnot(!any(is.na(badfilter)))
-@ 
+@
 <<figbadfilter,fig=TRUE>>=
 plot(rank(badfilter)/length(badfilter), -log10(res$pvalues), pch=16, cex=0.45)
 @
@@ -239,7 +225,7 @@ theta = seq(from=0, to=0.5, by=0.1)
 pBH = filtered_p(filter=res$filterstat, test=res$pvalue, theta=theta, method="BH")
 <<pBH2>>=
 head(pBH)
-@ 
+@
 %
 The rows of this matrix correspond to the genes (i.\,e., the rows of \Robject{res}) and
 the columns to the BH-adjusted $p$-values for the different possible
@@ -252,19 +238,20 @@ filtering corresponds to increased rejections.
 %
 <<figrejection,fig=TRUE,width=5.5,height=5.5>>=
 rejection_plot(pBH, at="sample",
-               xlim=c(0, 0.5), ylim=c(0, 1800),
+               xlim=c(0, 0.5), ylim=c(0, 2000),
                xlab="FDR cutoff (Benjamini & Hochberg adjusted p-value)", main="")
 @
 The plot is shown in the left panel of Figure~\ref{figrej}.
 
 
-\subsection{Choice of filtering cutoff}
-
-If we select a fixed cutoff for the adjusted $p$-values, we can also look more
-closely at the relationship between the fraction of null hypotheses filtered and
-the total number of discoveries. The \texttt{filtered\_R} function wraps
-\texttt{filtered\_p} and just returns rejection counts. It requires a $p$-value
-cutoff. 
+%------------------------------------------------------------
+\subsection{Choice of filtering cutoff}\label{choose:cutoff}
+%------------------------------------------------------------
+If we select a fixed cutoff for the adjusted $p$-values, we can also look more closely at
+the relationship between the fraction of null hypotheses filtered and the total number of
+discoveries. The \texttt{filtered\_R} function wraps \texttt{filtered\_p} and just returns
+rejection counts. It requires you to choose a particular $p$-value cutoff, specified
+through the argument \Robject{alpha}.
 %
 <<filtered_R1,cache=TRUE>>=
 theta = seq(from=0, to=0.8, by=0.02)
@@ -281,58 +268,48 @@ plot(theta, rejBH, type="l",
 @
 The plot is shown in the right panel of Figure~\ref{figrej}.
 
-\subsection{Choice of filtering statistic}
-
-\fixme{Compute another \Robject{rejBH} line for different filters
-  (min, max, var)
-  and compare.}
-
 %------------------------------------------------------------
-\section{Filtering volcano plot}
+\subsection{Choice of filtering statistic}\label{choose:filterstat}
 %------------------------------------------------------------
+We can use the analysis of the previous section~\ref{choose:cutoff} also to inform
+ourselves about different possible choices of filter statistic. We construct a dataframe
+with a number of different choices.
 
-Filtering on overall standard deviation and then using a standard $t$-statistic
-induces a lower bound of fold change, albeit one which varies somewhat with the
-significance of the $t$-statistic. The \texttt{filter\_volcano} function allows
-you to visualize this effect.
-
-<<filter_volcano,fig=TRUE,eval=FALSE>>=
-S_cutoff = quantile(res$filterstat, 0.5)
-filter_volcano(res$effectsize, res$pvalue, res$filter, n1, n2, alpha=.01, S_cutoff)
-@ 
-The output is shown in the left panel of Fig.~\ref{figvolcano}.
-
-%\begin{figure}[tb]
-%\begin{center}
-%\includegraphics[width=0.49\textwidth]{filter_volcano}
-%\caption{plot produced by the \texttt{filter\_volcano} function.}
-%\label{figvolcano}
-%\end{center}
-%\end{figure}
-
-The \texttt{kappa\_p} and \texttt{kappa\_t} functions, used to make the volcano
-plot, compute the fold change bound multiplier as a function of either a
-$t$-test $p$-value or the $t$-statistic itself. The actual induced bound on the
-fold change is $\kappa$ times the filter's cutoff on the overall standard
-deviation. Note that fold change bounds for values of $|T|$ which are close to 0
-are not of practical interest because we will not reject the null hypothesis
-with test statistics in this range.
-
-@ 
-<<kappa, fig=TRUE, include=FALSE,eval=FALSE>>=
-t = seq(0, 5, length=100)
-plot(t, kappa_t(t, n1, n2) * S_cutoff, 
-     xlab="|T|", ylab="Fold change bound", type="l")
+<<differentstats,cache=TRUE>>=
+filterChoices = data.frame(
+  `mean`   = res$filterstat,
+  `geneID` = badfilter,
+  `min`    = rowMin(counts(cds)),
+  `max`    = rowMax(counts(cds)),
+  `sd`     = rowSds(counts(cds))
+)
+rejChoices = sapply(filterChoices, function(f)
+  filtered_R(alpha=0.1, filter=f, test=res$pvalue, theta=theta, method="BH"))
+<<colours,results=hide>>=
+library("RColorBrewer")
+myColours = brewer.pal(ncol(filterChoices), "Set1")
+<<figdifferentstats,fig=TRUE,width=5.5,height=5.5>>=
+matplot(theta, rejChoices, type="l", lty=1, col=myColours, lwd=2,
+        xlab=expression(theta), ylab="number of rejections")
+legend("bottomleft", legend=colnames(filterChoices), fill=myColours)
 @
-The plot is shown in the right panel of Fig.~\ref{figvolcano}.
+%
+The result is shown in Figure~\ref{figdifferentstats}. It indicates that for the data at
+hand, \Robject{mean}, \Robject{max} and \Robject{sd} provide similar performance, whereas
+the other choices are less effective.
+\begin{figure}[tb]
+\begin{center}
+\includegraphics[width=0.49\textwidth]{independent_filtering-figdifferentstats}
+\caption{The number of rejections at FDR=10\% as a function of
+  $\theta$ (analogous to the right panel in Figure~\ref{figrej}) for a number of different choices of the filter statistic.}
+\label{figdifferentstats}
+\end{center}
+\end{figure}
 
 
-
-%%%%%%%% Session info
-
+%--------------------------------------------------
 \section*{Session information}
-
-@ 
+%--------------------------------------------------
 <<sessionInfo, results=tex, echo=FALSE>>=
 si = as.character( toLatex( sessionInfo() ) )
 cat( si[ -grep( "Locale", si ) ], sep = "\n" )
@@ -340,7 +317,7 @@ cat( si[ -grep( "Locale", si ) ], sep = "\n" )
 
 
 \begin{thebibliography}{10}
-\bibitem{BourgonIndependentFiltering}
+\bibitem{Bourgon:2010:PNAS}
 Richard Bourgon, Robert Gentleman and Wolfgang Huber.
 \newblock Independent filtering increases power for detecting differentially
 expressed genes. \textit{PNAS} (2010).
