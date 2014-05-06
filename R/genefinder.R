@@ -109,7 +109,7 @@ setMethod("genefinder", c("matrix", "vector", "ANY", "ANY", "ANY", "ANY"),
                   nResults = as.integer(numResults),
                   method= as.integer(method),
                   weights = as.double(weights),
-                  DUP = FALSE, NAOK=TRUE, PACKAGE="genefilter")
+                  NAOK=TRUE, PACKAGE="genefilter")
 
     Genes <- extCall$g+1
     Dists <- extCall$d

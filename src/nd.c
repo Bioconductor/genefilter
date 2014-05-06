@@ -239,7 +239,6 @@ static double gf_dist_binary(double *x, double *wval, RSInt nr, RSInt nc, RSInt 
 {
     RSInt total, ct, ans;
     RSInt j;
-    double w1, w2; /* Weighted values */
 
     total = 0;
     ct = 0;

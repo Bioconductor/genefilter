@@ -120,7 +120,6 @@ SEXP pAUC(SEXP _spec, SEXP _sens, SEXP _p, SEXP _flip)
     double *p;
     int flip;
     int rows, columns;  /* dimensions of spec and sens  */
-    int i;
  
 
     /* check input argument spec */
