@@ -1,6 +1,6 @@
 Package: genefilter
 Title: genefilter: methods for filtering genes from high-throughput experiments
-Version: 1.47.3
+Version: 1.47.4
 Author: R. Gentleman, V. Carey, W. Huber, F. Hahne
 Description: Some basic functions for filtering genes
 Maintainer: Bioconductor Package Maintainer
@@ -15,3 +15,4 @@ Collate: AllClasses.R AllGenerics.R all.R dist2.R eSetFilter.R fastT.R
         kappa_p.R nsFilter.R rejection_plot.R rowROC-accessors.R
         rowSds.R rowpAUCs-methods.R rowttests-methods.R shorth.R zzz.R
 biocViews: Microarray
+VignetteBuilder: knitr
