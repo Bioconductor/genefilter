@@ -47,7 +47,7 @@ genefilter(expr, flist)
 \examples{
    set.seed(-1)
    f1 <- kOverA(5, 10)
-   flist <- filterfun(f1, allNA)
+   flist <- filterfun(f1)
    exprA <- matrix(rnorm(1000, 10), ncol = 10)
    ans <- genefilter(exprA, flist)
 }

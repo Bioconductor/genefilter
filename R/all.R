@@ -2,9 +2,15 @@
 
 #FILTER FUNCTIONS -- some trivial changes
 
-allNA <- function(x) !all(is.na(x))
+allNA <- function(x) {
+    txt <- "'allNA' is deprecated."
+    .Deprecated( msg=paste(strwrap(txt), collapse="\n"))
+}
 
-anyNA <- function(x) !any(is.na(x))
+anyNA <- function(x) {
+    txt <- "'anyNA' is deprecated."
+    .Deprecated( msg=paste(strwrap(txt), collapse="\n"))
+}
 
 kOverA <- function(k, A=100, na.rm = TRUE) {
   function(x) {
