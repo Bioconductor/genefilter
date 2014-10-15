@@ -165,8 +165,8 @@ plot(ecdf(trsf(res$filterstat)), xlab=body(trsf), main="")
 @
 \begin{figure}[ht]
 \centering
-\includegraphics[width=.49\textwidth]{figure/figscatterindepfilt}
-\includegraphics[width=.49\textwidth]{figure/figecdffilt}
+\includegraphics[width=.49\textwidth]{figure/figscatterindepfilt-1}
+\includegraphics[width=.49\textwidth]{figure/figecdffilt-1}
 \caption{Left: scatterplot of the rank (scaled to $[0,1]$) of the
   filter criterion \Robject{filterstat} ($x$-axis) versus the negative
   logarithm of the test \Robject{pvalue} ($y$-axis). Right: the
@@ -196,7 +196,7 @@ plot(rank(badfilter)/length(badfilter), -log10(res$pvalue), pch=16, cex=0.45)
 @
 \begin{figure}[ht]
 \centering
-\includegraphics[width=.49\textwidth]{figure/figbadfilter}
+\includegraphics[width=.49\textwidth]{figure/figbadfilter-1}
 \caption{Scatterplot analogous to Figure~\ref{figscatterindepfilt}, but with \Robject{badfilter}.}
 \label{figbadfilter}
 \end{figure}
@@ -212,8 +212,8 @@ for a range of different filter cutoffs.
 %
 \begin{figure}[tb]
 \begin{center}
-\includegraphics[width=0.49\textwidth]{figure/figrejection}
-\includegraphics[width=0.49\textwidth]{figure/fignumreject}
+\includegraphics[width=0.49\textwidth]{figure/figrejection-1}
+\includegraphics[width=0.49\textwidth]{figure/fignumreject-1}
 \caption{Left panel: the plot shows the number of rejections (i.\,e.\ genes detected as
   differentially expressed) as a function of the FDR threshold
   ($x$-axis) and the filtering cutoff $\theta$ (line colours,
@@ -310,7 +310,7 @@ hand, \Robject{mean}, \Robject{max} and \Robject{sd} provide similar performance
 the other choices are less effective.
 \begin{figure}[tb]
 \begin{center}
-\includegraphics[width=0.49\textwidth]{figure/figdifferentstats}
+\includegraphics[width=0.49\textwidth]{figure/figdifferentstats-1}
 \caption{The number of rejections at FDR=10\% as a function of
   $\theta$ (analogous to the right panel in Figure~\ref{figrej}) for a number of different choices of the filter statistic.}
 \label{figdifferentstats}
@@ -342,7 +342,7 @@ legend("topright", fill=rev(colori), legend=rev(names(colori)))
 @
 \begin{figure}[ht]
 \centering
-\includegraphics[width=.5\textwidth]{figure/fighistindepfilt}
+\includegraphics[width=.5\textwidth]{figure/fighistindepfilt-1}
 \caption{Histogram of $p$-values for all tests.
   The area shaded in blue indicates the subset of those that pass the filtering,
   the area in khaki those that do not pass.}
@@ -436,8 +436,8 @@ text(x=0, y=slope, labels=paste(round(slope)), adj=c(-0.1, 1.3))
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=.49\textwidth]{figure/sortedP}
-\includegraphics[width=.49\textwidth]{figure/SchwederSpjotvoll}
+\includegraphics[width=.49\textwidth]{figure/sortedP-1}
+\includegraphics[width=.49\textwidth]{figure/SchwederSpjotvoll-1}
 \caption{\emph{Left:} illustration of the Benjamini-Hochberg multiple testing
   adjustment procedure \cite{BH:1995}.  The black line shows the
   $p$-values ($y$-axis) versus their rank ($x$-axis), starting with

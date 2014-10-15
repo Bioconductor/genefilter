@@ -108,8 +108,8 @@ The output is shown in the left panel of Fig.~\ref{fig:volcano}.
 
 \begin{figure}[tb]
 \begin{center}
-\includegraphics[width=0.49\textwidth]{figure/filter_volcano}
-\includegraphics[width=0.49\textwidth]{figure/kappa}
+\includegraphics[width=0.49\textwidth]{figure/filter_volcano-1}
+\includegraphics[width=0.49\textwidth]{figure/kappa-1}
 \caption{Left panel: plot produced by the \texttt{filter\_volcano} function.
 Right panel: graph of the \texttt{kappa\_t} function.}
 \label{fig:volcano}
@@ -145,8 +145,8 @@ range of different filter stringencies.
 
 \begin{figure}[tb]
 \begin{center}
-\includegraphics[width=0.49\textwidth]{figure/rejection_plot}
-\includegraphics[width=0.49\textwidth]{figure/filtered_R_plot}
+\includegraphics[width=0.49\textwidth]{figure/rejection_plot-1}
+\includegraphics[width=0.49\textwidth]{figure/filtered_R_plot-1}
 \caption{Left panel: plot produced by the \texttt{rejection\_plot} function.
 Right panel: graph of \texttt{theta}.}
 \label{fig:rej}
