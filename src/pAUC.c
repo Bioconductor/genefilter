@@ -6,7 +6,7 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 #include <R_ext/Rdynload.h>
-#include <R_ext/Utils.h> 
+#include <R_ext/Utils.h>
 
 #include <stdlib.h>
 
@@ -54,7 +54,7 @@ void pAUC_c(double *spec, double *sens, double *area, double *auc, double *p,
 	}
 	x[columns]=1;
 	y[columns]=y[columns-1];
-  
+
 
 	/* compute area by trapezoidal rule*/
 	lim = x[0] < (*p) ? x[0] : *p; /*right border of first segment*/
@@ -64,19 +64,19 @@ void pAUC_c(double *spec, double *sens, double *area, double *auc, double *p,
 	    a += ((x[i]-x[i-1])*(y[i]-y[i-1])/2) + ((x[i]-x[i-1])*y[i-1]);
 	    i++;
 	}
-   
+
 	if(i > 2) /*last segment (from xn to p)*/
 	    a += (((*p)-x[i-1])*(y[i]-y[i-1])/2) + (((*p)-x[i-1])*y[i-1]);
 	ta = a;
-	/*compute full AUC and flip curve if necessary*/ 
+	/*compute full AUC and flip curve if necessary*/
 	if((*p) < 1){
-	    ta =  ta += ((x[i]-(*p))*(y[i]-y[i-1])/2) + ((x[i]-(*p))*y[i-1]);
+	    ta += ((x[i]-(*p))*(y[i]-y[i-1])/2) + ((x[i]-(*p))*y[i-1]);
 	    i++;
 	    while(i < columns+1 && x[i] < 1){
-		ta =  ta += ((x[i]-x[i-1])*(y[i]-y[i-1])/2) + ((x[i]-x[i-1])*y[i-1]);
+		ta += ((x[i]-x[i-1])*(y[i]-y[i-1])/2) + ((x[i]-x[i-1])*y[i-1]);
 		i++;
 	    }
-	    ta =  ta += ((1-x[i-1])*(1-y[i-1])/2) + ((1-x[i-1])*y[i-1]);
+	    ta += ((1-x[i-1])*(1-y[i-1])/2) + ((1-x[i-1])*y[i-1]);
 	}else{
 	    d=1;
 	}
@@ -102,15 +102,15 @@ void pAUC_c(double *spec, double *sens, double *area, double *auc, double *p,
   interface to R with arguments:
   spec :    matrix of numerics (specificity)
   sens:   matrix of numerics (sensitivity)
-  p:        numeric in 0<p<1, limit to integrate pAUC to 
+  p:        numeric in 0<p<1, limit to integrate pAUC to
   ------------------------------------------------------------------*/
 
 SEXP pAUC(SEXP _spec, SEXP _sens, SEXP _p, SEXP _flip)
-{ 
+{
     SEXP res, namesres;      /* return value: a list */
-    SEXP area;  /* list element for constructing 
+    SEXP area;  /* list element for constructing
 		   the return value */
-    SEXP auc;  /* list element for constructing 
+    SEXP auc;  /* list element for constructing
 		  the return value */
     SEXP dimSpec; /* dimensions for spec and sens matrices */
     SEXP dimSens;
@@ -120,38 +120,38 @@ SEXP pAUC(SEXP _spec, SEXP _sens, SEXP _p, SEXP _flip)
     double *p;
     int flip;
     int rows, columns;  /* dimensions of spec and sens  */
- 
+
 
     /* check input argument spec */
     PROTECT(dimSpec = getAttrib(_spec, R_DimSymbol));
     if((!isReal(_spec)) | isNull(dimSpec) | (LENGTH(dimSpec)!=2))
-	error("Invalid argument 'spec': must be a real matrix."); 
+	error("Invalid argument 'spec': must be a real matrix.");
     spec   = REAL(_spec);
     rows = INTEGER(dimSpec)[1];
     columns = INTEGER(dimSpec)[0];
-    UNPROTECT(1);          
+    UNPROTECT(1);
     /* done with spec */
 
     /* check input argument sens */
     PROTECT(dimSens = getAttrib(_sens, R_DimSymbol));
     if((!isReal(_sens)) | isNull(dimSens) | (LENGTH(dimSens)!=2))
-	error("Invalid argument 'sens': must be a real matrix."); 
+	error("Invalid argument 'sens': must be a real matrix.");
     sens   = REAL(_sens);
     if(rows != INTEGER(dimSens)[1] | columns != INTEGER(dimSens)[0])
 	error("'spec' and 'sens' must be matrices with equal dimensions");
-    UNPROTECT(1);          
+    UNPROTECT(1);
     /* done with sens */
-   
+
     /* check input argument p */
-    if(!isReal(_p) || length(_p)!=1) 
+    if(!isReal(_p) || length(_p)!=1)
 	error("'p' must be numeric.");
     p = REAL(_p);
     if(((*p)<0)||((*p)>1))
 	error("'p' must be between 0 and 1.");
     /* done with p */
-  
+
     /* check input argument flip */
-    if(!isInteger(_flip)) 
+    if(!isInteger(_flip))
 	error("'flip' must be an integer.");
     flip = (int)INTEGER(_flip)[0];
     /* done with flip */
