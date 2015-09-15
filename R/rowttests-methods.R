@@ -14,6 +14,9 @@ rowcoltt =  function(x, fac, tstatOnly, which) {
   if ((f$nrgrp > 2) || (f$nrgrp <= 0))
     stop("Number of groups is ", f$nrgrp, ", but must be >0 and <=2 for 'rowttests'.")
 
+  if (typeof(x) == "integer")
+      x[] <- as.numeric(x)
+
   cc = .Call("rowcolttests", x, f$fac, f$nrgrp, which-1L, PACKAGE="genefilter")
     
   res = data.frame(statistic = cc$statistic,
@@ -37,6 +40,9 @@ rowcolFt =  function(x, fac, var.equal, which) {
   
   if(which==2L)
     x = t(x)
+
+  if (typeof(x) == "integer")
+      x[] <- as.numeric(x)
 
   sqr = function(x) x*x
   
