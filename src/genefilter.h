@@ -2,5 +2,8 @@
 #include <R.h>
 #include <Rinternals.h>
 
-void gf_distance(double *x, double *kval, int *nr, int *nc, double *d, 
-		 int *diag, int *method);
+typedef int RSInt;
+
+void gf_distance(double *x, RSInt *nr, RSInt *nc, RSInt *g, double *d, 
+		 RSInt *iRow, RSInt *nInterest, RSInt *nResults, 
+		 RSInt *method, double *wval);

@@ -26,17 +26,14 @@
 #if defined(USING_R) /*( R-specific stuff */
 
 #define  S_CDECL
-typedef int RSInt;
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 /* we need this first to get the right options for math.h */
 #include <R_ext/Arith.h>
 
-#include <R.h>
+#include "genefilter.h"
 #include <Rmath.h>
-#include <Rinternals.h>
 #include "R_ext/Error.h"
 #include "R_ext/Applic.h" 
 
