@@ -33,6 +33,12 @@ importMethodsFrom(methods,
                   "body<-",
                   show)
 
+importFrom(S4Vectors,
+           rowSums,
+           colSums,
+           rowMeans,
+           colMeans)
+
 importFrom(Biobase,
            addVigs2WinMenu,
            subListExtract)
