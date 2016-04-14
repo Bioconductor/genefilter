@@ -2,11 +2,6 @@
 
 #FILTER FUNCTIONS -- some trivial changes
 
-allNA <- function(x) {
-    txt <- "'allNA' is deprecated."
-    .Deprecated( msg=paste(strwrap(txt), collapse="\n"))
-}
-
 kOverA <- function(k, A=100, na.rm = TRUE) {
   function(x) {
       if(na.rm)

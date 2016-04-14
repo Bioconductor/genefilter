@@ -77,7 +77,6 @@ importFrom(survival,
            coxph)
 
 export(Anova, 
-       allNA, 
        coxfilter,
        cv, 
        eSetFilter, 
