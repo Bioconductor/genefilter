@@ -7,11 +7,6 @@ allNA <- function(x) {
     .Deprecated( msg=paste(strwrap(txt), collapse="\n"))
 }
 
-anyNA <- function(x) {
-    txt <- "'anyNA' is deprecated."
-    .Deprecated( msg=paste(strwrap(txt), collapse="\n"))
-}
-
 kOverA <- function(k, A=100, na.rm = TRUE) {
   function(x) {
       if(na.rm)

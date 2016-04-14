@@ -1,0 +1,6 @@
+CHANGES IN VERSION 1.54.0
+------------------------
+
+DEPRECATED AND DEFUNCT
+
+    o anyNA() was removed; contradicted base::anyNA
