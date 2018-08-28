@@ -4,9 +4,9 @@ setGeneric("rowFtests", function(x, fac, var.equal=TRUE)
            standardGeneric("rowFtests"))
 setGeneric("colFtests", function(x, fac, var.equal=TRUE)
            standardGeneric("colFtests"))
-setGeneric("rowttests", function(x, fac, tstatOnly=FALSE)
+setGeneric("rowttests", function(x, fac, tstatOnly=FALSE, na.rm = FALSE)
            standardGeneric("rowttests"))
-setGeneric("colttests", function(x, fac, tstatOnly=FALSE)
+setGeneric("colttests", function(x, fac, tstatOnly=FALSE, na.rm = FALSE)
            standardGeneric("colttests"))
 
 

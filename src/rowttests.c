@@ -18,8 +18,8 @@ char errmsg[256];
   which=1:  t-test by column
 -----------------------------------------------------------------*/
 void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt, 
-                    int which, int nrgrp, double *statistic, double *dm, 
-                    double *df) {
+                    int which, int nrgrp, int na_rm,
+                    double *statistic, double *dm, double *df) {
 
     int i, j, grp;
     double z, delta, newmean, factor;
@@ -28,7 +28,7 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
        but it should be possible to generalize this code to more samples
        (F-test) without too many changes */
 
-    int n[2];   
+    int *n[2];
     double* s[2];
     double* ss[2];
 
@@ -38,10 +38,11 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
     /* allocate and initialize storage for intermediate quantities
        (namely first and second moments for each group) */
     for(grp=0; grp<nrgrp; grp++) {
+	n[grp] = (int *) R_alloc(nt, sizeof(int));
 	s[grp]  = (double*) R_alloc(nt, sizeof(double));
 	ss[grp] = (double*) R_alloc(nt, sizeof(double));
-	for(i=0; i<nt; i++)  
-	    s[grp][i] = ss[grp][i] = 0;
+	for(i=0; i<nt; i++)
+	    n[grp][i] = s[grp][i] = ss[grp][i] = 0;
     }
 
     /* A numerically stable one-pass algorithm is used, see
@@ -52,16 +53,15 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
     switch(which) {
 	case 0:  /* by row */
 	    for(i=0; i<nr; i++) {
-  	        for(grp=0; grp<nrgrp; grp++)
-		    n[grp] = 0;
-
 		for(j=0; j<nc; j++) {
 		    grp = fac[j];
 		    if(grp!=R_NaInt) {
-                        n[grp]++;
 			z = x[i+nr*j];
-                        delta   = z - s[grp][i];
-                        newmean = s[grp][i] + delta/n[grp];
+			if (na_rm && R_IsNA(z))
+			    continue;
+			n[grp][i]++;
+			delta	= z - s[grp][i];
+			newmean = s[grp][i] + delta/n[grp][i];
 			s[grp][i]  = newmean;
 			ss[grp][i] += delta*(z-newmean);
 		    }
@@ -69,17 +69,16 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
 	    } /* for i */
 	    break;
 	case 1:  /* by column */
-	    for(grp=0; grp<nrgrp; grp++)
-		n[grp] = 0;
-
 	    for(i=0; i<nr; i++) {
 		grp = fac[i];
 		if(grp!=R_NaInt) { 
-                    n[grp]++;
 		    for(j=0; j<nc; j++) {
 			z = x[i+nr*j];
-                        delta   = z - s[grp][j];
-                        newmean = s[grp][j] + delta/n[grp];
+			if (na_rm && R_IsNA(z))
+			    continue;
+			n[grp][j]++;
+			delta	= z - s[grp][j];
+			newmean = s[grp][j] + delta/n[grp][j];
 			s[grp][j]  = newmean;
 			ss[grp][j] += delta*(z-newmean);
 		    } /* for j */
@@ -92,18 +91,27 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
 
     switch(nrgrp) {
     case 1:
-        *df = n[0]-1;
-        factor = sqrt((*df) * n[0]);
         for(i=0; i<nt; i++) {
+	    if (n[0][i] == 0) {
+		df[i] = dm[i] = statistic[i] = R_NaReal;
+		continue;
+	    }
+	    df[i]	 = n[0][i]-1;
+	    factor	 = sqrt((df[i]) * n[0][i]);
 	    z            = ss[0][i];
 	    dm[i]        = s[0][i];
 	    statistic[i] =  factor * dm[i] / sqrt(z);
         }
         break;
     case 2:
-	*df = n[0]+n[1]-2;
-        factor = sqrt((*df) * (double) n[0] * (double) n[1] / (n[0]+n[1]));
-        for(i=0; i<nt; i++) {
+	for(i=0; i<nt; i++) {
+	    if ((n[0][i] == 0) || (n[1][i] == 0)) {
+		df[i] = dm[i] = statistic[i] = R_NaReal;
+		continue;
+	    }
+	    df[i]	 = n[0][i]+n[1][i]-2;
+	    factor	 = sqrt((df[i]) * (double) n[0][i] *
+				(double) n[1][i] / (n[0][i]+n[1][i]));
             z            = ss[0][i] + ss[1][i];
 	    dm[i]        = s[0][i] - s[1][i];
 	    statistic[i] =  factor * dm[i] / sqrt(z);
@@ -124,7 +132,7 @@ void rowcolttests_c(double *x, int *fac, int nr, int nc, int no, int nt,
    which: int. For 0, do the tests along the rows, for 1, 
           along the columns 
 ------------------------------------------------------------------*/
-SEXP rowcolttests(SEXP _x, SEXP _fac, SEXP _nrgrp, SEXP _which) 
+SEXP rowcolttests(SEXP _x, SEXP _fac, SEXP _nrgrp, SEXP _which, SEXP _na_rm)
 {
   SEXP dimx;  /* dimensions of x */
   SEXP res, namesres;      /* return value: a list */
@@ -132,7 +140,7 @@ SEXP rowcolttests(SEXP _x, SEXP _fac, SEXP _nrgrp, SEXP _which)
                               the return value */
 
   double *x;
-  int *fac;
+  int *fac, na_rm;
   int i, which, nrgrp;
   int nr;  /* number of rows     */
   int nc;  /* number of columns  */
@@ -193,12 +201,19 @@ SEXP rowcolttests(SEXP _x, SEXP _fac, SEXP _nrgrp, SEXP _which)
 	  error("Elements of 'fac' must be >=0 and < 'nrgrp'.");
 
 
+  /* check input argument na_rm */
+  if (!isLogical(_na_rm) || length(_na_rm) != 1 || LOGICAL(_na_rm)[0] == R_NaInt)
+      error("'na.rm' must be TRUE or FALSE");
+  na_rm = LOGICAL(_na_rm)[0];
+
   PROTECT(statistic = allocVector(REALSXP, nt));
   PROTECT(dm        = allocVector(REALSXP, nt));
-  PROTECT(df        = allocVector(REALSXP, 1));
+  PROTECT(df        = allocVector(REALSXP, nt));
 
   /* Do it */
-  rowcolttests_c(x, fac, nr, nc, no, nt, which, nrgrp, REAL(statistic), REAL(dm), REAL(df));
+  rowcolttests_c(
+      x, fac, nr, nc, no, nt, which, nrgrp, na_rm,
+      REAL(statistic), REAL(dm), REAL(df));
 
   /* return value: a list with two elements, statistic and df */
   PROTECT(res = allocVector(VECSXP, 3));

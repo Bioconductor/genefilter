@@ -6,9 +6,9 @@
 ##-----------------------------------------------------------------------
 ## The core function for row- and column-wise t-tests - it uses C code
 ##------------------------------------------------------------------------
-rowcoltt =  function(x, fac, tstatOnly, which) {
+rowcoltt =  function(x, fac, tstatOnly, which, na.rm) {
   if (!missing(tstatOnly) && (!is.logical(tstatOnly) || is.na(tstatOnly)))
-    stop(sQuote("tstatOnly"), " must be TRUE or FALSE.")
+      stop(sQuote("tstatOnly"), " must be TRUE or FALSE.")
   
   f = checkfac(fac)
   if ((f$nrgrp > 2) || (f$nrgrp <= 0))
@@ -17,7 +17,8 @@ rowcoltt =  function(x, fac, tstatOnly, which) {
   if (typeof(x) == "integer")
       x[] <- as.numeric(x)
 
-  cc = .Call("rowcolttests", x, f$fac, f$nrgrp, which-1L, PACKAGE="genefilter")
+  cc = .Call("rowcolttests", x, f$fac, f$nrgrp, which-1L, na.rm,
+             PACKAGE="genefilter")
     
   res = data.frame(statistic = cc$statistic,
                    dm        = cc$dm,
@@ -121,20 +122,20 @@ rowcolFt =  function(x, fac, var.equal, which) {
 ## rowttests and colttests methods for 'matrix'
 ## ==========================================================================
 setMethod("rowttests", signature(x="matrix", fac="factor"),
-          function(x, fac, tstatOnly=FALSE)
-          rowcoltt(x, fac, tstatOnly, 1L))
+          function(x, fac, tstatOnly=FALSE, na.rm = FALSE)
+          rowcoltt(x, fac, tstatOnly, 1L, na.rm))
 
 setMethod("rowttests", signature(x="matrix", fac="missing"),
-          function(x, fac, tstatOnly=FALSE) 
-          rowcoltt(x, factor(integer(ncol(x))), tstatOnly, 1L))
+          function(x, fac, tstatOnly=FALSE, na.rm = FALSE)
+          rowcoltt(x, factor(integer(ncol(x))), tstatOnly, 1L, na.rm))
 
 setMethod("colttests", signature(x="matrix", fac="factor"),
-          function(x, fac, tstatOnly=FALSE)
-          rowcoltt(x, fac, tstatOnly, 2L))
+          function(x, fac, tstatOnly=FALSE, na.rm = FALSE)
+          rowcoltt(x, fac, tstatOnly, 2L, na.rm))
 
 setMethod("colttests", signature(x="matrix", fac="missing"),
-          function(x, fac, tstatOnly=FALSE) 
-          rowcoltt(x, factor(integer(ncol(x))), tstatOnly, 2L))
+          function(x, fac, tstatOnly=FALSE, na.rm = FALSE)
+          rowcoltt(x, factor(integer(ncol(x))), tstatOnly, 2L, na.rm))
 
 
 ## ==========================================================================
@@ -153,22 +154,22 @@ setMethod("colFtests", signature(x="matrix", fac="factor"),
 ## Methods for 'ExpressionSet': only for rowttests and rowFtests
 ## -==========================================================================
 setMethod("rowttests", signature(x="ExpressionSet", fac="factor"),
-  function(x, fac, tstatOnly=FALSE)
-    rowcoltt(exprs(x), fac, tstatOnly=tstatOnly, 1L))
+  function(x, fac, tstatOnly=FALSE, na.rm = FALSE)
+    rowcoltt(exprs(x), fac, tstatOnly=tstatOnly, 1L, na.rm))
 
 setMethod("rowttests", signature(x="ExpressionSet", fac="missing"),
-  function(x, fac, tstatOnly=FALSE) {
+  function(x, fac, tstatOnly=FALSE, na.rm = FALSE) {
     x = exprs(x)
     fac = integer(ncol(x))
-    rowcoltt(x, fac, tstatOnly, 1L)
+    rowcoltt(x, fac, tstatOnly, 1L, na.rm)
   })
 
 setMethod("rowttests", signature(x="ExpressionSet", fac="character"),
-  function(x, fac, tstatOnly=FALSE) {
+  function(x, fac, tstatOnly=FALSE, na.rm = FALSE) {
     if (length(fac) != 1)
       stop("fac must be length 1 character or a factor")
     fac = factor(pData(x)[[fac]])
-    rowcoltt(exprs(x), fac, tstatOnly, 1L)
+    rowcoltt(exprs(x), fac, tstatOnly, 1L, na.rm)
   })
 
 setMethod("rowFtests", signature(x="ExpressionSet", fac="factor"),

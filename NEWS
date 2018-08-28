@@ -1,5 +1,13 @@
+CHANGES IN VERSION 1.64.0
+-------------------------
+
+NEW FEATURES
+
+    o Add `na.rm =` to row/colttests, requested by
+      https://github.com/Bioconductor/genefilter/issues/1
+
 CHANGES IN VERSION 1.54.0
-------------------------
+-------------------------
 
 DEPRECATED AND DEFUNCT
 

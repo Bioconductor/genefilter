@@ -29,8 +29,8 @@
 \description{t-tests and F-tests for rows or columns of a
   matrix, intended to be speed efficient.}
 \usage{
-rowttests(x, fac, tstatOnly = FALSE) 
-colttests(x, fac, tstatOnly = FALSE)
+rowttests(x, fac, tstatOnly = FALSE, na.rm = FALSE)
+colttests(x, fac, tstatOnly = FALSE, na.rm = FALSE)
 fastT(x, ig1, ig2, var.equal = TRUE)
 
 rowFtests(x, fac, var.equal = TRUE)
@@ -61,6 +61,9 @@ colFtests(x, fac, var.equal = TRUE)
     p-values from the t-distribution with appropriate degrees of
     freedom. If \code{TRUE}, just the t-statistics are
     returned. This can be considerably faster.}
+
+  \item{na.rm}{A logical variable indicating whether to remove NA values
+    prior to calculation test statistics.}
 
   \item{ig1}{The indices of the columns of \code{x} that correspond
     to group 1.}
