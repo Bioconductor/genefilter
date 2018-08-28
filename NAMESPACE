@@ -56,7 +56,12 @@ importFrom(graphics,
            rect,
            strheight,
            strwidth,
-           text)
+           text,
+           legend,
+           segments)
+
+importFrom(grDevices,
+           rainbow)
 
 importFrom(methods,
            is,
@@ -71,7 +76,11 @@ importFrom(stats,
            pt,
            quantile,
            sd,
-           t.test)
+           t.test,
+           na.omit,
+           p.adjust,
+           qt,
+           stepfun)
 
 importFrom(survival,
            coxph)

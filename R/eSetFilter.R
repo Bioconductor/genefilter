@@ -7,8 +7,8 @@
 
 eSetFilter <- function(eSet){
     require("tkWidgets", character.only = TRUE) ||
-    stop(paste("eSetFilter requires the tkWidgets",
-                                "package. Please have it installed"))
+    stop("eSetFilter requires the tkWidgets ",
+         "package. Please have it installed")
 
     descList <- getFuncDesc()
 

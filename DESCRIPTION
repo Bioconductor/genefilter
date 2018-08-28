@@ -1,13 +1,14 @@
 Package: genefilter
 Title: genefilter: methods for filtering genes from high-throughput experiments
-Version: 1.63.1
+Version: 1.63.2
 Author: R. Gentleman, V. Carey, W. Huber, F. Hahne
-Description: Some basic functions for filtering genes
+Description: Some basic functions for filtering genes.
 Maintainer: Bioconductor Package Maintainer
         <maintainer@bioconductor.org>
-Suggests: class, hgu95av2.db, tkWidgets, ALL, ROC, DESeq, pasilla, BiocStyle,
-    knitr
-Imports: S4Vectors (>= 0.9.42), AnnotationDbi, annotate, Biobase, graphics, methods, stats, survival
+Suggests: class, hgu95av2.db, tkWidgets, ALL, ROC, DESeq, pasilla,
+    RColorBrewer, BiocStyle, knitr
+Imports: S4Vectors (>= 0.9.42), AnnotationDbi, annotate, Biobase,
+    graphics, methods, stats, survival
 License: Artistic-2.0
 LazyLoad: yes
 LazyData: yes

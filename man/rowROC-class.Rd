@@ -14,7 +14,7 @@
 \alias{sens,rowROC-method}
 \alias{area,rowROC-method}
 \alias{show,rowROC-method}
-\alias{[,rowROC-method}
+\alias{[,rowROC,ANY,ANY,ANY-method}
 
 
 \title{Class "rowROC"}
