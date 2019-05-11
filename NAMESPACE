@@ -33,7 +33,7 @@ importMethodsFrom(methods,
                   "body<-",
                   show)
 
-importFrom(S4Vectors,
+importFrom(BiocGenerics,
            rowSums,
            colSums,
            rowMeans,
