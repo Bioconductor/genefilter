@@ -6,6 +6,15 @@
 #
 
 eSetFilter <- function(eSet){
+    #
+    # 2020-12-31 Wolfgang Huber: marking this as deprecated due to dubious coding style
+    # (leading to many notes in R CMD check), lack of maintenance, apparently minuscule
+    # update (e.g. I did not find a single mention of this function with
+    # https://support.bioconductor.org/post/search/?query=esetfilter today) and
+    # availability of better alternatives.
+    #
+    .Deprecated(new = "iSEE", old = "eSetFilter")
+    
     require("tkWidgets", character.only = TRUE) ||
     stop("eSetFilter requires the tkWidgets ",
          "package. Please have it installed")
@@ -151,11 +160,13 @@ eSetFilter <- function(eSet){
 }
 
 getFilterNames <- function(){
+    .Deprecated()
     return(sort(c("Anova", "coxfilter", "cv", "gapFilter", "kOverA",
     "maxA", "pOverA", "ttest")))
 }
 
 getFuncDesc <- function(lib = "genefilter", funcs = getFilterNames()){
+    .Deprecated()
     descList <- list()
 
     lines <- getRdAsText(lib)
@@ -176,6 +187,7 @@ getFuncDesc <- function(lib = "genefilter", funcs = getFilterNames()){
 }
 
 getRdAsText <- function(lib){
+    .Deprecated()
     fileName <- gzfile(file.path(.path.package(lib), "man",
                           paste(lib, ".Rd.gz", sep = "")), open = "r")
     lines <- readLines(fileName)
@@ -186,6 +198,7 @@ getRdAsText <- function(lib){
 }
 
 parseDesc <- function(text){
+    .Deprecated()
     descRExp <- ".*\\\\description\\{(.*)\\}.*\\\\usage\\{.*"
     text <- gsub(descRExp, "\\1", text)
     text <- gsub("(\\\\[a-zA-Z]*\\{|\\})", "", text)
@@ -193,6 +206,7 @@ parseDesc <- function(text){
 }
 
 parseArgs <- function(text){
+    .Deprecated()
     argsList <- list()
     text <- gsub(".*\\\\arguments\\{(.*)\\}.*\\\\details\\{.*", "\\1", text)
     text <- gsub(".*\\\\arguments\\{(.*)\\}.*\\\\value\\{.*", "\\1", text)
@@ -208,6 +222,7 @@ parseArgs <- function(text){
 }
 
 showESet <- function(eSet){
+    .Deprecated()
     end <- function(){
         tkdestroy(base)
     }
@@ -234,6 +249,7 @@ showESet <- function(eSet){
 }
 
 setESetArgs <- function(filter){
+    .Deprecated()
     on.exit(tkdestroy(base))
 
     cancel <- function(){
@@ -306,6 +322,7 @@ setESetArgs <- function(filter){
 }
 
 isESet <- function(eSet){
+    .Deprecated()
     if(missing(eSet) ||
        (!is(eSet, "ExpressionSet"))) {
         tkmessageBox(title = "Input Error",

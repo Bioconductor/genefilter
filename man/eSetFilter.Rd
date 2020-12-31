@@ -37,6 +37,8 @@ isESet(eSet)
   filter function} 
 }
 \details{
+  These functions are deprecated. Please use the \sQuote{iSee} package instead.
+  
   A set of filters may be selected to filter genes in through each of
   the filters in the order the filters have been selected
 }
