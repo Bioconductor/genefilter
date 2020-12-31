@@ -134,16 +134,16 @@ times that each gene was used (provided it was at least one) are
 recorded and stored in the environment of the aggregator \verb+Agg+.
 These can subsequently be retrieved and used for other purposes.
 
-<<aggregate1>>=
- knnCV <- function(EXPR, selectfun, cov, Agg, pselect = 0.01, Scale=FALSE) {
-   nc <- ncol(EXPR)
+<<knnCV>>=
+knnCV <- function(x, selectfun, cov, Agg, pselect = 0.01, scale=FALSE) {
+   nc <- ncol(x)
    outvals <- rep(NA, nc)
-   for(i in 1:nc) {
-      v1 <- EXPR[,i]
-      expr <- EXPR[,-i]
+   for(i in seq_len(nc)) {
+      v1 <- x[,i]
+      expr <- x[,-i]
       glist <- selectfun(expr, cov[-i], p=pselect)
       expr <- expr[glist,]
-      if( Scale ) {
+      if( scale ) {
         expr <- scale(expr)
         v1 <- as.vector(scale(v1[glist]))
       }
