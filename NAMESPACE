@@ -19,7 +19,8 @@ importMethodsFrom(AnnotationDbi,
                   mget,
                   ncol,
                   nrow,
-                  sample)
+                  sample,
+                  dbmeta)
 
 importMethodsFrom(Biobase,
                   annotation,

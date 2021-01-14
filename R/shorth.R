@@ -15,7 +15,7 @@ shorth <- function(x, na.rm=FALSE, tie.action="mean", tie.limit=0.05) {
       
       sx    <- sort(x)
       width <- round(0.5*length(x))
-      diffs <- sx[(width+1):length(x)] - sx[1:(length(x)-width)]
+      diffs <- sx[(width+1):length(x)] - sx[seq_len(length(x)-width)]
       
       ## cannot use which.min since we want all minimising points not just one:
       q  <- which(diffs==min(diffs))

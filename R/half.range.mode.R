@@ -27,10 +27,9 @@ half.range.mode <- function( data, B, B.sample, beta = .5, diag = FALSE ) {
     if ( missing( B.sample ) )
       B.sample <- length( data )
 
-    M <- sapply(
-                1:B,
+    M <- sapply(seq_len(B),
                 function (x) {
-                  d <- sort( sample( data, B.sample, replace = T ) )
+                  d <- sort( sample( data, B.sample, replace = TRUE ) )
                   .C(
                      "half_range_mode",
                      data = as.double( d ),

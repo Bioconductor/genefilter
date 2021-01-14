@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{How to find genes whose expression profile is similar to that of specified genes}
+%\VignetteIndexEntry{02 - How to find genes whose expression profile is similar to that of specified genes}
 %\VignetteDepends{Biobase, genefilter}
 %\VignetteKeywords{Expression Analysis}
 %\VignettePackage{genefilter}

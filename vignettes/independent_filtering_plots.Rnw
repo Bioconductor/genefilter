@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{Additional plots for: Independent filtering increases power for detecting differentially expressed genes, Bourgon et al., PNAS (2010)}
+%\VignetteIndexEntry{03 - Additional plots for: Independent filtering increases power for detecting differentially expressed genes, Bourgon et al., PNAS (2010)}
 %\VignettePackage{genefilter}
 %\VignetteEngine{knitr::knitr}
 
@@ -22,11 +22,7 @@ BiocStyle:::latex()
 \newcommand{\thetitle}{Additional plots for: Independent filtering increases power for detecting differentially expressed genes, Bourgon et al., PNAS (2010)}
 
 \title{\thetitle}
-\author{Richard Bourgon}
-
-% The following command makes use of SVN's 'Date' keyword substitution
-% To activate this, I used: svn propset svn:keywords Date independent_filtering_plots.Rnw
-\date{\Rpackage{genefilter} version \Sexpr{packageDescription("genefilter")$Version} (Last revision \StrMid{$Date$}{8}{18})}
+\author{Richard Bourgon and Wolfgang Huber}
 
 \begin{document}
 
@@ -209,8 +205,7 @@ values of $\theta$ reduce power in this example:
 <<filtered_R_plot>>=
 plot(theta, R_BH, type="l",
      xlab=expression(theta), ylab="Rejections",
-     main="BH cutoff = .10"
-     )
+     main="BH cutoff = 0.1")
 @
 The plot is shown in the right panel of Fig.~\ref{fig:rej}.
 
@@ -221,8 +216,7 @@ The plot is shown in the right panel of Fig.~\ref{fig:rej}.
 \section*{Session information}
 
 <<sessionInfo, results='asis', echo=FALSE>>=
-si <- as.character( toLatex( sessionInfo() ) )
-cat( si[ -grep( "Locale", si ) ], sep = "\n" )
+sessionInfo() |> toLatex()
 @
 
 
