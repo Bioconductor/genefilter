@@ -50,6 +50,8 @@ typedef struct {
 
 
 static void detectTies(RSInt geneNum, RSInt nResults, RSInt nRows, gene_t *data) {
+    char msg_buf[100];
+
     /* Will scan through the first nResults+1 distances in the */
     /* data array, and if it detects any ties, will flag a R */
     /* warning */
@@ -63,8 +65,9 @@ static void detectTies(RSInt geneNum, RSInt nResults, RSInt nRows, gene_t *data)
     
     for (i = 1; i < nResults; i++) {
 	if (data[i].geneDist == data[i+1].geneDist) {
-	    PROBLEM "There are distance ties in the data for gene %d\n",geneNum
-            WARN;
+	    sprintf(msg_buf, "There are distance ties in the data "
+                             "for gene %d\n", geneNum);
+	    warning(msg_buf);
 	    break;
 	}
     }
