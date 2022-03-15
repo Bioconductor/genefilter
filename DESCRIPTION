@@ -1,6 +1,6 @@
 Package: genefilter
 Title: genefilter: methods for filtering genes from high-throughput experiments
-Version: 1.77.0
+Version: 1.77.1
 Author: Robert Gentleman, Vincent J. Carey, Wolfgang Huber, Florian Hahne
 Description: Some basic functions for filtering genes.
 Maintainer: Bioconductor Package Maintainer

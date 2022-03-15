@@ -21,7 +21,12 @@
   _R_ !!
 */
 
-#include "S.h"
+/* Modified in March 2022 so use R.h instead of S.h (S.h is going
+   away in R 4.2). Probably breaks compatibility with S-PLUS ArrayAnalyzer
+   by Insightful Corp (see above). Also, since USING_R now will **always**
+   be defined, all the Splus-specific stuff becomes dead code :-(
+*/
+#include <R.h>
 
 #if defined(USING_R) /*( R-specific stuff */
 
