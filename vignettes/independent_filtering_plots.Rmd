@@ -1,6 +1,5 @@
 ---
-title: "Additional plots for: Independent filtering increases power for
-  detecting differentially expressed genes, Bourgon et al., PNAS (2010)"
+title: "Additional plots for: Independent filtering increases power for detecting differentially expressed genes, Bourgon et al., PNAS (2010)"
 author: "Richard Bourgon and Wolfgang Huber"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 vignette: >
@@ -15,10 +14,24 @@ output:
     toc_depth: 4
 ---
 
+```{r functions, message=TRUE, warning=TRUE, include=FALSE}
+## Color Format
+colFmt <- function(x,color) {
+  outputFormat <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex') {
+    ret <- paste("\\textcolor{",color,"}{",x,"}",sep="")
+  } else if(outputFormat == 'html') {
+    ret <- paste("<font color='",color,"'>",x,"</font>",sep="")
+  } else {
+    ret <- x
+  }
+  return(ret)
+}
+```
+
 ```{r setup, echo=FALSE}
 options(width=80 )
 ```
-
 
 # Introduction
 
@@ -81,23 +94,7 @@ $t$-statistic induces a lower bound of fold change, albeit one which
 varies somewhat with the significance of the $t$-statistic. The
 `filter_volcano` function allows you to visualize this effect.
 
-```{r filter_volcano, echo=FALSE}
-S_cutoff <- quantile(S, .50)
-filter_volcano(d, p, S, n1, n2, alpha=.01, S_cutoff)
-```
-
-The output is shown in the left panel of Fig. [\[fig:volcano\]][1].
-  [1]: #fig:volcano {reference-type="ref" reference="fig:volcano"}
-<!--   [1]: #fig:volcano {reference-type="ref" reference="fig:volcano"} -->
-
-<!-- ::: center -->
-<!-- ![Left panel: plot produced by the `filter_volcano` function. Right -->
-<!-- panel: graph of the `kappa_t` -->
-<!-- function.](figure/filter_volcano-1 "fig:"){#fig:volcano width="49%"} -->
-<!-- ![Left panel: plot produced by the `filter_volcano` function. Right -->
-<!-- panel: graph of the `kappa_t` -->
-<!-- function.](figure/kappa-1 "fig:"){#fig:volcano width="49%"} -->
-<!-- ::: -->
+The output is shown in the left panel of Fig.^[1](#fig:volcano){reference-type="ref" reference="fig:volcano"}.
 
 The `kappa_p` and `kappa_t` functions, used to make the volcano plot,
 compute the fold change bound multiplier as a function of either a
@@ -107,14 +104,18 @@ standard deviation. Note that fold change bounds for values of $|T|$
 which are close to 0 are not of practical interest because we will not
 reject the null hypothesis with test statistics in this range.
 
-```{r kappa, echo=FALSE}
+Table:\#tab:label
+```{r filter_volcano, fig.cap = "Wide figure. A plot produced by a code chunk with option `fig.wide = TRUE`.", echo=FALSE}
+par(mfrow=c(1, 2))
+
+S_cutoff <- quantile(S, .50)
+ss <- filter_volcano(d, p, S, n1, n2, alpha=.01, S_cutoff)
+
 t <- seq(0, 5, length=100)
-plot(t, kappa_t(t, n1, n2) * S_cutoff, 
+plot(t, kappa_t(t, n1, n2) * S_cutoff,
      xlab="|T|", ylab="Fold change bound", type="l")
 ```
-
-The plot is shown in the right panel of
-Fig. [2](#fig:volcano)reference-type="ref" reference="fig:volcano".
+__Figure 1:__ __`r colFmt("Left panel: plot produced by the ", 'blue')`__ `filter_volcano` __`r colFmt("function ", 'blue')`__.\
 
 # Rejection count plots
 
@@ -147,6 +148,7 @@ p_bh <- filtered_p(S2, p2, theta, method="BH")
 ```{r p_bh, echo=TRUE}
 head(p_bh)
 ```
+
 
 The `rejection_plot` function takes sets of $p$-values corresponding to
 different filtering choices --- in the columns of a matrix or in a list
@@ -188,7 +190,12 @@ large values of $\theta$ reduce power in this example:
 plot(theta, R_BH, type="l",
      xlab=expression(theta), ylab="Rejections",
      main="BH cutoff = 0.1")
+
+
 ```
+
+your amazing header {#slug}
+\@ref(slug))
 
  The plot is shown in the right panel of 
 Fig. [4](#fig:rej){reference-type="ref" reference="fig:rej"}.
@@ -198,10 +205,15 @@ Fig. [4](#fig:rej){reference-type="ref" reference="fig:rej"}.
 ```{r sessionInfo, echo=FALSE, results='asis'}
 #sessionInfo() |> toLatex()
 sessionInfo()
-```
 
+
+```
+\@ref(fig:ss)
 
 <!-- ::: thebibliography -->
 <!-- 10 Richard Bourgon, Robert Gentleman and Wolfgang Huber. Independent -->
 <!-- filtering increases power for detecting differentially expressed genes. -->
 <!-- ::: -->
+
+
+\@ref(tab:label)
