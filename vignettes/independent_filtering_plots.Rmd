@@ -15,8 +15,8 @@ output:
   BiocStyle::html_document:
     number_sections: yes
     toc: yes
-    toc_depth: 4
----
+    toc_depth: 4 
+---  
 
 ```{r functions, message=TRUE, warning=TRUE, include=FALSE}
 ## Color Format
