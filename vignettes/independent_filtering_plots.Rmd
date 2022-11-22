@@ -1,6 +1,10 @@
 ---
 title: "Additional plots for: Independent filtering increases power for detecting differentially expressed genes, Bourgon et al., PNAS (2010)"
-author: "Richard Bourgon and Wolfgang Huber"
+author: 
+- name: "Richard Bourgon"
+- name: "Wolfgang Huber"
+- name: "Paul Villafuerte"
+  affiliation: "Vignette translation from Sweave to Rmarkdown / HTML"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
