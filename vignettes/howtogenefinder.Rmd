@@ -1,0 +1,108 @@
+---
+title: "How to find genes whose expression profile is similar to that of
+specified genes"
+author:  
+- Robert Gentleman
+- Vincent J. Carey
+- Wolfgang Huber
+- Florian Hahne
+date: "January 19, 2023"
+package: genefilter
+vignette: >
+  %\VignetteIndexEntry{Using the genefilter function to filter genes from a microarray dataset}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output:
+  BiocStyle::html_document
+---
+
+# Introduction
+In some cases you have certain genes of interest and you would like to find other genes that are close to the genes of interest. This can be done using the `genefinder` function.  
+
+You need to specify either the index position of the genes you want (which row of the expression array the gene is in) or the name (consistent with the `featureNames` of the ExpressionSet).  
+
+A vector of names can be specified and matches for all will be computed. The number of matches
+and the distance measure used can all be specified. The examples will be carried out using the artificial data set, `sample.ExpressionSet`.  
+
+Two other options for `genefinder` are `scale` and `method`. The `scale` option controls the scaling of the rows (this is often desirable), while the `method` option controls the distance measure used between genes. The possible values and their meanings are listed at the end of this document.
+```{r, message = FALSE}
+library("Biobase")
+```
+```{r}
+library("genefilter")
+data(sample.ExpressionSet)
+igenes <- c(300,333,355,419) ##the interesting genes
+closeg <- genefinder(sample.ExpressionSet, igenes, 10, method="euc", scale="none")
+names(closeg)
+``` 
+
+The Affymetrix identifiers (since these were originally Affymetrix data) are `31539_r_at`, `31572_at`, `31594_at` and `31658_at`. We can find the nearest genes (by index) for any of these by simply accessing the relevant component of `closeg`.
+```{r}
+closeg$"31539_r_at"
+```
+```{r}
+Nms1 <- featureNames(sample.ExpressionSet)[closeg$"31539_r_at"$indices]
+Nms1
+```
+You could then take these names (from `Nms1`) and the annotate package and explore them further. See the various **HOWTO's** in annotate to see how to further explore your data. Examples include finding and searching all PubMed abstracts associated with these data. Finding and downloading associated sequence information. The data can also be visualized using the *geneplotter* package (again there are a number of **HOWTO** documents there).  
+
+# Parameter Settings
+
+The scale parameter can take the following values:  
+
+**none**&emsp;No scaling is done.  
+
+**range**&emsp;Scaling is done by $(x_{i} − x_{(1)})/(x_{(n)} − x_{(1)})$.  
+
+**zscore**&emsp;Scaling is done by $(x_{i} − \bar{x})/s_{x}$. Where s~x~ is the standard deviation.  
+
+The method parameter can take the following values:  
+
+**euclidean**&emsp;Euclidean distance is used.  
+
+**maximum**&emsp;Maximum distance between any two elements of x and y (supremum norm).  
+
+**manhattan**&emsp;Absolute distance between the two vectors (1 norm).
+
+**canberra**&emsp;The $\sum(|x_{i} − y_{i}|/|x_{i} + y_{i}|)$. Terms with zero numerator and denominator are omitted from the sum and treated as if the values were missing.  
+
+**binary**&emsp;(aka asymmetric binary): The vectors are regarded as binary bits, so non-zero elements are on and zero elements are off. The distance is the proportion of bits in which only one is on amongst those in which at least one is on.  
+
+# Session Information  
+
+The version number of R and packages loaded for generating the vignette were:  
+
+* R version 4.2.2 (2022-10-31), `x86_64-pc-linux-gnu`  
+
+* Locale: `LC_CTYPE=en_US.UTF-8`, `LC_NUMERIC=C`, `LC_TIME=en_GB`, `LC_COLLATE=C`,
+`LC_MONETARY=en_US.UTF-8`, `LC_MESSAGES=en_US.UTF-8`, `LC_PAPER=en_US.UTF-8`, `LC_NAME=C`,
+`LC_ADDRESS=C`, `LC_TELEPHONE=C`, `LC_MEASUREMENT=en_US.UTF-8`, `LC_IDENTIFICATION=C`  
+
+* Running under: `Ubuntu 20.04.5 LTS`  
+
+* Matrix products: default  
+
+* BLAS: `/home/biocbuild/bbs-3.16-bioc/R/lib/libRblas.so`  
+
+* LAPACK: `/home/biocbuild/bbs-3.16-bioc/R/lib/libRlapack.so`  
+
+* Base packages: base, datasets, grDevices, graphics, methods, stats, utils  
+
+* Other packages: ALL 1.40.0, Biobase 2.58.0, BiocGenerics 0.44.0, class 7.3-20, genefilter 1.80.3,
+knitr 1.41  
+
+* Loaded via a namespace (and not attached): AnnotationDbi 1.60.0, BiocManager 1.30.19,
+BiocStyle 2.26.0, Biostrings 2.66.0, DBI 1.1.3, GenomeInfoDb 1.34.7, GenomeInfoDbData 1.2.9,
+IRanges 2.32.0, KEGGREST 1.38.0, Matrix 1.5-3, R6 2.5.1, RCurl 1.98-1.9, RSQLite 2.2.20,
+Rcpp 1.0.9, S4Vectors 0.36.1, XML 3.99-0.13, XVector 0.38.0, annotate 1.76.0, bit 4.0.5,
+bit64 4.0.5, bitops 1.0-7, blob 1.2.3, cachem 1.0.6, cli 3.6.0, codetools 0.2-18, compiler 4.2.2,
+crayon 1.5.2, digest 0.6.31, evaluate 0.20, fastmap 1.1.0, glue 1.6.2, grid 4.2.2, highr 0.10,
+htmltools 0.5.4, httr 1.4.4, lattice 0.20-45, lifecycle 1.0.3, magick 2.7.3, magrittr 2.0.3,
+memoise 2.0.1, png 0.1-8, rlang 1.0.6, rmarkdown 2.19, splines 4.2.2, stats4 4.2.2, stringi 1.7.12,
+stringr 1.5.0, survival 3.5-0, tools 4.2.2, vctrs 0.5.1, xfun 0.36, xtable 1.8-4, yaml 2.3.6,
+zlibbioc 1.44.0  
+
+
+  
+
+      
