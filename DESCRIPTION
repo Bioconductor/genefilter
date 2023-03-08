@@ -5,9 +5,8 @@ Authors@R: c(
     person("Robert", "Gentleman", role = "aut"),
     person("Vincent J.",  "Carey", role = "aut"), 
     person("Wolfgang", "Huber", role = "aut"),
-    person("Florian", "Hahne", role = "aut")
-    person("Bioconductor Package Maintainer",
-        email = "maintainer@bioconductor.org", role = "cre"))
+    person("Florian", "Hahne", role = "aut"),
+    person("Bioconductor Package Maintainer", email = "maintainer@bioconductor.org", role = "cre"))
 Description: Some basic functions for filtering genes.
 Suggests: class, hgu95av2.db, tkWidgets, ALL, ROC, RColorBrewer, BiocStyle, knitr
 Imports: BiocGenerics, AnnotationDbi, annotate, Biobase, graphics, methods, stats, survival, grDevices
