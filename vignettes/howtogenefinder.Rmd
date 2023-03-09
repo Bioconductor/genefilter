@@ -1,20 +1,23 @@
 ---
-title: "How to find genes whose expression profile is similar to that of
-specified genes"
+title: "How to find genes whose expression profile is similar to that of specified genes"
 author:  
-- Robert Gentleman
-- Vincent J. Carey
-- Wolfgang Huber
-- Florian Hahne
-date: "January 19, 2023"
-package: genefilter
+- name: "Robert Gentleman"
+- name: "Vincent J. Carey"
+- name: "Wolfgang Huber"
+- name: "Florian Hahne"
+- name: "Emmanuel Taiwo"
+  affiliation: "Vignette translation from Sweave to R Markdown / HTML"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 vignette: >
-  %\VignetteIndexEntry{How to find genes whose expression profile is similar to that of
-specified genes}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{How to find genes whose expression profile is similar to that of specified genes}
+  %\VignettePackage{genefilter}
   %\VignetteEncoding{UTF-8}
 output:
-  BiocStyle::html_document
+  BiocStyle::html_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
 ---
 
 # Introduction
@@ -29,6 +32,7 @@ Two other options for `genefinder` are `scale` and `method`. The `scale` option 
 ```{r, message = FALSE}
 library("Biobase")
 ```
+&nbsp;  
 ```{r}
 library("genefilter")
 data(sample.ExpressionSet)
@@ -36,16 +40,19 @@ igenes <- c(300,333,355,419) ##the interesting genes
 closeg <- genefinder(sample.ExpressionSet, igenes, 10, method="euc", scale="none")
 names(closeg)
 ``` 
-
+&nbsp;  
 The Affymetrix identifiers (since these were originally Affymetrix data) are `31539_r_at`, `31572_at`, `31594_at` and `31658_at`. We can find the nearest genes (by index) for any of these by simply accessing the relevant component of `closeg`.
+
 ```{r}
 closeg$"31539_r_at"
 ```
+&nbsp;  
 ```{r}
 Nms1 <- featureNames(sample.ExpressionSet)[closeg$"31539_r_at"$indices]
 Nms1
 ```
-You could then take these names (from `Nms1`) and the annotate package and explore them further. See the various **HOWTO's** in annotate to see how to further explore your data. Examples include finding and searching all PubMed abstracts associated with these data. Finding and downloading associated sequence information. The data can also be visualized using the *geneplotter* package (again there are a number of **HOWTO** documents there).  
+&nbsp;  
+You could then take these names (from `Nms1`) and the `r Biocpkg("annotate")` package and explore them further. See the various HOWTO's in annotate to see how to further explore your data. Examples include finding and searching all PubMed abstracts associated with these data. Finding and downloading associated sequence information. The data can also be visualized using the `r Biocpkg("geneplotter")` package (again there are a number of HOWTO documents there).  
 
 # Parameter Settings
 
@@ -57,7 +64,7 @@ The scale parameter can take the following values:
 
 **zscore**&emsp;Scaling is done by $(x_{i} − \bar{x})/s_{x}$. Where s~x~ is the standard deviation.  
 
-The method parameter can take the following values:  
+The `method` parameter can take the following values:  
 
 **euclidean**&emsp;Euclidean distance is used.  
 
