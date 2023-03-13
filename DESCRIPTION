@@ -2,10 +2,10 @@ Package: genefilter
 Title: genefilter: methods for filtering genes from high-throughput experiments
 Version: 1.81.0
 Authors@R: c(
-    person("Robert", "entleman", role = "aut"),
+    person("Robert", "Gentleman", role = "aut"),
     person("Vincent J.", "Carey", role = "aut"),
-     person("Wolfgang", "Huber", role = "aut"),
-      person("Florian", "Hahne", role = "aut"),
+    person("Wolfgang", "Huber", role = "aut"),
+    person("Florian", "Hahne", role = "aut"),
     person("Khadijah", "Amusat", role = "ctb",
         comment = "Converted genefilter vignette from Sweave to RMarkdown / HTML."),
     person("Bioconductor Package Maintainer",
