@@ -68,18 +68,16 @@ in at least 5 samples" criterion, the function `ffun` is the filtering
 function (which in this case consists of only one criterion), and we
 apply it using `genefilter`. There were genes that satisfied the
 criterion and passed the filter.
-
 As an example for a specific filter, let us select genes that are
 differentially expressed in the groups defined by `type`.
 
 ```{r}
- f2 <- ttest(sample.ExpressionSet$type, p=0.1)
+f2 <- ttest(sample.ExpressionSet$type, p=0.1)
 ffun <- filterfun(f1)
 wh2 <- genefilter(exprs(sample.ExpressionSet), 
 filterfun(f2))
 sum(wh2)
 ```
-
 Here, `ttest` is a function from the `genefilter`
 package which provides a suitable wrapper around \texttt{t.test} from
 package \textit{stats}. Now we see that there are  `r \Sexpr{sum(wh2)}`
@@ -154,7 +152,6 @@ knnCV <- function(x, selectfun, cov, Agg, pselect = 0.01, scale=FALSE) {
 }
 ```
 
-
 ```{r}
  gfun <- function(expr, cov, p=0.05) {
     f2 <- ttest(cov, p=p)
@@ -173,7 +170,6 @@ Next we show how to use this function on the dataset
   ##genescale is a slightly more flexible "scale"
   ##work on a subset -- for speed only
   
-
   geneData <- genescale(exprs(sample.ExpressionSet)[1:75,], 1)
   Agg <- new("aggregator")
   testcase <- knnCV(geneData, gfun, sample.ExpressionSet$type, Agg,pselect=0.05) 
