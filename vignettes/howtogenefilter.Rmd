@@ -1,10 +1,23 @@
 ---
+title: "genefilter"
+author:
+- name: Robert, Gentleman
+  affiliation: Vignette Author's Institution
+- name: Khadijah AMUSAT
+  affiliation: Vignette translation from Sweave to R Markdown / HTML
+date: March 09, 2023
 output:
-  html_document: default
-  pdf_document: default
----
-# Introduction {#introduction .unnumbered}
+  BiocStyle: BiocStyle::html_documents
+    number_sections: true
+    toc: true
+    toc_depth: 4
+package: genefilter
+vignette: >
+  %\VignetteIndexEntry{genefilter}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 
+# Introduction {#introduction .unnumbered}
 The *genefilter* package can be used to filter (select) genes from a
 microarray dataset according to a variety of different filtering
 mechanisms. Here, we will consider the example dataset in the
@@ -23,7 +36,6 @@ data(sample.ExpressionSet)
  data(sample.ExpressionSet)
  
 ```
-
 
 One dichotomy that can be of interest for subsequent analyses is whether
 the filter is *specific* or *non-specific*. Here, specific means that we
@@ -45,26 +57,12 @@ There are three steps that must be performed.
 
 3.  Apply the filtering function to the expression matrix.
 
-
-```{r}
-library(Biobase) 
-library(genefilter)
-data(sample.ExpressionSet)
- varLabels(sample.ExpressionSet)
- table(sample.ExpressionSet$sex)
- table(sample.ExpressionSet$type)
- data(sample.ExpressionSet)
- 
-```
-
 ```{r}
 f1 <- kOverA(5, 200)
 ffun <- filterfun(f1)
 wh1 <- genefilter(exprs(sample.ExpressionSet), ffun)
 sum(wh1)
 ```
-
-
 Here `f1` is a function that implies our "expression measure above 200
 in at least 5 samples" criterion, the function `ffun` is the filtering
 function (which in this case consists of only one criterion), and we
@@ -82,22 +80,20 @@ filterfun(f2))
 sum(wh2)
 ```
 
-
-Here, \texttt{ttest} is a function from the \texttt{genefilter}
+Here, `ttest` is a function from the `genefilter`
 package which provides a suitable wrapper around \texttt{t.test} from
-package \textit{stats}. Now we see that there are \Sexpr{sum(wh2)}
+package \textit{stats}. Now we see that there are  `r \Sexpr{sum(wh2)}`
 genes that satisfy the selection criterion. 
 
 Suppose that we want to combine the two filters. We want those genes
 for which at least 5 have an expression measure over 200 \emph{and} which also are differentially
-expressed between the groups defined by \verb+type+.
+expressed between the groups defined by `\verb+type+`.
 
 ```{r}
 ffun_combined <- filterfun(f1, f2)
 wh3 <- genefilter(exprs(sample.ExpressionSet), ffun_combined)
 sum(wh3)
 ```
-
 
 Now we see that there are only \Sexpr{sum(wh3)} genes  that satisfy both conditions.
 
@@ -119,7 +115,6 @@ sum(wh4)
 
 We see that there are 14 genes that pass this filter and that are
 candidates for further exploration.
-
 
 \section*{Selecting genes that appear useful for prediction}
 
