@@ -1,6 +1,6 @@
-
+---
 title: "genefilter"
-- name: Robert, Gentleman
+-name: Robert, Gentleman
     affiliation: Vignette Author's Institution
   - name: Khadijah AMUSAT
     affiliation: "Vignette translation from Sweave to R Markdown / HTML"
