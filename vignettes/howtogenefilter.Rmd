@@ -63,6 +63,7 @@ ffun <- filterfun(f1)
 wh1 <- genefilter(exprs(sample.ExpressionSet), ffun)
 sum(wh1)
 ```
+
 Here `f1` is a function that implies our "expression measure above 200
 in at least 5 samples" criterion, the function `ffun` is the filtering
 function (which in this case consists of only one criterion), and we
@@ -154,7 +155,6 @@ knnCV <- function(x, selectfun, cov, Agg, pselect = 0.01, scale=FALSE) {
 }
 ```
 
-
 ```{r}
  gfun <- function(expr, cov, p=0.05) {
     f2 <- ttest(cov, p=p)
@@ -173,7 +173,6 @@ Next we show how to use this function on the dataset
   ##genescale is a slightly more flexible "scale"
   ##work on a subset -- for speed only
   
-
   geneData <- genescale(exprs(sample.ExpressionSet)[1:75,], 1)
   Agg <- new("aggregator")
   testcase <- knnCV(geneData, gfun, sample.ExpressionSet$type, Agg,pselect=0.05) 
