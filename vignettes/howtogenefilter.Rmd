@@ -19,6 +19,7 @@ vignette: >
 ---
 
 # Introduction {#introduction .unnumbered}
+
 The *genefilter* package can be used to filter (select) genes from a
 microarray dataset according to a variety of different filtering
 mechanisms. Here, we will consider the example dataset in the
