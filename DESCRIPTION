@@ -1,21 +1,3 @@
----
-title: "genefilter"
-- name: Robert, Gentleman
-  affiliation: Vignette Author's Institution
-- name: Khadijah AMUSAT
-  affiliation: "Vignette translation from Sweave to R Markdown / HTML"
-date: March 09, 2023
-package: genefilter
-vignette: >
-  %\VignetteIndexEntry{genefilter}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-output:
-  BiocStyle: BiocStyle::html_documents
-    number_sections: true
-    toc: true
-    toc_depth: 4
-
 Package: genefilter
 Title: genefilter: methods for filtering genes from high-throughput experiments
 Version: 1.81.0

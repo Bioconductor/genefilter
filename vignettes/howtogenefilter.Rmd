@@ -1,21 +1,22 @@
 ---
-title: "genefilter"
+title: "Using the genefilter function to filter genes from a microarray dataset"
 author:
 - name: Robert, Gentleman
   affiliation: Vignette Author's Institution
-- name: Khadijah AMUSAT
+- name: Khadijah Amusat
   affiliation: Vignette translation from Sweave to R Markdown / HTML
 date: March 09, 2023
 output:
-  BiocStyle: BiocStyle::html_documents
+  BiocStyle: BiocStyle:: html_documents:
     number_sections: true
     toc: true
     toc_depth: 4
 package: genefilter
 vignette: >
-  %\VignetteIndexEntry{genefilter}
+  %\VignetteIndexEntry{Using the genefilter function to filter genes from a microarray}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+---
 
 # Introduction {#introduction .unnumbered}
 The *genefilter* package can be used to filter (select) genes from a
