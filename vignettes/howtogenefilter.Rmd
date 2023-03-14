@@ -85,8 +85,8 @@ package \textit{stats}. Now we see that there are  `r \Sexpr{sum(wh2)}`
 genes that satisfy the selection criterion. 
 
 Suppose that we want to combine the two filters. We want those genes
-for which at least 5 have an expression measure over 200 \emph{and} which also are differentially
-expressed between the groups defined by `\verb+type+`.
+for which at least 5 have an expression measure over 200 *and* which also are differentially
+expressed between the groups defined by `type+`.
 
 ```{r}
 ffun_combined <- filterfun(f1, f2)
