@@ -11,7 +11,8 @@ author:
 date: "`r format(Sys.time(), '%B %d, %Y')`" 
 vignette: > 
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{How to find genes whose expression profile is similar to that of specified genes} 
+  %\VignetteIndexEntry{How to find genes whose expression profile is similar to 
+  that of specified genes} 
   %\VignettePackage{genefilter} 
   %\VignetteEncoding{UTF-8}
 output: 
@@ -70,8 +71,8 @@ You could then take these names (from `Nms1`) and the `r Biocpkg("annotate")`
 package and explore them further. See the various HOWTO's in annotate to see how
 to further explore your data. Examples include finding and searching all PubMed
 abstracts associated with these data. Finding and downloading associated
-sequence information. The data can also be visualized using the `r Biocpkg("geneplotter")` 
-package (again there are a number of HOWTO documents there).
+sequence information. The data can also be visualized using the 
+`r Biocpkg("geneplotter")` package (again there are a number of HOWTO documents there).
 
 # Parameter Settings 
 
@@ -91,9 +92,12 @@ The `method` parameter can take the following values:
 
 **manhattan** Absolute distance between the two vectors (1 norm).
 
-**canberra** The $\sum(|x_{i} − y_{i}|/|x_{i} + y_{i}|)$. Terms with zero numerator and denominator are omitted from the sum and treated as if the values were missing.
+**canberra** The $\sum(|x_{i} − y_{i}|/|x_{i} + y_{i}|)$. Terms with zero numerator 
+and denominator are omitted from the sum and treated as if the values were missing.
 
-**binary** (aka asymmetric binary): The vectors are regarded as binary bits, so non-zero elements are on and zero elements are off. The distance is the proportion of bits in which only one is on amongst those in which at least one is on.
+**binary** (aka asymmetric binary): The vectors are regarded as binary bits, so 
+non-zero elements are on and zero elements are off. The distance is the 
+proportion of bits in which only one is on amongst those in which at least one is on.
 
 # Session Information 
 
