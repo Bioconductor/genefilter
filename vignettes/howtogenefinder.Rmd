@@ -2,10 +2,6 @@
 title: "How to find genes whose expression profile is similar to that of
 specified genes"
 author:
-- name: "Robert Gentleman"
-- name: "Vincent J. Carey"
-- name: "Wolfgang Huber"
-- name: "Florian Hahne"
 - name: "Emmanuel Taiwo"
   affiliation: "Vignette translation from Sweave to R Markdown / HTML" 
 date: "`r format(Sys.time(), '%B %d, %Y')`" 
@@ -43,9 +39,6 @@ their meanings are listed at the end of this document.
 
 ```{r, message = FALSE}
 library("Biobase")
-```
-
-```{r}
 library("genefilter")
 data(sample.ExpressionSet)
 igenes <- c(300,333,355,419) ##the interesting genes
@@ -60,9 +53,6 @@ genes (by index) for any of these by simply accessing the relevant component of
 
 ```{r}
 closeg$"31539_r_at"
-```
-
-```{r}
 Nms1 <- featureNames(sample.ExpressionSet)[closeg$"31539_r_at"$indices]
 Nms1
 ```
