@@ -1,10 +1,14 @@
 Package: genefilter
 Title: genefilter: methods for filtering genes from high-throughput experiments
 Version: 1.81.0
-Author: Robert Gentleman, Vincent J. Carey, Wolfgang Huber, Florian Hahne
+Authors@R: c(
+    person("Robert", "Gentleman", role = "aut"),
+    person("Vincent J.", "Carey", role = "aut"),
+    person("Wolfgang", "Huber", role = "aut"),
+    person("Florian", "Hahne", role = "aut"),
+    person("Emmanuel", "Taiwo", role = "ctb", comment = "'howtogenefinder' vignette translation from Sweave to RMarkdown / HTML."),
+    person("Bioconductor Package Maintainer", email = "maintainer@bioconductor.org", role = "cre"))
 Description: Some basic functions for filtering genes.
-Maintainer: Bioconductor Package Maintainer
-        <maintainer@bioconductor.org>
 Suggests: class, hgu95av2.db, tkWidgets, ALL, ROC, RColorBrewer, BiocStyle, knitr
 Imports: BiocGenerics, AnnotationDbi, annotate, Biobase, graphics, methods, stats, survival, grDevices
 License: Artistic-2.0

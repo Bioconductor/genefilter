@@ -1,0 +1,99 @@
+---
+title: "How to find genes whose expression profile is similar to that of
+specified genes"
+author:
+- name: "Emmanuel Taiwo"
+  affiliation: "Vignette translation from Sweave to R Markdown / HTML" 
+date: "`r format(Sys.time(), '%B %d, %Y')`" 
+vignette: > 
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{How to find genes whose expression profile is similar to 
+  that of specified genes} 
+  %\VignettePackage{genefilter} 
+  %\VignetteEncoding{UTF-8}
+output: 
+  BiocStyle::html_document: 
+    number_sections: yes 
+    toc: yes 
+    toc_depth: 4
+---
+
+# Introduction 
+
+In some cases you have certain genes of interest and you would like to find
+other genes that are close to the genes of interest. This can be done using the
+`genefinder` function.
+
+You need to specify either the index position of the genes you want (which row
+of the expression array the gene is in) or the name (consistent with the
+`featureNames` of the ExpressionSet).
+
+A vector of names can be specified and matches for all will be computed. The
+number of matches and the distance measure used can all be specified. The
+examples will be carried out using the artificial data set, `sample.ExpressionSet`.
+
+Two other options for `genefinder` are `scale` and `method`. The `scale` option
+controls the scaling of the rows (this is often desirable), while the `method`
+option controls the distance measure used between genes. The possible values and
+their meanings are listed at the end of this document.
+
+```{r closeg, message = FALSE}
+library("Biobase")
+library("genefilter")
+data(sample.ExpressionSet)
+igenes <- c(300,333,355,419) ##the interesting genes
+closeg <- genefinder(sample.ExpressionSet, igenes, 10, method="euc", scale="none")
+names(closeg)
+```
+
+The Affymetrix identifiers (since these were originally Affymetrix data) are
+`31539_r_at`, `31572_at`, `31594_at` and `31658_at`. We can find the nearest
+genes (by index) for any of these by simply accessing the relevant component of
+`closeg`.
+
+```{r gene-indexing}
+closeg$"31539_r_at"
+Nms1 <- featureNames(sample.ExpressionSet)[closeg$"31539_r_at"$indices]
+Nms1
+```
+
+You could then take these names (from `Nms1`) and the `r Biocpkg("annotate")`
+package and explore them further. See the various HOWTO's in annotate to see how
+to further explore your data. Examples include finding and searching all PubMed
+abstracts associated with these data. Finding and downloading associated
+sequence information. The data can also be visualized using the 
+`r Biocpkg("geneplotter")` package (again there are a number of HOWTO documents there).
+
+# Parameter Settings 
+
+The scale parameter can take the following values:
+
+**none** No scaling is done.
+
+**range** Scaling is done by $(x_{i} − x_{(1)})/(x_{(n)} − x_{(1)})$.
+
+**zscore** Scaling is done by $(x_{i} − \bar{x})/s_{x}$. Where s~x~ is the standard deviation.
+
+The `method` parameter can take the following values:
+
+**euclidean** Euclidean distance is used.
+
+**maximum** Maximum distance between any two elements of x and y (supremum norm).
+
+**manhattan** Absolute distance between the two vectors (1 norm).
+
+**canberra** The $\sum(|x_{i} − y_{i}|/|x_{i} + y_{i}|)$. Terms with zero numerator 
+and denominator are omitted from the sum and treated as if the values were missing.
+
+**binary** (aka asymmetric binary): The vectors are regarded as binary bits, so 
+non-zero elements are on and zero elements are off. The distance is the 
+proportion of bits in which only one is on amongst those in which at least one is on.
+
+# Session Information 
+
+The version number of R and packages loaded for generating
+the vignette were:
+
+```{r, echo=FALSE}
+sessionInfo()
+```
