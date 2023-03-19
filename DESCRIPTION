@@ -10,6 +10,16 @@ Authors@R: c(
         comment = "Converted genefilter vignette from Sweave to RMarkdown / HTML."),
     person("Bioconductor Package Maintainer",
         email = "maintainer@bioconductor.org", role = "cre"))
+Version: 1.81.1
+Authors@R: c(
+        person("Robert", "Gentleman", role = "aut"),
+        person("Vincent J.", "Carey", role = "aut"),
+        person("Wolfgang", "Huber", role = "aut"),
+        person("Florian", "Hahne", role = "aut"),
+        person("Emmanuel", "Taiwo", role = "ctb",
+                comment = "'howtogenefinder' vignette translation from Sweave to RMarkdown / HTML."),
+        person("Bioconductor Package Maintainer", role = "cre",
+                email = "maintainer@bioconductor.org"))
 Description: Some basic functions for filtering genes.
 Suggests: class, hgu95av2.db, tkWidgets, ALL, ROC, RColorBrewer, BiocStyle, knitr
 Imports: BiocGenerics, AnnotationDbi, annotate, Biobase, graphics, methods, stats, survival, grDevices
