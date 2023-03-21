@@ -1,11 +1,11 @@
 ---
 title: "Using the genefilter function to filter genes from a microarray dataset"
 author:
-- name: Khadijah Amusat
-  affiliation: Vignette translation from Sweave to R Markdown / HTML
-date: `r format(Sys.time(), '%B %d , %Y')`
+- name: "Khadijah Amusat"
+  affiliation: "Vignette translation from Sweave to R Markdown / HTML"
+date: "`r format(Sys.time(), '%B %d , %Y')`"
 output:
-  BiocStyle:html_documents:
+    BiocStyle::html_documents:
     number_sections: true
     toc: true
     toc_depth: 4
@@ -18,7 +18,7 @@ vignette: >
 
 # Introduction {#introduction .unnumbered}
 
-The `r Biocpkg("genefilter ")` package can be used to filter (select) genes from a microarray dataset according to a variety of different filtering mechanisms. Here, we will consider the example dataset in the `sample.ExpressionSet` example from the `r Biocpkg("biobase")` package. This experiment has 26 samples, and there are 500 genes and 3 covariates. The covariates are named `sex`, `type` and `score`. The first two have two levels and the last one is continuous.
+The `r Biocpkg("genefilter")` package can be used to filter (select) genes from a microarray dataset according to a variety of different filtering mechanisms. Here, we will consider the example dataset in the `sample.ExpressionSet` example from the `r Biocpkg("Biobase")` package. This experiment has 26 samples, and there are 500 genes and 3 covariates. The covariates are named `sex`, `type` and `score`. The first two have two levels and the last one is continuous.
 
 ```{r}
 library(Biobase) 
@@ -61,7 +61,7 @@ filterfun(f2))
 sum(wh2)
 ```
 
-Here, `ttest` is a function from the `r Biocpkg("genefilter ")` package which provides a suitable wrapper around \texttt{t.test} from package \Rpackage{stats}. Now we see that there are `r (wh2)` genes that satisfy the selection criterion.
+Here, `ttest` is a function from the `r Biocpkg("genefilter")` package which provides a suitable wrapper around \texttt{t.test} from package `r Biocpkg("stats")`. Now we see that there are `r (wh2)` genes that satisfy the selection criterion.
 
 Suppose that we want to combine the two filters. We want those genes for which at least 5 have an expression measure over 200 *and* which also are differentially expressed between the groups defined by `type`
 
@@ -75,9 +75,9 @@ Now we see that there are only sum(wh3) genes that satisfy both conditions.
 
 ## Selecting genes that appear useful for prediction
 
-The function \texttt{knnCV} defined below performs$k$--nearest neighbour classification using leave--one--out cross--validation. At the same time it aggregates the genes that were selected. The function returns the predicted classifications as its returned value. However, there is an additional side effect. The number of times that each gene was used (provided it was at least one) are recorded and stored in the environment of the aggregator \verb+Agg+. These can subsequently be retrieved and used for other purposes.
+The function \texttt{knnCV} defined below performs$k$--nearest neighbour classification using leave--one--out cross--validation. At the same time it aggregates the genes that were selected. The function returns the predicted classifications as its returned value. However, there is an additional side effect. The number of times that each gene was used (provided it was at least one) are recorded and stored in the environment of the aggregator `Agg`. These can subsequently be retrieved and used for other purposes.
 
-```{r}
+```{r, knnCV}
 knnCV <- function(x, selectfun, cov, Agg, pselect = 0.01, scale=FALSE) {
    nc <- ncol(x)
    outvals <- rep(NA, nc)
@@ -104,17 +104,16 @@ knnCV <- function(x, selectfun, cov, Agg, pselect = 0.01, scale=FALSE) {
 }
 ```
 
-```{r}
- gfun <- function(expr, cov, p=0.05) {
-    f2 <- ttest(cov, p=p)
-    ffun <- filterfun(f2)
-    which <- genefilter(expr, ffun)
+```{r, aggregate1}
+gfun <- function(expr, cov, p=0.05) {
+   f2 <- ttest(cov, p=p)
+   ffun <- filterfun(f2)
+   which <- genefilter(expr, ffun)
   }
 ```
-
 Next we show how to use this function on the dataset `geneData`
 
-```{r}
+```{r, aggregate2, results=hide}
 library("class")
 ##scale the genes
 ##genescale is a slightly more flexible "scale"
@@ -122,17 +121,16 @@ library("class")
 geneData <- genescale(exprs(sample.ExpressionSet)[1:75,], 1) 
 Agg <- new("aggregator") 
 testcase <- knnCV(geneData, gfun, sample.ExpressionSet$type, 
-Agg,pselect=0.05) aggregate3  
-sort(sapply(aggenv(Agg), c), decreasing=TRUE)
+      Agg,pselect=0.05)   
 ```
+
+sort(sapply(aggenv(Agg), c), decreasing=TRUE)
 
 The environment `Agg` contains, for each gene, the number of times it was selected in the cross-validation.
 
 # Session Information {#session-information .unnumbered}
 
 The version number of R and packages loaded for generating the vignette were:
-
-# `sessionInfo()`
 
 ```{r sessionInfo, echo=FALSE}
 sessionInfo()
