@@ -817,44 +817,8 @@ sum(wh3)</code></pre>
 geneData &lt;- genescale(exprs(sample.ExpressionSet)[1:75,], 1) 
 Agg &lt;- new(&quot;aggregator&quot;) 
 testcase &lt;- knnCV(geneData, gfun, sample.ExpressionSet$type, 
-       Agg,pselect=0.05)  </code></pre>
-<pre><code>## [1] &quot;iter 1 num genes= 3&quot;
-## [1] &quot;iter 2 num genes= 5&quot;
-## [1] &quot;iter 3 num genes= 5&quot;
-## [1] &quot;iter 4 num genes= 6&quot;
-## [1] &quot;iter 5 num genes= 7&quot;
-## [1] &quot;iter 6 num genes= 5&quot;
-## [1] &quot;iter 7 num genes= 8&quot;
-## [1] &quot;iter 8 num genes= 5&quot;
-## [1] &quot;iter 9 num genes= 4&quot;
-## [1] &quot;iter 10 num genes= 5&quot;
-## [1] &quot;iter 11 num genes= 5&quot;
-## [1] &quot;iter 12 num genes= 6&quot;
-## [1] &quot;iter 13 num genes= 5&quot;
-## [1] &quot;iter 14 num genes= 5&quot;
-## [1] &quot;iter 15 num genes= 6&quot;
-## [1] &quot;iter 16 num genes= 6&quot;
-## [1] &quot;iter 17 num genes= 6&quot;
-## [1] &quot;iter 18 num genes= 4&quot;
-## [1] &quot;iter 19 num genes= 6&quot;
-## [1] &quot;iter 20 num genes= 4&quot;
-## [1] &quot;iter 21 num genes= 5&quot;
-## [1] &quot;iter 22 num genes= 5&quot;
-## [1] &quot;iter 23 num genes= 6&quot;
-## [1] &quot;iter 24 num genes= 6&quot;
-## [1] &quot;iter 25 num genes= 5&quot;
-## [1] &quot;iter 26 num genes= 6&quot;</code></pre>
-<pre class="r"><code>sort(sapply(aggenv(Agg), c), decreasing=TRUE)</code></pre>
-<pre><code>##          AFFX-MurIL4_at         AFFX-TrpnX-M_at         AFFX-hum_alu_at 
-##                      26                      26                      26 
-##        AFFX-YEL018w/_at                31308_at          AFFX-PheX-M_at 
-##                      20                      15                      15 
-##                31312_at          AFFX-BioC-3_st AFFX-HUMRGE/M10098_M_at 
-##                       3                       3                       1 
-##          AFFX-DapX-5_at         AFFX-TrpnX-5_at         AFFX-BioDn-5_at 
-##                       1                       1                       1 
-##          AFFX-PheX-5_at 
-##                       1</code></pre>
+       Agg,pselect=0.05)  
+sort(sapply(aggenv(Agg), c), decreasing=TRUE)</code></pre>
 <p>The environment <code>Agg</code> contains, for each gene, the number of times it was selected in the cross-validation.</p>
 </div>
 </div>

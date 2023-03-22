@@ -114,7 +114,7 @@ gfun <- function(expr, cov, p=0.05) {
 
 Next we show how to use this function on the dataset `geneData`
 
-```{r, aggregate2}
+```{r, aggregate2, results="hide"}
 library("class")
 ##scale the genes
 ##genescale is a slightly more flexible "scale"
