@@ -5,7 +5,7 @@ author:
   affiliation: "Vignette translation from Sweave to R Markdown / HTML"
 date: "`r format(Sys.time(), '%B %d , %Y')`"
 output:
-    BiocStyle::html_documents:
+    BiocStyle::html_document:
     number_sections: true
     toc: true
     toc_depth: 4
@@ -111,6 +111,7 @@ gfun <- function(expr, cov, p=0.05) {
    which <- genefilter(expr, ffun)
   }
 ```
+
 Next we show how to use this function on the dataset `geneData`
 
 ```{r, aggregate2, results=hide}
@@ -121,10 +122,9 @@ library("class")
 geneData <- genescale(exprs(sample.ExpressionSet)[1:75,], 1) 
 Agg <- new("aggregator") 
 testcase <- knnCV(geneData, gfun, sample.ExpressionSet$type, 
-      Agg,pselect=0.05)   
-```
-
+       Agg,pselect=0.05)  
 sort(sapply(aggenv(Agg), c), decreasing=TRUE)
+```
 
 The environment `Agg` contains, for each gene, the number of times it was selected in the cross-validation.
 
