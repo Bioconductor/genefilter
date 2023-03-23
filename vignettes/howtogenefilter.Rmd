@@ -49,7 +49,7 @@ wh1 <- genefilter(exprs(sample.ExpressionSet), ffun)
 sum(wh1)
 ```
 
-Here `f1` is a function that implies our "expression measure above 200 in at least 5 samples" criterion, the function `ffun` is the filtering function (which in this case consists of only one criterion), and we apply it using `genefilter`. There were genes that satisfied the criterion and passed the filter.
+Here `f1` is a function that implies our "expression measure above 200 in at least 5 samples" criterion, the function `ffun` is the filtering function (which in this case consists of only one criterion), and we apply it using `genefilter`. There were  `r {sum(wh1)}` genes that satisfied the criterion and passed the filter.
 
 As an example for a specific filter, let us select genes that are differentially expressed in the groups defined by `type`.
 
