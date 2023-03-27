@@ -63,11 +63,10 @@ sum(wh1)
 
 Here `f1` is a function that implies our "expression measure above 200 in at
 least 5 samples" criterion, the function `ffun` is the filtering function (which
-in this case consists of only one criterion), and we apply it using 
-`r Biocpkg("genefilter")`. There were `r sum(wh1)` genes that satisfied the
-criterion and passed the filter.
-As an example for a specific filter, let us select genes that are differentially
-expressed in the groups defined by `type`.
+in this case consists of only one criterion), and we apply it using `r
+Biocpkg("genefilter")`. There were `r sum(wh1)` genes that satisfied the
+criterion and passed the filter. As an example for a specific filter, let us
+select genes that are differentially expressed in the groups defined by `type`.
 
 ```{r}
 f2 <- ttest(sample.ExpressionSet$type, p=0.1)
@@ -78,9 +77,8 @@ sum(wh2)
 Here, `ttest` is a function from the `r Biocpkg("genefilter")` package which
 provides a suitable wrapper around `t.test` from package `r Rpackage("stats")`.
 Now we see that there are `r sum(wh2)` genes that satisfy the selection
-criterion.
-Suppose that we want to combine the two filters. We want those genes for which
-at least 5 have an expression measure over 200 *and* which also are
+criterion. Suppose that we want to combine the two filters. We want those genes
+for which at least 5 have an expression measure over 200 *and* which also are
 differentially expressed between the groups defined by `type`
 
 ```{r gene-indexing}
