@@ -1,0 +1,162 @@
+---
+title: "Using the genefilter function to filter genes from a microarray dataset"
+author:
+- name: "Khadijah Amusat"
+  affiliation: "Vignette translation from Sweave to R Markdown / HTML"
+date: "`r format(Sys.time(), '%B %d , %Y')`"
+output:
+    BiocStyle::html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 4
+package: genefilter
+vignette: >
+  %\VignetteIndexEntry{Using the genefilter function to filter genes from a microarray}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+# Introduction
+
+The `r Biocpkg("genefilter")` package can be used to filter (select) genes from
+a microarray dataset according to a variety of different filtering mechanisms.
+Here, we will consider the example dataset in the `sample.ExpressionSet` example
+from the `r Biocpkg("Biobase")` package. This experiment has 26 samples, and
+there are 500 genes and 3 covariates. The covariates are named `sex`, `type` and
+`score`. The first two have two levels and the last one is continuous.
+
+```{r closeg, message = FALSE}
+library("Biobase") 
+library("genefilter")
+data(sample.ExpressionSet)
+varLabels(sample.ExpressionSet)
+table(sample.ExpressionSet$sex)
+table(sample.ExpressionSet$type)
+```
+
+One dichotomy that can be of interest for subsequent analyses is whether the
+filter is *specific* or *non-specific*. Here, specific means that we are
+filtering with reference to sample metadata, for example, `type`. For example,
+if we want to select genes that are differentially expressed in the two groups
+defined by `type`, that is a specific filter. If on the other hand we want to
+select genes that are expressed in more than 5 samples, that is an example of a
+non--specific filter.
+
+First, let us see how to perform a non--specific filter. Suppose we want to
+select genes that have an expression measure above 200 in at least 5 samples. To
+do that we use the function `kOverA`.
+
+There are three steps that must be performed.
+
+1.  Create function(s) implementing the filtering criteria.
+
+2.  Assemble it (them) into a (combined) filtering function.
+
+3.  Apply the filtering function to the expression matrix.
+
+```{r message=FALSE}
+f1 <- kOverA(5, 200)
+ffun <- filterfun(f1)
+wh1 <- genefilter(exprs(sample.ExpressionSet), ffun)
+sum(wh1)
+```
+
+Here `f1` is a function that implies our "expression measure above 200 in at
+least 5 samples" criterion, the function `ffun` is the filtering function (which
+in this case consists of only one criterion), and we apply it using `r
+Biocpkg("genefilter")`. There were `r sum(wh1)` genes that satisfied the
+criterion and passed the filter. As an example for a specific filter, let us
+select genes that are differentially expressed in the groups defined by `type`.
+
+```{r}
+f2 <- ttest(sample.ExpressionSet$type, p=0.1)
+wh2 <- genefilter(exprs(sample.ExpressionSet), filterfun(f2))
+sum(wh2)
+```
+
+Here, `ttest` is a function from the `r Biocpkg("genefilter")` package which
+provides a suitable wrapper around `t.test` from package `r Rpackage("stats")`.
+Now we see that there are `r sum(wh2)` genes that satisfy the selection
+criterion. Suppose that we want to combine the two filters. We want those genes
+for which at least 5 have an expression measure over 200 *and* which also are
+differentially expressed between the groups defined by `type`
+
+```{r gene-indexing}
+ffun_combined <- filterfun(f1, f2)
+wh3 <- genefilter(exprs(sample.ExpressionSet), ffun_combined)
+sum(wh3)
+```
+
+Now we see that there are only `r sum(wh3)` genes that satisfy both conditions.
+
+## Selecting genes that appear useful for prediction
+
+The function `knnCV` defined below performs $k$--nearest neighbour
+classification using leave--one--out cross--validation. At the same time it
+aggregates the genes that were selected. The function returns the predicted
+classifications as its returned value. However, there is an additional side
+effect. The number of times that each gene was used (provided it was at least
+one) are recorded and stored in the environment of the aggregator `Agg`. These
+can subsequently be retrieved and used for other purposes.
+
+```{r knnCV}
+knnCV <- function(x, selectfun, cov, Agg, pselect = 0.01, scale=FALSE) {
+   nc <- ncol(x)
+   outvals <- rep(NA, nc)
+   for(i in seq_len(nc)) {
+      v1 <- x[,i]
+      expr <- x[,-i]
+      glist <- selectfun(expr, cov[-i], p=pselect)
+      expr <- expr[glist,]
+      if( scale ) {
+        expr <- scale(expr)
+        v1 <- as.vector(scale(v1[glist]))
+      }
+      else
+         v1 <- v1[glist]
+      out <- paste("iter ",i, " num genes= ", sum(glist), sep="")
+      print(out)
+      Aggregate(row.names(expr), Agg)
+      if( length(v1) == 1)
+         outvals[i] <- knn(expr, v1, cov[-i], k=5)
+      else
+          outvals[i] <- knn(t(expr), v1, cov[-i], k=5)
+    }
+    return(outvals)
+}
+```
+
+```{r aggregate1}
+gfun <- function(expr, cov, p=0.05) {
+   f2 <- ttest(cov, p=p)
+   ffun <- filterfun(f2)
+   which <- genefilter(expr, ffun)
+  }
+```
+
+Next we show how to use this function on the dataset `geneData`
+
+```{r aggregate2, results="hide"}
+library("class")
+##scale the genes
+##genescale is a slightly more flexible "scale"
+##work on a subset -- for speed only
+geneData <- genescale(exprs(sample.ExpressionSet)[1:75,], 1) 
+Agg <- new("aggregator") 
+testcase <- knnCV(geneData, gfun, sample.ExpressionSet$type, 
+       Agg,pselect=0.05)  
+```
+
+```{r aggregate3}
+sort(sapply(aggenv(Agg), c), decreasing=TRUE)
+```
+
+The environment `Agg` contains, for each gene, the number of times it was selected in the cross-validation.
+
+# Session Information
+
+The version number of R and packages loaded for generating the vignette were:
+
+```{r echo=FALSE}
+sessionInfo()
+```

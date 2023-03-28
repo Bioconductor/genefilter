@@ -8,6 +8,8 @@ Authors@R: c(
         person("Florian", "Hahne", role = "aut"),
         person("Emmanuel", "Taiwo", role = "ctb",
                 comment = "'howtogenefinder' vignette translation from Sweave to RMarkdown / HTML."),
+        person("Khadijah", "Amusat", role = "ctb",
+                comment = "Converted genefilter vignette from Sweave to RMarkdown / HTML."),
         person("Bioconductor Package Maintainer", role = "cre",
                 email = "maintainer@bioconductor.org"))
 Description: Some basic functions for filtering genes.
