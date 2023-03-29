@@ -1,6 +1,6 @@
 Package: genefilter
 Title: genefilter: methods for filtering genes from high-throughput experiments
-Version: 1.81.2
+Version: 1.81.3
 Authors@R: c(
         person("Robert", "Gentleman", role = "aut"),
         person("Vincent J.", "Carey", role = "aut"),
@@ -14,7 +14,7 @@ Authors@R: c(
                 email = "maintainer@bioconductor.org"))
 Description: Some basic functions for filtering genes.
 Suggests: class, hgu95av2.db, tkWidgets, ALL, ROC, RColorBrewer, BiocStyle, knitr
-Imports: BiocGenerics, AnnotationDbi, annotate, Biobase, graphics, methods, stats, survival, grDevices
+Imports: MatrixGenerics (>= 1.11.1), AnnotationDbi, annotate, Biobase, graphics, methods, stats, survival, grDevices
 License: Artistic-2.0
 LazyLoad: yes
 LazyData: yes

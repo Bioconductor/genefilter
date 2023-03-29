@@ -34,7 +34,7 @@ importMethodsFrom(methods,
                   "body<-",
                   show)
 
-importFrom(BiocGenerics,
+importFrom(MatrixGenerics,
            rowSums,
            colSums,
            rowMeans,
