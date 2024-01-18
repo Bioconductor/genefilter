@@ -72,7 +72,7 @@ static void detectTies(RSInt geneNum, RSInt nResults, RSInt nRows, gene_t *data)
 	if (data[i].geneDist == data[i+1].geneDist) {
 	    sprintf(msg_buf, "There are distance ties in the data "
                              "for gene %d\n", geneNum);
-	    warning(msg_buf);
+	    warning("%s", msg_buf);
 	    break;
 	}
     }
